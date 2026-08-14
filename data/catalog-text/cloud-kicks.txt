@@ -1,0 +1,167 @@
+Recreate a single full-viewport ecommerce landing hero for a fictional footwear brand **SkyRunner Co. (SKR)**. The page is **one section only**: white chrome above a rounded media stage. No other sections. Match these assets, fonts, copy, layout, and motion exactly.
+
+### Tech stack (match the original)
+- React 18 + Vite + TypeScript
+- Tailwind CSS 3
+- Icons from `lucide-react` (`User`, `ShoppingBag`)
+- Google Font: **Inter** weights **400, 600, 800**
+- Page title: `SkyRunner Co.`
+- Body: `font-family: 'Inter', sans-serif; background: #ffffff;`
+- Font load:
+  `https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap`
+
+### Exact asset URLs (do not substitute)
+
+**Background looping video (CloudFront):**
+` ` `
+https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260728_001841_06bacb20-f1eb-4393-98af-83f9ed0db096.mp4
+` ` `
+- Full-bleed cover behind the shoe
+- Attributes: `autoPlay` `muted` `loop` `playsInline`
+- CSS: `absolute inset-0 h-full w-full object-cover`
+
+**Foreground floating sneaker PNG (transparent cutout over the video):**
+` ` `
+https://soft-zoom-63098134.figma.site/_assets/v11/adf4929a1d6ee94f224704a93455bd20282a1043.png
+` ` `
+- Alt text: `Floating kick`
+- CSS: `absolute inset-0 z-10 h-full w-full object-contain`
+- Drop shadow: `drop-shadow-[0_40px_60px_rgba(0,0,0,0.35)]`
+- Float animation (see Motion)
+
+### Overall layout
+- Root: `min-h-screen bg-white`
+- Hero section: `flex h-[100dvh] flex-col bg-white`
+- Structure top → bottom:
+  1. Fixed-height **nav** on white
+  2. **Flex-1 media stage** with large top corner radius (the white chrome “cuts” into a rounded portal)
+
+### Navigation (desktop ≥ md)
+Horizontal bar: `relative z-50 flex items-center justify-between px-4 py-4 sm:px-8 sm:py-6`
+
+**Left — logo**
+- Text link `SKR`
+- Classes: `text-lg font-extrabold tracking-tight text-black`
+- `href="#"`
+
+**Center — links** (hidden below `md`, flex row at `md+`)
+- Labels exactly: `Latest Drops`, `Him`, `Femme`, `Tots`, `Design It`
+- Each: `text-xs font-semibold uppercase tracking-wide text-black`
+- Gap between links: `gap-8`
+- Hover: `transition-opacity hover:opacity-60`
+- All `href="#"`
+
+**Right — actions** (`flex items-center gap-4 sm:gap-5`)
+1. Account button (`aria-label="Account"`): Lucide `User`, size **20**, strokeWidth **1.75**, black, hover opacity 60%
+2. Cart button (`aria-label="Cart"`): Lucide `ShoppingBag`, size **20**, strokeWidth **1.75**, black, hover opacity 60%
+   - Badge: absolute `-right-1.5 -top-1.5`, circle `h-4 w-4`, `bg-black`, text `0` in white `text-[9px] font-semibold`
+3. Hamburger (mobile only, `md:hidden`): 36×36 hit area; **two** 1.5px × 20px black bars that morph into an X
+
+### Mobile hamburger morph
+- Closed: top bar `-translate-y-[3.5px]`, bottom bar `translate-y-[3.5px]`
+- Open: top `rotate-45`, bottom `-rotate-45`
+- Transition: `duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]`
+- When open: lock body scroll (`document.body.style.overflow = 'hidden'`)
+
+### Mobile full-screen menu overlay (`md:hidden`)
+- Fixed `inset-0 z-40`, white background
+- Reveal with **circular clip-path** from the top-right hamburger origin:
+  - Closed: `clip-path: circle(0% at calc(100% - 2.5rem) 2.5rem)` + `pointer-events-none`
+  - Open: `clip-path: circle(150% at calc(100% - 2.5rem) 2.5rem)`
+  - Transition: `duration-500 ease-[cubic-bezier(0.76,0,0.24,1)]`
+- Nav list: `mt-28 flex flex-col gap-1 px-8`
+- Each link: `text-3xl font-extrabold uppercase tracking-tight text-black`, `py-3`
+- Enter animation: from `translate-y-full opacity-0` → `translate-y-0 opacity-100`
+  - Duration 500ms, same cubic-bezier `0.22,1,0.36,1`
+  - Stagger delay when opening: `150 + i * 60` ms (i = 0…4); delay `0` when closing
+- Footer tagline bottom: `SKR — In The Clouds`
+  - `text-[10px] font-semibold uppercase tracking-[0.3em] text-black/40`
+  - `mt-auto px-8 pb-10`
+  - Fades in with `opacity-100 delay-500` when open
+
+### Media stage (hero portal)
+Container: `relative flex-1 overflow-hidden rounded-t-[2rem] sm:rounded-t-[3rem]`
+
+Layers (back → front):
+1. **Video** — full cover CloudFront MP4
+2. **Giant title** — centered near top
+3. **“Aftershock”** label — left
+4. **“Statement Men’s Kick”** label — right/top
+5. **Floating shoe PNG** — full stage, contain, z-10, animated
+6. **“Step Inside” CTA** — right mid
+7. **Circular play button** — bottom center
+
+### Typography overlays on the stage
+
+**H1 — “In The Clouds”**
+- Position: `absolute left-1/2 top-[14%] w-full -translate-x-1/2 text-center sm:top-[16%]`
+- `pointer-events-none select-none`
+- Text: uppercase, extrabold, `leading-none tracking-tight`, `whitespace-nowrap`
+- Size: `text-[16vw]` → `sm:text-[13vw]`
+- Fill: vertical gradient clipped to text:
+  - `bg-gradient-to-b from-white via-white/70 to-transparent bg-clip-text text-transparent`
+- Soft white fade into the shoe/video below
+
+**Left label — “Aftershock”**
+- `absolute left-4 top-[32%] z-10 sm:left-12 sm:top-[34%]`
+- `text-[10px] sm:text-sm font-extrabold uppercase tracking-[0.35em] text-white`
+
+**Right label — “Statement Men’s Kick”**
+- `absolute right-4 top-[12%] z-10 sm:right-12 sm:top-[14%]`
+- `text-[9px] sm:text-xs font-extrabold uppercase tracking-[0.25em] text-white`
+- Word “Kick” in a span: `font-normal opacity-80`
+
+### CTA — “Step Inside”
+- Black pill button, white text
+- Position: `absolute right-4 top-[40%] z-20 sm:right-14 sm:top-[38%]`
+- Padding: `px-5 py-2.5 sm:px-7 sm:py-3`
+- Type: `text-[11px] sm:text-sm font-semibold`
+- `rounded-full bg-black shadow-lg`
+- Hover: `transition-transform hover:scale-105`
+
+### Play button (visual only / aria “Play video”)
+- Position: `absolute bottom-5 left-1/2 z-20 -translate-x-1/2 sm:bottom-6`
+- Size: `h-11 w-11 sm:h-12 sm:w-12`, `rounded-full shadow-lg`
+- Hover: `hover:scale-110`
+- SVG 48×48:
+  - White filled circle
+  - Play triangle cut out via mask:
+    - mask: white rect + black path `M20 16 L33 24 L20 32 Z`
+  - Result: solid white disc with triangular transparent play window (video shows through)
+
+### Motion — shoe float
+Custom CSS (not Tailwind built-in):
+` ` `css
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+` ` `
+Apply class `animate-float` to the sneaker `<img>`.
+
+### Visual feel / content of media
+- Video: soft abstract pastel cloud / iridescent atmosphere (pink–lilac–blue)
+- Shoe PNG: chunky futuristic sneaker, pearlescent pink/blue metallic upper, thick modular sole, floating with soft ground shadow from the drop-shadow
+- Composition: product as hero centerpiece; giant faded wordmark above; sparse micro-labels; one black pill CTA; one white play control at bottom center
+- Outside the rounded stage: pure white; inside: immersive video + overlays
+
+### Responsive behavior checklist
+- Mobile: hamburger + circular clip menu; tighter padding; larger VW title (`16vw`)
+- Desktop (`md+`): centered uppercase nav links; no hamburger/overlay
+- Stage radius: `2rem` → `3rem` at `sm`
+- All overlay positions scale via the `sm:` offsets listed above
+
+### What NOT to add
+- No secondary page sections, product grids, footers, or cards
+- No purple UI chrome, cream backgrounds, or non-Inter system fonts
+- Do not replace the CloudFront video or Figma PNG URLs
+- Cart badge stays at `0`
+- Nav links are non-routing placeholders (`#`)
+
+### Acceptance criteria
+Pixel-faithful recreation means: Inter 400/600/800; SKR nav chrome; CloudFront MP4 as `object-cover` stage background; Figma PNG shoe floating on a 4s ±12px ease-in-out loop with `0 40px 60px` black drop-shadow; “In The Clouds” giant white-to-transparent clipped gradient title; “Aftershock” / “Statement Men’s Kick” micro labels; black “Step Inside” pill; white circular play cutout; mobile circle-expand menu with staggered link reveals — all matching the measurements and easing curves above.
+
+---

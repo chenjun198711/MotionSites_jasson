@@ -1,0 +1,207 @@
+Recreate this exact full-viewport landing page called "Nexus/Circle" as a single React + TypeScript + Vite + Tailwind CSS page. Do not invent extra sections, cards, navbars, or features. Match layout, typography, colors, videos, cursor, and interaction exactly.
+
+═══════════════════════════════════════
+STACK & GLOBAL SETUP
+═══════════════════════════════════════
+- React 18 + TypeScript + Vite
+- Tailwind CSS (utility classes only; no custom theme extensions required)
+- lucide-react for icons only (Settings, Heart)
+- No other UI libraries, no Framer Motion, no GSAP
+- Page title: "Nexus/Circle"
+- Single full-screen section: 100vw × 100vh, overflow hidden
+- Body font: Inter from Google Fonts
+
+Exact Google Fonts link in index.html:
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+Global CSS:
+body { font-family: 'Inter', sans-serif; }
+
+═══════════════════════════════════════
+CLOUDFRONT VIDEO URLS (EXACT — DO NOT CHANGE)
+═══════════════════════════════════════
+Video 1 (background loop, always visible underneath):
+https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260730_181344_3a592329-bd0b-4dc6-9ac6-cfb250e5ecdd.mp4
+
+Video 2 (overlay reveal video, starts hidden at opacity 0):
+https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260730_214302_820066a8-f3de-43f3-ab1d-96bd8b2716e6.mp4
+
+Both videos:
+- position: absolute; inset: 0; width/height 100%; object-fit: cover
+- muted, playsInline
+- Video 1: autoPlay + loop, opacity always 1
+- Video 2: NO autoPlay, NO loop; controlled by click; opacity transitions with style {{ opacity: showSecond ? 1 : 0, transition: 'opacity 600ms ease' }}
+
+═══════════════════════════════════════
+INTERACTION / ANIMATION BEHAVIOR (EXACT)
+═══════════════════════════════════════
+State:
+- showSecond: boolean (false initially)
+- fading: boolean (false initially)
+
+Touch detection hook:
+- isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0
+- On touch devices: hide custom cursor, use normal cursor (cursor: auto)
+- On desktop: cursor: none on the section, show custom cursor
+
+Custom cursor (desktop only):
+- Fixed 90×90px circle
+- centered on mouse with transform -translate-x-1/2 -translate-y-1/2
+- z-index 50, pointer-events: none
+- backdrop-filter: blur(8px)
+- backgroundColor: rgba(0,0,0,0.45)
+- willChange: 'left, top'
+- Inner text: white, text-sm, font-medium, tracking-wide, select-none
+- Label text: "open" when showSecond is false; "close" when showSecond is true
+- Position updated on window mousemove via left/top = clientX/clientY (no lag/lerp)
+
+Click anywhere on the section toggles:
+OPEN (when not showing second and not fading):
+1. Set second video currentTime = 1
+2. Call secondVideo.play()
+3. setShowSecond(true) → fades Video 2 in over 600ms ease
+
+CLOSE (when showing second, or during showSecond/fading click):
+1. If already fading or not showSecond, no-op for close path guards
+2. setFading(true); setShowSecond(false) → Video 2 fades out over 600ms ease
+3. After setTimeout 600ms: setFading(false); pause second video
+4. Also auto-close when Video 2 fires onEnded (same close path)
+
+Guard: if fading is true, ignore open attempts.
+
+No other motion/animations exist. Only the 600ms opacity crossfade on Video 2 and the cursor label swap.
+
+═══════════════════════════════════════
+LAYOUT STRUCTURE
+═══════════════════════════════════════
+<section> relative w-full h-screen overflow-hidden, onClick=toggle, cursor none (desktop)
+
+  [custom cursor div — desktop only]
+
+  <video> Video 1 absolute cover
+
+  <video> Video 2 absolute cover with opacity transition
+
+  <div class="relative z-10 h-full flex flex-col justify-between
+              p-5 sm:p-8 md:p-12 lg:p-16">
+
+    ── TOP ROW ──
+    flex items-start justify-between gap-4
+
+    LEFT COLUMN (flex flex-col gap-2 sm:gap-3 max-w-[65%] sm:max-w-sm):
+      1) Brand wordmark "Nexus/"
+         - text-2xl sm:text-3xl md:text-4xl lg:text-5xl
+         - font-bold tracking-tight
+         - Gradient text EXACT:
+           background: linear-gradient(135deg, #ffffff 0%, #c084fc 50%, #a855f7 100%)
+           -webkit-background-clip: text
+           -webkit-text-fill-color: transparent
+
+      2) Settings icon from lucide-react
+         - class: w-6 h-6 sm:w-8 sm:h-8 text-white/70
+         - strokeWidth={1.5}
+
+      3) Tagline paragraph
+         - text-white/90
+         - text-base sm:text-lg md:text-xl lg:text-2xl
+         - leading-snug tracking-tight
+         - Exact copy with line break:
+           "A guild and space " + <span class="font-semibold">for</span>
+           <br />
+           <span class="font-semibold">forward-looking creation</span>
+
+    RIGHT:
+      "/Circle"
+      - text-xl sm:text-3xl md:text-4xl lg:text-5xl
+      - font-semibold tracking-tight shrink-0
+      - color EXACT: #36306E
+
+    ── BOTTOM ROW ──
+    flex items-end justify-between gap-4
+
+    LEFT:
+      flex flex-col gap-1
+      Big number "150+"
+        - text-5xl sm:text-7xl md:text-8xl lg:text-[10rem]
+        - font-bold leading-[0.85] tracking-tighter
+        - Gradient text EXACT:
+          background: linear-gradient(135deg, #ffffff 0%, #d8b4fe 40%, #a855f7 100%)
+          -webkit-background-clip: text
+          -webkit-text-fill-color: transparent
+
+      Caption "curious minds on board"
+        - text-xs sm:text-sm md:text-base
+        - tracking-widest uppercase mt-1
+        - Gradient text EXACT:
+          background: linear-gradient(90deg, #ffffff 0%, #c084fc 100%)
+          -webkit-background-clip: text
+          -webkit-text-fill-color: transparent
+
+    RIGHT:
+      flex flex-col items-end gap-2
+
+      Patrons card:
+        - border rounded-2xl
+        - px-4 py-3 sm:px-6 sm:py-4
+        - backdrop-blur-sm bg-white/5
+        - flex flex-col items-center gap-1
+        - borderColor EXACT: rgba(54,48,110,0.3)
+
+        Inside card (top to bottom, centered):
+          "Secured to"
+            - text-xs sm:text-sm tracking-wide
+            - text-white/90 on mobile; sm:text-[#36306E] from sm breakpoint up
+
+          Row: "200" + Heart icon
+            - "200": text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold
+              text-white on mobile; sm:text-[#36306E] from sm up
+            - Heart (lucide-react): w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10
+              text-white on mobile; sm:text-[#36306E] from sm up
+              strokeWidth={1.2}
+            - flex items-center gap-2
+
+          "patrons"
+            - text-xs sm:text-sm tracking-wide
+            - text-white/70 on mobile; sm:text-[rgba(54,48,110,0.7)] from sm up
+
+      Below card, right-aligned:
+        "12.4K"
+        - text-xs sm:text-sm font-medium tracking-wide
+        - text-white/60 on mobile; sm:text-[rgba(54,48,110,0.6)] from sm up
+
+═══════════════════════════════════════
+COLOR TOKENS USED
+═══════════════════════════════════════
+- White: #ffffff
+- Soft purple light: #c084fc, #d8b4fe
+- Purple: #a855f7
+- Deep indigo/purple brand: #36306E
+- Deep indigo translucent borders/text: rgba(54,48,110,0.3), rgba(54,48,110,0.6), rgba(54,48,110,0.7)
+- Cursor fill: rgba(0,0,0,0.45)
+- White translucencies: white/90, white/70, white/60, white/5
+
+═══════════════════════════════════════
+RESPONSIVE RULES (KEEP EXACT BREAKPOINTS)
+═══════════════════════════════════════
+Padding: p-5 → sm:p-8 → md:p-12 → lg:p-16
+"Nexus/" and "/Circle" scale: 2xl/xl → 3xl → 4xl → 5xl
+"150+" scales up to lg:text-[10rem] with leading-[0.85]
+Patrons card and Heart scale up at sm/md/lg
+From sm breakpoint upward, patrons card text/icon switches from white translucencies to #36306E / rgba(54,48,110,*) so it remains readable over the brighter video areas
+
+═══════════════════════════════════════
+EXPLICIT NON-GOALS
+═══════════════════════════════════════
+- No navbar, footer, buttons, forms, or extra sections
+- No scroll (single locked viewport)
+- No sound on videos
+- No loading spinner / intro preloader
+- No cards except the one "Secured to / 200 ♥ / patrons" box
+- Do not replace Inter with another font
+- Do not change CloudFront URLs or video filenames
+- Do not add hover styles beyond the custom cursor label change
+` ` `
+
+---

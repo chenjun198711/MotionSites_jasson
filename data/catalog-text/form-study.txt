@@ -1,0 +1,191 @@
+Recreate this exact full-viewport editorial interactive page pixel-for-pixel. Single-page React + Vite + Tailwind CSS app. Page title: "Flow & Fluidity". Body background fallback #1a1a1a. No scrollbar. overflow-x: hidden. Full viewport: relative h-screen w-full overflow-hidden.
+
+═══════════════════════════════════════
+FONTS (load exactly these)
+═══════════════════════════════════════
+In <head>:
+1) Meutas Medium:
+<link href="https://db.onlinewebfonts.com/c/1d74be5de8676b951f415d89f9d3a663?family=Meutas+Medium" rel="stylesheet">
+Tailwind alias: font-meutas → font-family: "Meutas Medium", sans-serif
+
+2) JetBrains Mono:
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+Tailwind alias: font-jetbrains → font-family: "JetBrains Mono", monospace
+
+═══════════════════════════════════════
+ASSETS (use these exact URLs)
+═══════════════════════════════════════
+
+BACKGROUND VIDEO (full-bleed, absolute inset-0, object-cover, autoPlay, loop, muted, playsInline):
+https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260723_145606_ab143199-b593-4941-bb1b-9afca215416b.mp4
+
+THUMBNAIL IMAGES (4 slides, served via Higgs image CDN wrapper → CloudFront PNG). Use these exact strings as <img src>:
+
+[0]
+https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260723_152456_65bd59eb-4e9c-4be8-82eb-2aadd5b91e03.png&w=1920&q=85
+
+[1]
+https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260723_152522_96817909-a45f-4d68-9509-f399dda97419.png&w=1920&q=85
+
+[2]
+https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260723_152537_150da197-35c4-483c-bd9e-ebcf9335a640.png&w=1920&q=85
+
+[3]
+https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260723_152546_2e114d2c-293d-4c42-89e5-da7eddcfbfa3.png&w=1920&q=85
+
+Underlying CloudFront PNG originals (for reference):
+https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260723_152456_65bd59eb-4e9c-4be8-82eb-2aadd5b91e03.png
+https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260723_152522_96817909-a45f-4d68-9509-f399dda97419.png
+https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260723_152537_150da197-35c4-483c-bd9e-ebcf9335a640.png
+https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260723_152546_2e114d2c-293d-4c42-89e5-da7eddcfbfa3.png
+
+═══════════════════════════════════════
+COLOR PALETTE
+═══════════════════════════════════════
+- Page/fallback bg: #1a1a1a
+- Primary text (headline, counter, logo): #FFFFFF
+- Accent olive text / bracket borders / button text / arrow icons: #DBDDA1
+- Button / arrow button fill: #63624B
+- Button hover fill: #73725A
+- Top-right muted text: white at 70% opacity (text-white/70)
+- Active thumbnail frame: solid white (#FFFFFF) 2px border + white 8×8px (w-2 h-2) corner & mid-edge dots
+
+═══════════════════════════════════════
+LAYOUT STRUCTURE (z-layers)
+═══════════════════════════════════════
+1) Full-bleed looping background video (z-0, absolute inset-0)
+2) Content overlay (relative z-10), flex column, justify-between, padding:
+   - mobile: p-5 (20px)
+   - md: p-12 (48px)
+   - lg: p-16 (64px)
+
+Three vertical zones stacked with space-between:
+
+─────────────────────────────────────
+ZONE A — TOP ROW (flex, items-start, justify-between)
+─────────────────────────────────────
+LEFT — Logo mark:
+- Font: JetBrains Mono
+- Color: white
+- Size: text-xs
+- Tracking: 0.3em
+- Transform: uppercase
+- Exact text: "V — IX" (em dash)
+
+RIGHT — Instructional blurb (hidden below sm breakpoint; visible sm+):
+- Font: JetBrains Mono
+- Color: white/70
+- Size: text-[10px] mobile, md:text-xs
+- leading-relaxed, uppercase, tracking-wider
+- text-right
+- max-width: 180px mobile, 240px md+
+- Exact text: "Let your gaze wander and linger. Pass over each frame to uncover what li..."
+
+─────────────────────────────────────
+ZONE B — MIDDLE (flex-1, justify-start, pt-6 md:pt-12, max-w-3xl)
+─────────────────────────────────────
+HEADLINE:
+- Font: Meutas Medium
+- Color: white
+- Sizes: text-5xl → md:text-7xl → lg:text-8xl → xl:text-[110px]
+- leading-[0.95], tracking-tight
+- Exact line break:
+  Form &
+  Function
+  (two lines: "Form &" then "Function")
+
+BODY COPY below headline:
+- Font: JetBrains Mono
+- Color: #DBDDA1
+- Size: text-xs → md:text-sm
+- leading-relaxed
+- Margin top: mt-6 → md:mt-12
+- max-w-md
+- Exact text: "Every frame holds a piece of an unfolding story — surfaces, forms, and gestures caught in transit. Wander through the arrangements with silent observation."
+
+CTA BUTTON ("Reveal Hidden"):
+- Wrapper: relative w-fit, margin top mt-6 → md:mt-12
+- Four L-shaped corner brackets OUTSIDE the button, positioned absolute at -top-2/-left-2 etc., each w-4 h-4, border-t-2/border-l-2 (and matching corners) in #DBDDA1, 2px thick
+- Button itself:
+  - bg #63624B
+  - text #DBDDA1
+  - font JetBrains Mono, text-xs, uppercase
+  - tracking-[0.2em]
+  - padding: px-10 py-3.5
+  - hover: bg #73725A
+  - transition-colors duration-300
+  - No border-radius (sharp rectangle)
+  - Exact label: "Reveal Hidden"
+  - No click handler required (visual only in original)
+
+─────────────────────────────────────
+ZONE C — BOTTOM ROW
+─────────────────────────────────────
+Layout: flex-col gap-6 on mobile; md:flex-row md:items-end md:justify-between
+
+LEFT — Prev/Next arrow buttons (flex, gap-4 → md:gap-6):
+Each arrow button wrapped in relative container with four smaller L-brackets (w-3 h-3, border-2, #DBDDA1) at -top-2/-left-2 etc.
+Buttons:
+- Size: w-10 h-10 → md:w-11 md:h-11
+- bg #63624B, hover #73725A, transition-colors duration-300
+- flex center
+- Icon color #DBDDA1
+- Icons: lucide-react ArrowLeft and ArrowRight, size={18}
+- Prev wraps index (0 → last); Next wraps (last → 0)
+
+RIGHT — Counter + thumbnails (flex-col, items-start → md:items-end, gap-3 → md:gap-4):
+
+COUNTER:
+- Font: Meutas Medium
+- Color: white
+- Sizes: text-4xl → md:text-7xl → lg:text-8xl → xl:text-[110px]
+- leading-none
+- Format: zero-padded "NN/MM" e.g. "03/04"
+- Initial activeIndex = 2 → shows "03/04" on first load
+- Formula: String(activeIndex + 1).padStart(2,'0') + '/' + String(images.length).padStart(2,'0')
+
+THUMBNAILS (4 images in a row):
+- flex, gap-2 → md:gap-2.5, overflow-visible, hide scrollbar
+- Each thumb: clickable, sets activeIndex
+- Image sizes: w-14 h-14 → md:w-20 md:h-20 → lg:w-24 lg:h-24, object-cover
+- Inactive: no frame
+- ACTIVE thumbnail selection chrome (only when idx === activeIndex):
+  1) Absolute inset-0 white border-2 overlay (z-10)
+  2) Eight white square dots (w-2 h-2, bg-white, z-20):
+     - four corners: -top-1 -left-1, -top-1 -right-1, -bottom-1 -left-1, -bottom-1 -right-1
+     - four mid-edges: top/bottom centered with left-1/2 -translate-x-1/2; left/right centered with top-1/2 -translate-y-1/2
+  Looks like a design-tool bounding box / transform handles
+- Thumbnails do NOT swap the background video — video is always the same loop; only the active index / counter / selection chrome change
+- transition-all duration-300 on thumb wrappers
+
+═══════════════════════════════════════
+STATE & INTERACTION
+═══════════════════════════════════════
+- React useState activeIndex, default 2 (third image, counter "03/04")
+- Prev / Next cycle through 4 images with wraparound
+- Clicking a thumbnail sets that index
+- Only animation/transition in the design: color transitions on buttons (duration-300), and transition-all duration-300 on thumbnail wrappers
+- Background video covntinuously loops muted
+- No page scroll; single locked viewport composition
+
+═══════════════════════════════════════
+RESPONSIVE BEHAVIOR SUMMARY
+═══════════════════════════════════════
+- < sm: hide top-right blurb; stack bottom column; smaller type/padding
+- sm+: show top-right blurb
+- md+: larger padding, larger type, row bottom layout, larger thumbs/arrows
+- lg/xl: headline and counter scale up to 110px
+
+═══════════════════════════════════════
+TECH STACK MATCH
+═══════════════════════════════════════
+- Vite + React 18 + TypeScript
+- Tailwind CSS 3 with custom fontFamily extend: meutas, jetbrains
+- lucide-react for ArrowLeft / ArrowRight only
+- No other libraries needed for the UI
+- Utility .scrollbar-hide (hide scrollbar on thumb row)
+
+Do not invent extra sections, cards, overlays, stats, or purple gradients. Match this exact dark editorial composition: full-bleed video background, sparse corner-placed typography, olive accent brackets, Meutas display + JetBrains Mono UI, and the white transform-handle active thumbnail frame.
+` ` `
+
+---

@@ -1,0 +1,324 @@
+# PROMPT: Recreate "TOKYO NOCTURNE" — scroll-scrubbed cinematic one-pager
+
+Build a single self-contained `index.html` (everything inline: CSS + JS in one file, no build step). It is a black, film-graded, scroll-driven one-page site for a fictional Tokyo night-riding crew. The page has NO scrolling content in the normal sense — every visible layer is `position: fixed`, and three invisible spacer divs ("runways") create scroll height. One scroll listener + one rAF loop convert `scrollY` into CSS custom properties and a video scrub.
+
+---
+
+## 1. HEAD / ASSETS
+
+- `<html lang="en">`, `<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">`
+- Title: `TOKYO NOCTURNE · Shutoko C1 night runs`
+- Meta description: `A night-ride crew running sport bikes on the Shutoko C1 loop through central Tokyo.`
+- Google Fonts (with preconnect to fonts.googleapis.com and fonts.gstatic.com crossorigin):
+  `https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;700&family=Noto+Sans+JP:wght@400;700&display=swap`
+- GSAP 3.12.5 core + ScrollTrigger, both `defer`, from jsdelivr:
+  `https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js` and `.../ScrollTrigger.min.js`
+- mp4box 0.5.2 is loaded LAZILY by JS (see frame bank): `https://cdn.jsdelivr.net/npm/mp4box@0.5.2/dist/mp4box.all.min.js`
+
+### Videos (exact URLs)
+- **HERO (scrubbed by scroll, never played):**
+  `https://d8j0ntlcm91z4.cloudfront.net/user_3GJaYKPxdnQG0Q9O26lu6DPmcHu/hf_20260806_233903_cc2b0f36-8843-4e18-a751-22171634be40.mp4`
+  Attributes: `class="stage__media" data-hero crossorigin="anonymous" poster="hero-2.jpg" muted playsinline preload="auto"`.
+  `crossorigin="anonymous"` is REQUIRED — CloudFront answers `access-control-allow-origin: *` when an Origin header is sent, and the WebCodecs frame bank depends on fetching+decoding these bytes.
+  This clip: 97 frames, ~4.04s, 24fps, a single keyframe at t=0 (that single-keyframe GOP is why the frame bank exists).
+- **REVEAL (plays + loops when the split opens, never scrubbed):**
+  `https://d8j0ntlcm91z4.cloudfront.net/user_3GJaYKPxdnQG0Q9O26lu6DPmcHu/hf_20260806_181659_f9fcad4b-f561-45fc-b9d5-ba40a0627b34.mp4`
+  Attributes: `class="reveal__video" data-reveal muted loop playsinline preload="auto"`. No poster.
+- Poster `hero-2.jpg` is a local still from the same shoot.
+
+---
+
+## 2. GLOBAL CSS / DESIGN TOKENS
+
+- `*, *::before, *::after { box-sizing: border-box; }`
+- `html, body { overscroll-behavior:none; background:#000; }`
+- `html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }`
+- Negative tracking on `*` (NOT body, so each element resolves the em against its own size): `* { letter-spacing: -0.02em; }`
+- Body font: `'Inter Tight', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif; color: var(--ink); line-height: 1.3;`
+- `a { color: inherit; text-decoration: none; }`
+- `:focus-visible { outline: 1px solid var(--ink); outline-offset: 4px; }`
+- `::selection { background: var(--ink); color: #000; }`
+
+### `:root` tokens
+` ` `css
+--frame: 24px;
+--ink: #ffffff;                              /* zero accent — all colour from footage */
+--fs-display: clamp(42px, 8.2vw, 160px);
+--shrink-end: 0.51;                          /* overwritten by JS measure() */
+--fs-statement: calc(var(--fs-display) * var(--shrink-end));
+--leading-display: 1;
+--fs-jp: clamp(11px, 1.4vw, 26px);
+--fs-micro: 12px;
+--fs-nano: 12px;
+--fs-lede: 14px;
+--ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+--noise-opacity: .08;
+--runway: 350vh;                             /* hero section scroll length */
+--runway-2: 120vh;                           /* section 2 */
+--runway-3: 220vh;                           /* section 3 */
+/* Written per-frame by JS; these rested values are the correct no-JS paint: */
+--shrink: 1;  --exit: 0;  --exit-jp: 0;  --reveal: 0;  --s2: 0;  --s3: 0;
+/* Hero plate exit keyed to the reveal's tail (fades inside the vanishing corner sliver): */
+--stage-out: clamp(0, calc((var(--reveal) - 0.93) / 0.05), 1);
+` ` `
+
+---
+
+## 3. LAYER STACK (all fixed, bottom to top)
+
+1. **`.stage`** (z 0): `position:fixed; inset:0; background:#000; overflow:hidden; opacity: calc(1 - var(--stage-out));`
+   - `.stage__media` (the hero video): `width/height 100%; object-fit:cover; object-position:50% 50%; display:block; filter:blur(0px);` (blur declared so GSAP interpolates deterministically). Mobile (≤767px): `object-position: 66% 50%`.
+   - `.stage__canvas` (`data-canvas`, aria-hidden): absolutely fills stage, `opacity:0; transition:opacity 200ms linear; pointer-events:none;` → `opacity:1` when `[data-live]` is set. This is the WebCodecs frame-bank surface; every failure mode just leaves it invisible.
+   - `.stage::after`: flat wash `background: rgba(0,0,0,.30)` covering the stage (a mood knob, not a measured scrim; type blends with `difference` over raw footage and is allowed to wash out on bright frames).
+2. **`.reveal`** (z 5): the diagonal split (see §5).
+3. **`.grain`** (z 6): film grain over BOTH videos, under all type (see §4).
+4. **`.sec2`** and **`.sec3`** (z 8): fixed text layers with `mix-blend-mode: difference`.
+5. **`.frame`** (z 10): the hero's typographic layer, also `mix-blend-mode: difference`.
+
+CRITICAL blend rule: `mix-blend-mode: difference` MUST sit on the fixed layers (`.frame`, `.sec2`, `.sec3`) themselves, never on text children — a fixed element forms its own stacking context, so a blend on a child would resolve against empty transparency and do nothing.
+
+---
+
+## 4. FILM GRAIN (no network dependency)
+
+`.grain`: `position:fixed; top:-50vh; left:-50vw; width:200vw; height:200vh; z-index:6; pointer-events:none; opacity: var(--noise-opacity);`
+Background is an inline SVG data-URI, 200×200, `background-repeat:repeat; background-size:200px 200px`:
+`feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'` → `feColorMatrix type='saturate' values='0'` (raw turbulence is coloured; desaturate or it reads as a bug) → `feComponentTransfer` with linear R/G/B `slope='3.5' intercept='-1.48'` and A `slope='0' intercept='1'`.
+Animation: `animation: grain 500ms steps(1) infinite;` — 10 held `transform: translate(x%, y%)` offsets per cycle (= 20Hz snaps): `0%,100%: (0,0); 10%: (-4%,-6%); 20%: (-8%,3%); 30%: (4%,-8%); 40%: (-6%,6%); 50%: (-9%,-3%); 60%: (6%,4%); 70%: (-3%,8%); 80%: (7%,-5%); 90%: (-4%,7%)`. `steps(1)` snapping IS the film-grain read; transform-only so it runs on the compositor.
+
+---
+
+## 5. THE REVEAL (diagonal split → section-3 card)
+
+A centred clipping frame whose WIDTH grows (not a clip-path), rotated 45°, with the video inside counter-rotated so the picture stays upright while the opening edge is diagonal.
+
+` ` `css
+.reveal {
+  --reveal-span: calc(72vw + 72vh);   /* 0.707*(100vw+100vh)+margin: fullscreen exactly at --reveal:1 */
+  --card-k: 0.26;                     /* section-3 card scale (≈374×234 at 1440×900) */
+  --rot: calc(var(--reveal) * 45deg * (1 - var(--s3)));   /* section 3 UNWINDS the 45° */
+  position: fixed; top:50%; left:50%;
+  width: calc(var(--reveal) * var(--reveal-span));
+  height: var(--reveal-span);
+  transform: translate(-50%,-50%) rotate(var(--rot))
+             scale(calc(1 - var(--s3) * (1 - var(--card-k))));
+  overflow: hidden; z-index: 5; pointer-events: none;
+  background: rgba(0,0,0, calc(1 - var(--s3)));   /* black must GO as it becomes a card */
+}
+.reveal__video {
+  position:absolute; top:50%; left:50%; width:100vw; height:100vh; object-fit:cover;
+  transform: translate(-50%,-50%) rotate(calc(var(--rot) * -1));  /* reads --rot: one source */
+  display:block;
+}
+` ` `
+Section 3 shrinks the whole thing to a centred upright card: the rotation unwinds (else the diamond's own edges walk into frame) and the black background fades out (else the card is a black square with a letterboxed video).
+
+---
+
+## 6. RUNWAYS (only in-flow elements)
+
+` ` `html
+<div class="runway" aria-hidden="true"></div>      <!-- height: var(--runway) -->
+<div class="runway-2" aria-hidden="true"></div>    <!-- height: var(--runway-2) -->
+<div class="runway-3" aria-hidden="true"></div>    <!-- height: var(--runway-3) -->
+` ` `
+All `pointer-events:none`.
+
+---
+
+## 7. THE FRAME (hero type layer)
+
+`.frame`: fixed, inset 0, z 10, padding on each side `max(var(--frame), env(safe-area-inset-*))`, `display:grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto 1fr auto; pointer-events:none;` (re-enabled per link: `.frame a { pointer-events:auto; }`), `mix-blend-mode:difference`. `.frame > * { min-width: 0; }`.
+Hard 50% column: clock, lede, copyright all share the left edge of the right half; the wordmark owns the left half.
+
+### Micro text
+`.micro { font-size: var(--fs-micro); font-weight:500; line-height:1.2; text-transform:uppercase; letter-spacing:0.08em; }`
+Hit-area helper: `.hit { position:relative; } .hit::after { content:''; position:absolute; inset:-16px -8px; }` (44px targets without moving anything).
+
+### Brand (h1, grid area 1/1)
+` ` `html
+<h1 class="brand">
+  <span class="brand__slot">
+    <span class="brand__line" data-role="main">Tokyo</span>
+    <span class="brand__line" data-role="alt" aria-hidden="true">Enter</span>
+    <span class="brand__line" data-role="crew" aria-hidden="true">Crew</span>
+  </span>
+  <span class="brand__slot">
+    <span class="brand__line" data-role="main">Nocturne</span>
+    <span class="brand__line" data-role="alt" aria-hidden="true">The&nbsp;Loop</span>
+    <span class="brand__line" data-role="crew" aria-hidden="true">Of&nbsp;Twelve</span>
+  </span>
+  <span class="brand__jp" lang="ja" aria-hidden="true">
+    <span>トウキョウ</span><span>・</span><span>ノクターン</span>
+  </span>
+</h1>
+` ` `
+- `.brand`: `display:flex; column; align-items:stretch; width:fit-content; transform: scale(var(--shrink)); transform-origin: top left; margin:0;` Shrinks into the corner and STAYS (it becomes the section-2/3 heading).
+- `.brand__slot`: `display:grid; overflow:hidden; margin-left:-0.02em;` (cancels T/N side bearing). All three versions of a line occupy the SAME grid cell (`grid-area: 1/1` on `.brand__line`), so the slot takes the widest line's width and nothing reflows on swap; overflow clips the travelling line. First slot: `margin-top:-0.13em` (trims Inter Tight's ascent dead space so the cap meets the frame edge).
+- `.brand__line`: `font-size:var(--fs-display); font-weight:700; line-height:var(--leading-display); letter-spacing:-0.03em; text-transform:uppercase; white-space:nowrap; filter:blur(0px); transition: transform 380ms var(--ease-expo); will-change:transform;` — a TRANSITION, not keyframes, so scrubbing back and forth retargets mid-flight and reversing is free.
+- Roll states (vertical slot-machine): rest — `[data-role="alt"] { transform: translateY(100%); }`, `[data-role="crew"] { translateY(100%); }`. `.brand[data-title="alt"]`: main → `translateY(-100%)`, alt → `0`. `.brand[data-title="crew"]`: main AND alt → `-100%`, crew → `0`. Second slot's line gets `transition-delay: 80ms` (two-beat stagger).
+- `.brand__char` (per-letter spans, JS-split): `display:inline-block; text-align:center;` — widths locked in JS to the measured Latin advance so kana flips never shift the line.
+- `.brand__char[data-jp]`: `font-family:'Noto Sans JP','Hiragino Sans','Yu Gothic',sans-serif; font-weight:700; font-size:0.92em; letter-spacing:0; transform: scaleX(0.813);` (0.92em matches ink height 74.71/81.10; 0.813 condenses kana advance 92.1→74.9 to sit in the locked width).
+- `.brand__jp`: `display:flex; justify-content:space-between; margin-top:0.05em; font-family:'Noto Sans JP',...; font-weight:400; font-size:var(--fs-jp); line-height:1; letter-spacing:0;` — spread exactly as wide as the longest display line via the stretch/fit-content parent. `.brand__jp > span { filter: blur(0px); }`
+
+### Scroll exit (shared gesture: opacity + blur + lift)
+` ` `css
+.brand__jp, .lede, .foot {
+  opacity: calc(1 - var(--exit));
+  filter: blur(calc(var(--exit) * 12px));
+  transform: translate3d(0, calc(var(--exit) * -28px), 0);
+}
+.brand__jp { --exit: var(--exit-jp); }  /* katakana on its own earlier clock; must come AFTER */
+` ` `
+Do NOT redeclare `filter` on these elements anywhere later (it silently kills the blur).
+
+### Chrome (grid area 1/2): `display:flex; justify-content:space-between; align-items:flex-start; gap:16px;`
+- Clock: `<time class="clock__time" id="clock" aria-live="off">[ 02:41 AM ]</time>` + `<span class="clock__zone">Japan<br>Standard Time</span>` (`.clock__zone`: `margin-top:3px; font-size:var(--fs-nano); line-height:1.15; opacity:.92;`). `.clock__time { font-variant-numeric: tabular-nums; }`
+- Nav (`aria-label="Primary"`, gap `clamp(14px,1.5vw,26px)`): links `Routes / Machines / Film / Crew` (hrefs `#routes` etc.), each `class="hit"`.
+- Contact link: `↳&nbsp;Ride with us` (`&#8627;`), href `#contact`, class `contact micro hit`.
+- Hover (fine pointers only): `.nav a:hover, .contact:hover, .foot a:hover { opacity:.55; }` with `transition: opacity 200ms var(--ease-expo)`.
+
+### Lede (grid 2/2, right column)
+`align-self:end; margin: 0 0 clamp(40px, 19vh, 220px); max-width: clamp(240px, 23vw, 340px); font-size:var(--fs-lede); font-weight:400; line-height:1.45; letter-spacing:-0.01em;` — NO `filter` property here.
+Copy: *"We ride the C1 loop after the last train clears Shibuya. Four laps. Wet elevated concrete, the tunnels to ourselves, and nobody up here until the delivery trucks come off the Kasumigaseki ramp."*
+
+### Foot (grid 3/2)
+`display:flex; justify-content:space-between; align-items:baseline;` children `filter:blur(0px)`. Content: `©2026` and `Scroll down`.
+
+---
+
+## 8. SECTION 2 (fixed layer, z 8)
+
+` ` `html
+<section class="sec2" aria-label="The run in numbers">
+  <h2 class="s2-statement">Four laps of the C1. From last train to first truck.</h2>
+</section>
+` ` `
+`.sec2`: fixed, inset 0, same safe-area padding as `.frame`, `display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr auto; pointer-events:none; mix-blend-mode:difference;`
+`.s2-statement` (grid 2/2, align-self:end): typographically IDENTICAL to the shrunk title — `font-size:var(--fs-statement); font-weight:700; line-height:var(--leading-display); letter-spacing:-0.03em; text-transform:uppercase; margin:0;`
+JS splits it into `.s2-word` spans; each word carries `--w0` (entry window start, on `--s2`) and `--x0` (exit window start, on `--s3`):
+` ` `css
+.s2-word {
+  display:inline-block;
+  --in:  clamp(0, calc((var(--s2) - var(--w0)) / 0.09), 1);
+  --out: clamp(0, calc((var(--s3) - var(--x0)) / 0.09), 1);
+  opacity: calc(var(--in) - var(--out));
+  filter: blur(calc((1 - var(--in)) * 12px + var(--out) * 12px));
+  transform: translate3d(0, calc((1 - var(--in)) * 18px + var(--out) * -28px), 0);
+}
+` ` `
+Words type themselves in one-by-one on scroll, then cascade out in the same order on section 3's clock. JS writes ONLY `--s2`/`--s3`; every window is CSS math (scroll back = perfect reverse, zero timers).
+
+---
+
+## 9. SECTION 3 (fixed layer, z 8)
+
+` ` `html
+<section class="sec3" aria-label="The crew">
+  <p class="s3-left"  style="--i:0">Twelve of us. Four have ridden the loop since 2019, the rest turned up one at a time and stayed.</p>
+  <p class="s3-right" style="--i:1">No patches and no club. Two bikes minimum, five maximum, and nobody rides ahead of whoever knows the exits.</p>
+  <p class="s3-bottom">Twelve of us<br>Nine bikes<br>One route</p>
+</section>
+` ` `
+`.sec3`: same fixed/padded/difference pattern; `grid-template-columns:1fr 1fr; grid-template-rows:auto 1fr auto;` `.sec3 > * { margin:0; }`
+- `.s3-left/.s3-right` (margin notes, lede treatment verbatim): row 2, `align-self:center; max-width:24ch; font-size:var(--fs-lede); font-weight:400; line-height:1.45; letter-spacing:-0.01em;` left: col 1 / justify-self:start; right: col 2 / justify-self:end / text-align:right. Reveal: `--in: clamp(0, calc((var(--s3) - (0.62 + var(--i) * 0.10)) / 0.22), 1);` with the standard opacity/blur-12/rise-18px trio.
+- `.s3-bottom`: `grid-column:1/-1; grid-row:3; align-self:end; text-align:center;` same display treatment as `.s2-statement` (`--fs-statement`, 700, -0.03em, uppercase). JS word-splits it into `.s3-word` (same numbers as `.s2-word`, entry only, read off `--s3`); the hand-set `<br>`s are load-bearing — the splitter must walk childNodes and preserve them.
+
+---
+
+## 10. RESPONSIVE
+
+- `@media (max-width: 899px)`: `.nav { display:none; }`
+- `@media (max-width: 767px)`:
+  `--frame:20px; --fs-display: clamp(38px, 12.6vw, 96px); --fs-jp: clamp(10px, 2.1vw, 18px); --fs-lede:16px` (below 16 iOS auto-zooms).
+  `.frame` → 1 column, rows `auto auto 1fr auto`; chrome row 1, brand row 2 (`margin-top:5vh`), lede row 3 (`margin-bottom:7vh; max-width:42ch`), foot row 4. `.stage__media { object-position: 66% 50%; }` (bias to the rider). `.sec2` → 1 column, statement `grid-area: 2/1`. `.sec3` rows → `auto 1fr auto auto` with `column-gap: var(--frame)`; `.s3-bottom` row 3; notes drop to row 4 side-by-side (`align-self:end; max-width:none; margin-top:1.2em`).
+- `@media (max-width:767px) and (max-height:560px)` (landscape phone): `.sec2, .sec3 { --fs-statement: 5.5vh; }` `.sec3` back to 3 rows; notes back beside the card at row 2, `max-width: calc((100vw - 26vw)/2 - var(--frame)*2)`; `.reveal { --card-k: 0.16; }`
+- `@media (prefers-reduced-motion: reduce)`: kill nav/contact transitions, grain animation, brand-line transitions (title still swaps, without travel); `.s2-word { filter:none; transform:none; }` (opacity-gating only). In JS: no scrub, no frame bank, no reveal playback, no GSAP intro.
+
+---
+
+## 11. JAVASCRIPT
+
+### 11a. Live Tokyo clock (IIFE, runs at parse time)
+`Intl.DateTimeFormat('en-US', { timeZone:'Asia/Tokyo', hour:'2-digit', minute:'2-digit', hour12:true })` → paints `[ HH:MM AM ]` into `#clock` plus a `datetime` ISO attribute. First tick aligned to the minute boundary via `setTimeout(60000 - Date.now() % 60000)`, then `setInterval` 60s.
+
+### 11b. Scroll narrative (main IIFE)
+One scroll listener writes the CSS variables directly (zero latency, works with throttled rAF); one rAF loop owns only the video scrub (it carries a lerp). `hero.pause()` immediately — the hero is scrubbed, never played.
+
+**CONFIG (exact values):**
+` ` `js
+shrink:     [0.00, 0.40],
+dissolveJp: [0.05, 0.34],   // katakana leaves with the title
+dissolve:   [0.45, 0.70],   // lede + footer leave much later, over the open reveal
+reveal:     [0.68, 1.00],   // [0] is DERIVED from revealVh in remeasure()
+revealVh:   80,             // the split travels a fixed 80vh of scroll
+brandEndPx: 120, brandMaxScale: 0.51,
+lerp: 0.08, epsilon: 0.01, endMargin: 0.05,
+startOffset: 0, holdAt: null, holdProgress: 0.40, endAt: null,  // neutral: linear time map
+swaps: 7, swapWindow: [0.03, 0.38], swapHalf: 0.011,
+s2Words: [0.02, 0.26], s2WordDur: 0.09,
+s2Exit:  [0.02, 0.32],
+s3Words: [0.55, 0.95],
+titleHysteresis: 0.01, burstSteps: 3, burstGap: 90
+` ` `
+
+**KANA map (fixed partner per letter):** `{ T:'タ', O:'オ', K:'カ', Y:'ヤ', N:'ナ', C:'ク', U:'ウ', R:'ラ', E:'エ' }`
+
+**Progress:** `progress = clamp(scrollY / (runway.offsetHeight - innerHeight))`; `p2 = clamp((scrollY - span)/span2)`; `p3 = clamp((scrollY - span - span2)/span3)`. Writes `--shrink` (`1 - (1-shrinkEnd) * norm(progress, shrink)`), `--exit`, `--exit-jp`, `--reveal`, `--s2`, `--s3` (all `.toFixed(4)`).
+
+**Reveal video control (in onScroll):** when `progress >= CONFIG.reveal[0]` crosses as an EDGE → `currentTime=0; play()`; when it un-crosses → `pause()`. Separately, if wanted && paused (browser suspended a hidden tab) → resume WITHOUT rewinding. Skip all of it under reduced motion. Swallow the play() promise rejection.
+
+**Char splitting:** split every `.brand__line`'s text into `.brand__char` spans (store `data-latin`), bucketed by role `{main, alt, crew}`.
+
+**measure()/remeasure():** force `--shrink:1`, clear swaps/bursts and width locks, measure the SLOTS (lines are transformed; slots aren't): `shrinkEnd = min(brandEndPx / brandBlockHeight, brandMaxScale)`; publish `--shrink-end` (this makes `--fs-statement` exactly the shrunk-title size — one formula, not two agreeing numbers). Lock every char's width (all three buckets) to its measured Latin advance. Derive `CONFIG.reveal[0] = max(0.35, 1 - (revealVh/100*innerHeight)/span)`. Re-run on resize AND on `document.fonts.ready` (first pass ran on fallback metrics). `locked` flag gates glyph swapping until measured.
+
+**Glyph swap (scroll-driven, deterministic):** schedule of 7 events tiled across swapWindow with jitter from a deterministic hash (`x = sin(n*127.1+311.7)*43758.5453; return x - floor(x)`), each event `{at, index}`. In `updateSwap(p)`: if `|p - at| < swapHalf`, that ONE char shows its kana (`data-jp` attr + KANA glyph); otherwise restore Latin. Pure function of scroll position — scrolling back reproduces the identical sequence; only one letter at a time.
+
+**Title swap (geometry-solved, not hardcoded):**
+- `solveTitleTrigger()`: walk `r` 0.01→1 step 0.005; the title corner (at its SHRUNK position) is inside the rotated strip when `|px·cos(θ) + py·sin(θ)| ≤ r·span/2` with `θ = r·45°`; map that `r` into progress via `CONFIG.reveal`. Fallback 0.95. (Lands ≈0.913 at 1440×900.)
+- `solveTitleOut()`: for section 3, walk `s` 0.01→0.45 (CEILING 0.45 — on narrow viewports the crossing is unsolvable and the heading must be gone before the shrink ends at 0.55); heading leaves when the shrinking card's edge `(W - kW)/2` passes the title's right edge or bottom, `k = 1 - s(1 - cardK)`.
+- `updateTitle(p, p3)`: two thresholds with hysteresis (leaving needs `titleHysteresis` more travel) resolve to one state: `crew` if titleOut, else `alt` if titleOn, else `main` → single `data-title` attribute write on change only. Every change fires a **burst** on the ARRIVING line's chars: `burstSteps` (3) timed flips at `burstGap` (90ms) intervals — clear all kana, flip one hash-picked char — then a final clear. Time-based on purpose (it belongs to the fired swap animation, not to scroll).
+
+**Time map:** `scrubTime(p)`: `q = min(1, p / CONFIG.reveal[0])` (video is done when the split starts); window `[scrubStart(), min(endAt ?? ∞, duration - endMargin)]`; linear when holdAt is null, else piecewise: `q ≤ a` maps `[0,a]→[start,holdAt]`, `q > a` maps `[a,1]→[holdAt,safe]` where `a = holdProgress/end`. Guard every inversion (short clip, holdAt out of range).
+
+**Scrub loop (rAF):** two paths, one clock. `smoothed += (target - smoothed) * lerp` with epsilon snap. If the frame bank is live → `bank.draw(smoothed)`. Else if the whole clip is buffered (`buffered().end ≥ duration - 0.1`) AND `!hero.seeking` and delta > epsilon → `hero.currentTime = smoothed` (the `!seeking` guard is what keeps the single-keyframe seek storm survivable). On `loadeddata`: seed `smoothed = scrubTime(0)` and seek the hero there (don't creep from 0).
+
+### 11c. FRAME BANK (WebCodecs, best-effort, the "smooth path")
+Problem: the clip has ONE keyframe at t=0, so `currentTime = x` decodes everything from zero (60–260ms) → 4–15fps scrub. Solution: pay the GOP once up front.
+- Skip entirely if reduced motion or no `window.VideoDecoder`. Get canvas 2d ctx with `{alpha:false}`. Set `hero.preload='metadata'` while building (don't download 21MB twice); on ANY failure `revert()`: restore `preload='auto'`, `hero.load()`, log `[frame bank] <why> — staying on the video scrub` via console.info. A `reverted` latch prevents a late `finish()` lighting the canvas after the watchdog fired.
+- **60-second watchdog** (measured: fetch alone took 19.1s on a slow connection; 15s killed working builds).
+- Inject the mp4box script tag lazily; on load: `MP4Box.createFile()`; `fetch(hero.currentSrc)` → arrayBuffer → `buf.fileStart = 0; file.appendBuffer(buf); file.flush()` — with SEPARATE catches for fetch vs demux (MP4Box runs callbacks synchronously inside appendBuffer, so a demux throw would otherwise masquerade as a network error).
+- `file.onReady`: take `videoTracks[0]`; build the codec description from `stsd.entries[0].avcC || .hvcC` written into a `window.DataStream` (BIG_ENDIAN) and `new Uint8Array(stream.buffer, 8)` (strip box header) — note DataStream is a GLOBAL of the mp4box.all bundle, NOT `MP4Box.DataStream`. `decoder.configure({codec: track.codec, codedWidth, codedHeight, description})`; `setExtractionOptions(track.id, null, {nbSamples: Infinity}); file.start();`
+- `file.onSamples`: for each sample `decoder.decode(new EncodedVideoChunk({ type: s.is_sync?'key':'delta', timestamp: s.cts*1e6/s.timescale, duration: s.duration*1e6/s.timescale, data: s.data }))`; then `decoder.flush().then(→ flushed=true; finish())`.
+- Decoder output: for each VideoFrame, `createImageBitmap` → draw to an offscreen canvas → `toBlob('image/webp', 0.82)` (~150–250KB stills; 97 live GPU frames would be hundreds of MB and get dropped). Track `encodeQueue`; `finish()` only when flushed && queue empty && every slot has a blob. **Sort by presentation timestamp** before banking (samples arrive in decode order with B-frame cts deltas; the decoder's contract emits presentation order, but the sort is cheap insurance). `fps = count / hero.duration`; set `live = true`, `canvas.setAttribute('data-live','')`, prewarm frame 0.
+- **Draw path:** LRU cache of 20 decoded ImageBitmaps, prefetch 3 AHEAD in the scroll direction, evict the frame furthest from the playhead (closing bitmaps). `draw(t)`: `i = round(t * fps)` clamped; on cache hit paint, on miss request (previous frame holds — invisible). `paint()` reproduces `object-fit: cover` by hand INCLUDING the mobile 66% object-position (`posX() = matchMedia(max-width:767px) ? 0.66 : 0.5`), with `dpr = min(devicePixelRatio, 2)` via `setTransform`.
+- Init order: `remeasure(); document.fonts.ready.then(remeasure); scroll listener ({passive:true}); resize listener; requestAnimationFrame(frame); bank.start()` LAST (page is already interactive on the video path first).
+
+### 11d. GSAP intro (DOMContentLoaded)
+Bail if no `window.gsap` or reduced motion. Timeline defaults `{ ease:'expo.out', immediateRender:true }`, `onComplete: gsap.set(TARGETS, {clearProps:'all'})` (hand everything back to the stylesheet). Use **fromTo** (never from — a seeked-over staggered from() can strand start values). Animate the SLOTS, never the lines (line transforms belong to the title swap).
+Sequence (position, from → to):
+- `.stage__media` @0: `{opacity:0, scale:1.06, blur 12px}` → `{1, 1, 0}` dur 1.6
+- slot 1 @0.15 and slot 2 @0.23: `{opacity:0, y:22, blur 12px}` → `{1, 0, 0}` dur 1.0
+- `.brand__jp > span` @0.45: `{0, y:14, blur 10px}` → dur 0.8, stagger 0.06
+- `.clock, .nav a, .contact` @0.55: `{0, y:10, blur 6px}` → dur 0.7, stagger 0.04
+- `.lede` @0.70: `{0, y:16, blur 10px}` → dur 0.9
+- `.foot > *` @0.80: `{0, y:10, blur 6px}` → dur 0.7, stagger 0.06
+
+---
+
+## 12. NARRATIVE ARC (what the user experiences)
+
+1. **Load:** black → cinematic cascade (video blurs in, title lines rise, katakana staggers, chrome, lede, footer).
+2. **Scroll (hero, 350vh):** the video scrubs frame-locked to scroll (canvas path at display rate once the bank builds). The wordmark shrinks into the corner (to exactly 120px tall, max 0.51×); single letters flicker to katakana one at a time on the way; the katakana row dissolves early (blur+lift), lede+footer dissolve past halfway.
+3. **The split (last 80vh):** a diagonal strip opens from the centre — rotating to 45° as it widens — revealing the second looping clip, picture upright. When the strip's edge geometrically reaches the shrunk title, both lines roll vertically: TOKYO/NOCTURNE → ENTER/THE LOOP, with a 3-flip kana burst. The hero plate fades inside the final corner sliver (`--reveal` 0.93→0.98).
+4. **Section 2 (120vh):** "FOUR LAPS OF THE C1. FROM LAST TRAIN TO FIRST TRUCK." types itself in word-by-word (bottom-right, exactly the shrunk-title size), over the still-looping reveal clip.
+5. **Section 3 (220vh):** the statement cascades out word-by-word; the fullscreen clip unwinds its rotation and shrinks to a centred card (0.26×) while its black frame fades; the heading rolls a third time → CREW/OF TWELVE (with burst) exactly as the card's edge clears it; two margin notes fade in flanking the card (staggered 0.62/0.72); the closing line "TWELVE OF US / NINE BIKES / ONE ROUTE" (hand-set breaks preserved) types itself in centred at the bottom.
+6. Scrolling backwards replays EVERYTHING in perfect reverse — every animation is a pure function of scroll position (CSS var math + retargeting transitions); the only timers are the clock and the burst.
+
+## 13. INVARIANTS (do not violate)
+
+- Everything visible is `position:fixed`; only the three runways create height.
+- JS writes ONLY CSS custom properties + `video.currentTime` — never layout. The rested `:root` values are the correct no-JS/no-CDN first paint.
+- `mix-blend-mode: difference` on the fixed layers only. White ink, zero accent colour.
+- The frame bank is pure progressive enhancement: any failure leaves the `<video>` scrub running as if the bank never existed.
+- All copy, sizes, windows, and easing values exactly as specified above.

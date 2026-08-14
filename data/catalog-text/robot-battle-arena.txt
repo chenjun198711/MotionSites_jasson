@@ -1,0 +1,240 @@
+# Prompt: Recreate “Your Robots” game UI (pixel-faithful)
+
+Build a **single-file static HTML page** (`index.html` + local `assets/`) that is a **1:1 recreation** of a robot-selection game HUD titled **“Your Robots”**. No frameworks. Pure HTML/CSS. Body `overflow: hidden`. Full viewport (`100svh`). Transparent page background; all atmosphere comes from a full-bleed hero backdrop image.
+
+---
+
+## 1. Exact asset URLs (download into `assets/`)
+
+### Hero / backdrop (1672×941 PNG)
+` ` `
+https://stone-expand-60400629.figma.site/_assets/v11/7c90cead4ef79aaead3abbe65cc533997dd3796b.png
+→ assets/backdrop.png
+` ` `
+Subject: centered white ceramic robot head, glowing orange-red circular eyes, thick black fabric cowl/scarf, dark shoulder armor, flat light grey studio background. Landscape crop.
+
+### Roster thumbnails (each 89×95 PNG)
+` ` `
+1 BERSERKER → https://stone-expand-60400629.figma.site/_assets/v11/c0bd937d3837ba304e8e9ae2e4725d8b25bc40f0.png
+             → assets/robot-portrait-1.png
+2 DESTROER  → https://stone-expand-60400629.figma.site/_assets/v11/427e49f7f762554d6348570481817f035bc00ba5.png
+             → assets/robot-portrait-2.png
+3 WARRIOR   → https://stone-expand-60400629.figma.site/_assets/v11/0bd6c97ff19b492e8dcf902550c0d4d6b36b8f8e.png
+             → assets/robot-portrait-3.png
+4 FIGHTER   → https://stone-expand-60400629.figma.site/_assets/v11/fe2a7d2ee80e217a5e3502cbf07255c030df3844.png
+             → assets/robot-portrait-4.png
+` ` `
+
+### Fonts (UI type)
+Local WOFF2 files named **Roboto Flex UI** at weights **400 / 500 / 700**:
+` ` `
+assets/roboto-flex-ui-400.woff2
+assets/roboto-flex-ui-500.woff2
+assets/roboto-flex-ui-700.woff2
+` ` `
+`@font-face` family name must be exactly `'Roboto Flex UI'`. Fallback stack:
+` ` `css
+font-family: 'Roboto Flex UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+` ` `
+`-webkit-font-smoothing: antialiased; text-rendering: geometricPrecision;`
+
+### Icons (Google Material Symbols Outlined — NOT PNGs)
+Load:
+` ` `
+https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=block
+` ` `
+Use these exact glyph names:
+| Slot | Icon name | FILL |
+|---|---|---|
+| Coin badge next to balance | `toll` | 0 |
+| Signal / wifi | `wifi` | 0 |
+| Skill 1 | `local_fire_department` | 1 |
+| Skill 2 | `skull` | 1 |
+| Skill 3 | `pets` | 1 |
+
+Do **not** use image assets for coin, wifi, or skills.
+
+---
+
+## 2. Scaling system (critical — do not use fixed px layout)
+
+Reference artboard: **1414 × 900** design units.
+
+` ` `css
+--frame-block-start: clamp(8px, 1.8vh, 28px);
+--u: clamp(
+  0.5px,
+  min(100vw / 1414, (100vh - var(--frame-block-start)) / 900),
+  1.45px
+);
+` ` `
+**Every** dimension, type size, gap, and margin is `calc(N * var(--u))`. Layout never crops; slack goes into the flexible center column (desktop) or the flexible dossier row (portrait).
+
+---
+
+## 3. Color / surface tokens
+
+` ` `
+--glass-face:  rgba(255,255,255,.46)
+--glass-edge:  rgba(255,255,255,.8)
+--glass-blur:  calc(6 * var(--u))
+--panel-face:  #fefefe
+--ink:         #060606
+--ink-soft:    #24242b
+--ink-muted:   #2f3133
+--level-face:  #555557
+--level-ink:   #454546
+--skill-face-a:#575759
+--skill-face-b:#5e5c61
+--cta-face:    rgba(16,16,16,.44)   /* portrait upright: rgba(16,16,16,.86) */
+--cta-edge:    #070707
+--cta-halo:    rgba(255,255,255,.85)
+--rule:        rgba(0,0,0,.35)
+` ` `
+
+Glass cards: `backdrop-filter: blur(var(--glass-blur))` + translucent white face. Active unit card is opaque `#fefefe` with **no** blur.
+
+---
+
+## 4. Corner-bracket motif (shared visual language)
+
+Roster unit cards, ADD tile, and skill tiles use **L-shaped corner brackets** (not full borders):
+- Top-right + bottom-left only
+- Stroke `--unit-bracket-w: calc(3.5 * var(--u))`
+- Arm length = 100% of card height for units/add; **50%** for skills
+- 30° mitred tips via `--unit-bracket-tip: calc(1.7320508 * var(--unit-bracket-w))`
+- Bracket color = `--glass-edge` normally; active unit = `#fff`
+
+---
+
+## 5. Exact DOM / content inventory
+
+### Shell
+` ` `
+.app
+  img.app__backdrop  (src=assets/backdrop.png)
+  header.topbar
+  main.stage
+    section.roster
+    section.dossier
+` ` `
+
+### Backdrop placement
+- Absolute, `z-index:0`, full height, `object-fit:cover`, `object-position:50% 30%`
+- Width: `max(1580u, 100% + 52u)`, centered then shifted left by `-26u`
+- Portrait upright: shift/bleed = 0, width 100%, `object-position:50% 26%`
+
+### Topbar (left → right)
+1. **Back button** — SVG 86×55 viewBox, black plate polygon `0,0 86,0 72,55 0,55`, white triangle arrow `27,27.5 52.5,16.5 51.5,39.5`
+2. **Title** `Your Robots` — 40.7u / weight 400 / tracking 0.7u / color `#131313`
+3. **HUD** (margin-inline-start:auto):
+   - White circle 48u: Material `toll` at 22u
+   - Pill `#fdfdfd` balance **`2523`** — 20.5u / weight 500 / color `#070707` / height 31u / min-width 91u
+   - Material `wifi` at 28u, gutter 72u from pill
+
+### Roster (left column)
+- Eyebrow (exact text with spaces): `CLASSES  S  —  A`  
+  (em dash `—` / `&#8212;`) — 29u / weight **700** / white / tracking 2.06u / soft black text-shadow
+- 4 unit buttons, gap 16u:
+
+| # | Name | ID | Portrait | State |
+|---|---|---|---|---|
+| 1 | BERSERKER | Robot 2300.10 | robot-portrait-1.png | default glass |
+| 2 | DESTROER | Robot 1747.12 | robot-portrait-2.png | default glass |
+| 3 | WARRIOR | Robot 2347.12 | robot-portrait-3.png | default glass |
+| 4 | FIGHTER | Robot 0440.01 | robot-portrait-4.png | **active** (wider opaque card) |
+
+- Default unit: 302×126u, 15u padding, portrait 89×95u, name 27.4u / id 18.4u (`--ink-soft`)
+- Active unit: 326×127u, white brackets, solid panel
+- **ADD ROBOTS** button 301×128u, glass, label 26.1u weight 500, plus-icon box 69×72u with 4u ink border and CSS + bars (25×5 and 5×26)
+
+### Dossier (right column, 456u wide track)
+**Level block (129u wide):**
+- Giant **`51`** — 111.4u / weight 500 / color `#454546` / right-aligned
+- Grey bar **`LEVEL`** — height 34u / bg `#555557` / white / tracking 5.85u / weight 500
+
+**Identity:**
+- **`FIGHTER`** — 31.5u / color `#343234`
+- `Class ` + bold **`S`** (21.72u / weight 700 / black)
+
+**Stats (single column desktop; 2-col portrait), exact values + fill %:**
+| Label | Value | `--stat-fill` |
+|---|---|---|
+| ATTACK | 260 | 85.714% |
+| DEFENCE | 80 | 34.762% |
+| ACCURACY | 150 | 48.095% |
+| DEXTRETY | 220 | 72.381% |
+
+Meters: 6u tall track; 2u hairline rule under; solid black fill bar. Spellings **DEFENCE** and **DEXTRETY** are intentional (keep typos).
+
+**Skills** label `Skills` then 3 tiles 73×80u, gap 25u:
+- Grey gradient plate `#575759 → #5e5c61` (SVG linearGradient)
+- White filled Material icons centered: `local_fire_department`, `skull`, `pets` at 28u
+
+**Decorative scrollbar** (non-interactive): 8u wide rail, 1.5u grey track, black thumb 7×98u starting 44u down, total height 261u.
+
+**START CTA** height 90u:
+- Stepped/notched rectangle (8/280 × 8/90 notch fractions on all 4 corners)
+- Face `rgba(16,16,16,.44)` + blur
+- SVG edge viewBox `0 0 280 90`: outer white halo stroke 1.4 + inner black stroke 6
+- Label **`START`** white, 24.7u, weight 500, **huge tracking 9.75u**
+
+---
+
+## 6. Desktop layout (landscape)
+
+` ` `
+topbar (fixed height ~85u + frame inset)
+stage: grid columns [auto | minmax(120u,1fr) | 456u]
+         padding: 30u left, 24u right, 62u bottom
+roster = col 1 | empty center shows robot art | dossier = col 3
+` ` `
+Dossier internal grid:
+` ` `
+rows: 180u | auto | auto | 1fr | auto
+cols: auto | 1fr | auto
+level(1,1) ident(2,1) stats(2,2) skills(2-3,3) scroll(3,1-4) cta(2-3,5)
+` ` `
+
+---
+
+## 7. Responsive compositions (must implement)
+
+### A. Portrait shared (`orientation:portrait` and `max-width:1200px`)
+- Single column stage: roster on top, dossier glass panel anchored to bottom
+- Dossier becomes bordered glass panel with padding 26u
+- Stats → 2 columns; skills move to masthead opposite level
+- Active unit same size as others (no grow)
+- CTA face darkens to `rgba(16,16,16,.86)`
+
+### B. Phone (`portrait` + `max-width:480px`)
+- Artboard becomes **620×880**
+- Roster = horizontal snap-scroll rail of cards; ADD parks beside scroller as compact stacked icon+label tile
+- Level/skills compressed (level ~72u, skills 48×53u)
+
+### C. Tablet (`portrait` + `481–1200px`)
+- Artboard **900×1400**; console max-width 820u centered
+- Roster = **2-column** grid of units; ADD = full-width bar
+
+### D. Wide tablet (`+ min-aspect-ratio: 7/8`)
+- Roster becomes **4 columns** on one row; stack max-width 1280u
+
+---
+
+## 8. Aesthetic rules (do not “improve”)
+
+- Monochrome UI chrome (black/white/grey) over photoreal robot art; **only** accent in the artwork is the orange eyes
+- Glassmorphism cards with **corner brackets only** — never rounded cards, never purple, never glow stacks, never pill clusters beyond the balance pill
+- No Inter/Roboto/Arial as primary — use **Roboto Flex UI**
+- No hero overlays, badges, or floating chips on the robot
+- Keep intentional copy typos: DESTROER, DEXTRETY, DEFENCE
+- Page title: `Your Robots`
+- Static mock: buttons need no JS
+
+---
+
+## 9. Deliverable
+
+One self-contained `index.html` with embedded CSS matching the token architecture above, plus `assets/` containing the 5 PNGs and 3 WOFF2s. Visual target: desktop landscape first viewport = topbar + left roster rail + centered robot backdrop + right dossier (level/stats/skills/START), matching the described measurements within ±1 design unit.
+
+---

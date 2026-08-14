@@ -1,0 +1,308 @@
+Recreate this UI EXACTLY as a single self-contained index.html file (inline CSS + JS, no frameworks, no build step). Pixel-perfect absolute layout of a dark industrial logistics ops dashboard.
+
+═══════════════════════════════════════
+TITLE / META
+═══════════════════════════════════════
+- Document title: OVERVATECH — Freight Queue · HUB-2
+- lang="en"
+- viewport: width=device-width, initial-scale=1.0, viewport-fit=cover
+- html/body: 100% w/h, background #000, overflow:hidden, antialiased fonts
+
+═══════════════════════════════════════
+ASSETS (ONLY THESE — NO OTHER IMAGES/VIDEOS/ICONS FILES)
+═══════════════════════════════════════
+1) Google Fonts (exact URL):
+   https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap
+   Preconnect both fonts.googleapis.com and fonts.gstatic.com (crossorigin).
+
+2) Inline SVG search/magnifier icon (ONLY graphic asset), 13×13 viewBox="0 0 13 13" fill="none":
+   - circle cx="5.6" cy="5.6" r="4.15" stroke="#b0b0b0" stroke-width="1.15"
+   - line x1="8.8" y1="8.8" x2="12.3" y2="12.3" stroke="#b0b0b0" stroke-width="1.15" stroke-linecap="round"
+   Positioned at left:1107px; top:112px on the desktop stage.
+
+NO remote images, no favicon required, no CSS background-images, no icon fonts.
+
+═══════════════════════════════════════
+TYPOGRAPHY
+═══════════════════════════════════════
+- Sans (--sans): 'Instrument Sans', 'Inter', -apple-system, 'Helvetica Neue', Arial, sans-serif
+- Mono (--mono): 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace
+- Class .mn = mono weight 400; .sn = sans weight 400
+- Text nodes use class "t" with line-height:1, white-space:pre, letter-spacing:0
+- Nested <b> inside mono labels: font-weight:400; color:#3a3a3a (used for bracket dimming like [ ALL_SHIPMENTS ])
+
+═══════════════════════════════════════
+COLOR SYSTEM (CSS VARIABLES — USE EXACT HEX)
+═══════════════════════════════════════
+--page:#030303
+--pnl-l:#060606          (left nav panel)
+--pnl-c:#080808          (queue panel top)
+--pnl-c2:#060606         (queue panel bottom of gradient)
+--pnl-r:#030303          (inspector panel)
+--pnl-rh:#070707         (inspector header strip)
+--pnl-rt:#000000         (inspector terminal footer)
+--edge:#2e2e2e           (panel borders)
+--bracket:#6e6e6e        (corner L-brackets)
+--rule:#1a1a1a           (hairlines / dividers)
+--btn-line:#171717
+--btn-on-line:#2a2a2a
+--btn-on-fill:#131313
+--chip-fill:#0e0e0e
+--chip-line:#191919
+--sort-line:#1c1c1c
+--bill-line:#222222
+--tag-line:#414141
+--field:#030303
+--sel:#101010            (selected row bg)
+--sb-track:#141414
+--sb-thumb:#9a9a9a
+--green:#06ce8a
+--red:#f52a2a
+--red-live:#ea2020
+
+Other hardcoded text colors used:
+#fff, #efefef, #f4f4f4, #e6e6e6, #e2e2e2, #d9d9d9, #d8d8d8, #d6d6d6, #bdbdbd, #b0b0b0, #a4a4a4, #8d8d8d, #8a8a8a, #7a7a7a, #6d6d6d, #6b6b6b, #4e4e4e, #3a3a3a, #484848, #777, #000, #fafafa (ON TIME pill bg)
+
+═══════════════════════════════════════
+LAYOUT ARCHITECTURE (CRITICAL)
+═══════════════════════════════════════
+- Outer #viewport: fixed inset 0, flex center, bg --page
+- Inner #stage: relative, FIXED design canvas 1586×992 px, transform-origin center, color #fff, font-family sans
+- Almost EVERYTHING is position:absolute with fractional pixel left/top values — this is a measured pixel-perfect mock, not a flex/grid UI
+- Three bordered panels (class .panel) at top:85px; height:878px; border 1px solid --edge:
+  1) #nav   left:27px;  width:349px;  bg --pnl-l
+  2) #queue left:406px; width:650px;  bg linear-gradient(180deg, --pnl-c 0%, --pnl-c 72%, --pnl-c2 100%)
+  3) #insp  left:1086px; width:472px; bg --pnl-r
+- Each panel has 4 corner brackets (.br.tl/.tr/.bl/.brr): 22×22 L-shapes made of 1px lines in --bracket, offset -1px on corners (sci-fi panel corners)
+
+═══════════════════════════════════════
+ANIMATIONS (ONLY TWO CSS ANIMATIONS)
+═══════════════════════════════════════
+1) LIVE pulse on .livedot:
+   @keyframes pl { 0%,100%{opacity:1} 50%{opacity:.4} }
+   animation: pl 1.9s ease-in-out infinite
+   Dot: 8×8 circle, bg --red-live, box-shadow: 0 0 8px 1px rgba(234,32,32,.5)
+
+2) Terminal caret blink on .cursor:
+   @keyframes bl { 0%,49%{opacity:1} 50%,100%{opacity:.12} }
+   animation: bl 1.1s steps(1) infinite
+   Caret: 9×14 px rect, bg --green, box-shadow: 0 0 7px 1px rgba(6,206,138,.45)
+
+Also:
+- Status dots .dot.g / .dot.r: static glow shadows (green/red), NO animation
+- Button hover transition: .15s (color/border only)
+- @media (prefers-reduced-motion:reduce) { .cursor,.livedot { animation:none } }
+
+NO other motion, no page load fades, no GSAP, no parallax.
+
+═══════════════════════════════════════
+DESKTOP HEADER BAR (y ≈ 16–22)
+═══════════════════════════════════════
+Exact elements (left, top, size/style):
+- White square logo mark: left:27 top:21 11×11 bg #fff
+- "OVERVATECH" mono 13.2px left:51 top:20.07
+- Vertical rule 1×21 at left:159 top:16 color #2a2a2a
+- "ROUTES" mono 13.2px color #d9d9d9 left:186.5 top:20.07
+- "NETWORK:" mono 13.2px color #6b6b6b left:1009.5
+- "HUB-2" mono 13.2px #fff weight 600 left:1080.5
+- Rule at left:1146
+- "TOTAL_LOADS:" #6b6b6b left:1175.5
+- "191" #fff weight 600 left:1279.5
+- "/ 192" #4e4e4e left:1309.5
+- Rule at left:1377
+- livedot 8×8 left:1409 top:22
+- "LIVE_FLEET_ACTIVE" mono 13.6px color --red-live weight 500 left:1427 top:19.72
+
+═══════════════════════════════════════
+LEFT NAV PANEL (#nav) CONTENT
+═══════════════════════════════════════
+- White 10×10 square left:48 top:112 + "OPS_NAV" mono 15px left:69 top:109.01
+- "LINK.OK" mono 11px #6b6b6b left:292.8 top:111.97 + green status dot 9×9 left:347 top:114 (glow)
+- Hairline hr left:28 top:148.5 width:347
+- Label "ACTIVE_NETWORK" mono 12.5px #6b6b6b left:51 top:176.68
+- Title "North Hub Fleet" sans 30px #fff letter-spacing:-0.016em left:51 top:201.52
+- "SHIFT" / "CYCLE" mono 10.5px #6b6b6b at left:51 and 209, top:258.41
+- Values "02" / "2026" sans 19.5px same x, top:277.61
+- Hairline at top:324.5
+- "OPERATIONS" mono 12.3px #6b6b6b left:51 top:352.85
+- Menu rows (mono 14.3px), selected row white, others #4e4e4e, brackets via <b>[</b> ... <b>]</b>:
+  • [ ALL_SHIPMENTS ]  count "321" #bdbdbd at left:329.4
+  • [ DISTRIBUTION ]   dash "–" (#8211) #3a3a3a at left:342.6
+  • [ EXCEPTIONS ]     dash
+  • [ ALLOCATIONS ]    dash
+  Row tops: 394.77 / 439.47 / 484.17 / 528.87
+
+═══════════════════════════════════════
+CENTER QUEUE PANEL (#queue) CONTENT
+═══════════════════════════════════════
+- Title "Freight Queue" sans 36.5px letter-spacing:-0.019em left:436 top:116.89
+- Subtitle "DISPLAYING 191 OF 191 LOADS" mono 13.8px #6b6b6b left:436 top:164.55
+- Sort control .sort left:902 top:150 124×31: "SORT: DESCENDING" mono 10.6px #e2e2e2, border --sort-line, radius 2px
+
+SEARCH FIELD:
+- .field box left:436 top:212 590×45 bg --field border --rule radius 3px
+- Prompt ">" mono 14.7px #8a8a8a left:455.5 top:224.87
+- Placeholder "search --ld" mono 14.7px #6b6b6b left:481.5 top:225.77
+
+FILTER ROWS (buttons .btn: mono 12.5px, height 31, radius 2px, border --btn-line, color #8d8d8d; .on = fill --btn-on-fill, border --btn-on-line, color #fff; dropdown caret via <em>▾</em> U+9662 size 8px #7a7a7a translateY(1px)):
+- MODE label left:436 top:285.97 → buttons ALL (on, 54×31 at 516,276.5), ROAD (67.5), OCEAN (73)
+- CARRIER label top:331.97 → "ALL CARRIERS▾" 133×31 at 516,321.8
+- LOAD TYPE label top:376.97 → "ALL LOAD TYPES▾" 147×31 at 516,367.1
+- STATE label top:421.97 → ALL (on), ON TIME, DELAYED at top:412.4
+
+ACTIVE FILTERS strip:
+- hr at top:461; "ACTIVE FILTERS:" #4e4e4e 9.8px; "NONE" #8a8a8a 10.5px; "CLEAR ALL" #bdbdbd 9.8px underlined cursor:pointer at left:973.1
+- hr at top:516
+
+COLUMN HEADERS (mono 12.5px #6b6b6b top:532.67):
+  ID@437  MD@488  LOAD ID@538  ROUTE@638  ETA@891  STATUS@993
+- hr at top:563.5 then scrollable list
+
+TABLE (.tscroll left:407 top:563.5 w:648 h:351; custom scrollbar track/thumb; webkit width 21px):
+- Each .trow: relative 627×78, bottom 1px --rule hairline, hover rgba(255,255,255,.014), .sel bg --sel + left 3px white bar
+- Row children absolute offsets WITHIN the row:
+  • ID number sans 16.7px left:29 top:31.54
+  • Mode letter mono 12.3px #6d6d6d left:81 top:32.95  (R / O / A cycling)
+  • Load chip .chip left:129 top:25 78×28: mono 15.5px #d8d8d8 in <i>
+  • Subject .subj left:227 top:28.3 198×22: sans 18px #e6e6e6 ellipsis
+  • Date .date left:470 top:20.5 90×38: mono 12px line-height 19 #6d6d6d, two lines "MAY 21,<br>2026"
+  • Status .dot 10×10 left:586 top:34 — green (.g) or red (.r) with glow
+
+SELECTED ROW (default): the row with ID 186 / chip CN-2201 / mode O / green / date MAY 20, 2026
+  Subject: "Industrial machine components — Rotterdam Port to Berlin DC"
+  (Note: inspector body text still says LD-1300 / L-186 — keep this exact mismatch as in original)
+
+FOOTER under list:
+- hr top:914.5
+- "RUN BY: NORTHSTAR LOGISTICS" (RUN BY: in dim <b>) mono 12px #6b6b6b left:436 top:933.11
+- "HUB-2 - 2026" mono 11.7px #6b6b6b left:944 top:933.37
+
+FULL TABLE DATA (descending IDs, include ALL rows — status G=green R=red):
+191 R LD-6947 | Refrigerated medical supplies — North Hub to Central Metro | MAY 21, 2026 | G
+189 O CN-1041 | Retail inventory pallets — Harbor Terminal to Inland Hub | MAY 21, 2026 | G
+188 A LD-1324 | Automotive service parts — Central Depot to North Terminal | MAY 21, 2026 | R
+187 R EX-1300 | Consumer electronics freight — Border Station to City Fulfillment | MAY 20, 2026 | G
+186 O CN-2201 | Industrial machine components — Rotterdam Port to Berlin DC | MAY 20, 2026 | G  ← SELECTED
+184 A LD-3388 | Temperature-controlled produce — South Gateway to Regional DC | MAY 20, 2026 | G
+183 R LD-1140 | Pharmaceutical cold-chain load — Coastal Port to Valley Hub | MAY 19, 2026 | G
+182 O CN-0884 | Construction material shipment — Rail Ramp to Distribution Center | MAY 19, 2026 | G
+181 A EX-1291 | Priority aerospace components — Ridgeway Crossdock to East Depot | MAY 19, 2026 | G
+179 R LD-5512 | Food-grade packaged goods — West Yard to Airport Cargo | MAY 18, 2026 | G
+178 O CN-2077 | Renewable energy equipment — Plant 14 to Metro Warehouse | MAY 18, 2026 | G
+177 A LD-0942 | Warehouse replenishment stock — North Hub to Central Metro | MAY 18, 2026 | G
+176 R LD-4419 | Refrigerated medical supplies — Harbor Terminal to Inland Hub | MAY 17, 2026 | G
+174 O CN-1188 | Retail inventory pallets — Central Depot to North Terminal | MAY 17, 2026 | R
+173 A EX-1284 | Automotive service parts — Border Station to City Fulfillment | MAY 17, 2026 | G
+172 R LD-7016 | Consumer electronics freight — Rotterdam Port to Berlin DC | MAY 16, 2026 | G
+171 O CN-0331 | Industrial machine components — South Gateway to Regional DC | MAY 16, 2026 | G
+169 A LD-2308 | Temperature-controlled produce — Coastal Port to Valley Hub | MAY 16, 2026 | G
+168 R LD-6620 | Pharmaceutical cold-chain load — Rail Ramp to Distribution Center | MAY 15, 2026 | G
+167 O CN-0902 | Construction material shipment — Ridgeway Crossdock to East Depot | MAY 15, 2026 | G
+166 A EX-1276 | Priority aerospace components — West Yard to Airport Cargo | MAY 15, 2026 | G
+164 R LD-5140 | Food-grade packaged goods — Plant 14 to Metro Warehouse | MAY 14, 2026 | R
+163 O CN-3902 | Renewable energy equipment — North Hub to Central Metro | MAY 14, 2026 | G
+162 A LD-0771 | Warehouse replenishment stock — Harbor Terminal to Inland Hub | MAY 14, 2026 | G
+161 R LD-4488 | Refrigerated medical supplies — Central Depot to North Terminal | MAY 13, 2026 | G
+159 O CN-1655 | Retail inventory pallets — Border Station to City Fulfillment | MAY 13, 2026 | G
+158 A EX-1268 | Automotive service parts — Rotterdam Port to Berlin DC | MAY 13, 2026 | G
+157 R LD-8021 | Consumer electronics freight — South Gateway to Regional DC | MAY 12, 2026 | G
+156 O CN-2740 | Industrial machine components — Coastal Port to Valley Hub | MAY 12, 2026 | G
+154 A LD-1509 | Temperature-controlled produce — Rail Ramp to Distribution Center | MAY 12, 2026 | R
+153 R LD-6155 | Pharmaceutical cold-chain load — Ridgeway Crossdock to East Depot | MAY 11, 2026 | G
+152 O CN-0393 | Construction material shipment — West Yard to Airport Cargo | MAY 11, 2026 | G
+151 A EX-1251 | Priority aerospace components — Plant 14 to Metro Warehouse | MAY 11, 2026 | G
+149 R LD-5877 | Food-grade packaged goods — North Hub to Central Metro | MAY 10, 2026 | G
+148 O CN-1012 | Renewable energy equipment — Harbor Terminal to Inland Hub | MAY 10, 2026 | G
+147 A LD-3044 | Warehouse replenishment stock — Central Depot to North Terminal | MAY 10, 2026 | G
+146 R LD-7433 | Refrigerated medical supplies — Border Station to City Fulfillment | MAY 9, 2026 | G
+144 O CN-2296 | Retail inventory pallets — Rotterdam Port to Berlin DC | MAY 9, 2026 | R
+143 A EX-1239 | Automotive service parts — South Gateway to Regional DC | MAY 9, 2026 | G
+142 R LD-4901 | Consumer electronics freight — Coastal Port to Valley Hub | MAY 8, 2026 | G
+141 O CN-0668 | Industrial machine components — Rail Ramp to Distribution Center | MAY 8, 2026 | G
+139 A LD-1877 | Temperature-controlled produce — Ridgeway Crossdock to East Depot | MAY 8, 2026 | G
+138 R LD-6304 | Pharmaceutical cold-chain load — West Yard to Airport Cargo | MAY 7, 2026 | G
+137 O CN-3110 | Construction material shipment — Plant 14 to Metro Warehouse | MAY 7, 2026 | G
+136 A EX-1222 | Priority aerospace components — North Hub to Central Metro | MAY 7, 2026 | R
+134 R LD-5063 | Food-grade packaged goods — Harbor Terminal to Inland Hub | MAY 6, 2026 | G
+133 O CN-1490 | Renewable energy equipment — Central Depot to North Terminal | MAY 6, 2026 | G
+132 A LD-2661 | Warehouse replenishment stock — Border Station to City Fulfillment | MAY 6, 2026 | G
+131 R LD-7788 | Refrigerated medical supplies — Rotterdam Port to Berlin DC | MAY 5, 2026 | G
+129 O CN-2503 | Retail inventory pallets — South Gateway to Regional DC | MAY 5, 2026 | G
+128 A EX-1210 | Automotive service parts — Coastal Port to Valley Hub | MAY 5, 2026 | G
+127 R LD-4066 | Consumer electronics freight — Rail Ramp to Distribution Center | MAY 4, 2026 | G
+126 O CN-0991 | Industrial machine components — Ridgeway Crossdock to East Depot | MAY 4, 2026 | R
+124 A LD-1345 | Temperature-controlled produce — West Yard to Airport Cargo | MAY 4, 2026 | G
+123 R LD-6812 | Pharmaceutical cold-chain load — Plant 14 to Metro Warehouse | MAY 3, 2026 | G
+122 O CN-3455 | Construction material shipment — North Hub to Central Metro | MAY 3, 2026 | G
+121 A EX-1197 | Priority aerospace components — Harbor Terminal to Inland Hub | MAY 3, 2026 | G
+119 R LD-5299 | Food-grade packaged goods — Central Depot to North Terminal | MAY 2, 2026 | G
+118 O CN-1733 | Renewable energy equipment — Border Station to City Fulfillment | MAY 2, 2026 | R
+117 A LD-0804 | Warehouse replenishment stock — Rotterdam Port to Berlin DC | MAY 2, 2026 | G
+116 R LD-7120 | Refrigerated medical supplies — South Gateway to Regional DC | MAY 1, 2026 | G
+114 O CN-2988 | Retail inventory pallets — Coastal Port to Valley Hub | MAY 1, 2026 | G
+113 A EX-1184 | Automotive service parts — Rail Ramp to Distribution Center | MAY 1, 2026 | G
+112 R LD-4712 | Consumer electronics freight — Ridgeway Crossdock to East Depot | APR 30, 2026 | R
+111 O CN-1129 | Industrial machine components — West Yard to Airport Cargo | APR 30, 2026 | G
+109 A LD-2115 | Temperature-controlled produce — Plant 14 to Metro Warehouse | APR 30, 2026 | G
+108 R LD-6577 | Pharmaceutical cold-chain load — North Hub to Central Metro | APR 29, 2026 | G
+107 O CN-3801 | Construction material shipment — Harbor Terminal to Inland Hub | APR 29, 2026 | G
+106 A EX-1163 | Priority aerospace components — Central Depot to North Terminal | APR 29, 2026 | R
+104 R LD-5904 | Food-grade packaged goods — Border Station to City Fulfillment | APR 28, 2026 | G
+
+═══════════════════════════════════════
+RIGHT INSPECTOR PANEL (#insp)
+═══════════════════════════════════════
+Header strip .ihead left:1087 top:86 470×64.5 bg --pnl-rh:
+- SVG ico left:1107 top:112
+- "LOAD DETAIL" mono 14.5px #efefef left:1131.5 top:110.94
+- Tag .tag "L-186" left:1487 top:107 50×24: mono 11.5px #fff border --tag-line radius 2px
+- hr left:1087 top:150.5 width:470
+
+Scroll body .iscroll left:1087 top:151 470×692 (scrollbar width 20px):
+- Content .icont relative w:450 padding:87.4px 0 46px 29px
+- Bill chip .bill "LD-1300" left:29 top:29 145×38: mono 17px #fff border --bill-line padding 0 13px
+- Status pill .passed "ON TIME" left:353 top:30 65×29: bg #fafafa, mono weight 700 11.5px #000 radius 2px
+- Body .btxt w:390 sans 25.5px line-height 34.4 letter-spacing:-0.003em color #f4f4f4 — EXACT copy:
+
+"Priority refrigerated load LD-1300 is scheduled from the North Hub consolidation center to the Central Metro distribution terminal. The shipment contains temperature-controlled medical supplies assigned to carrier Northstar Linehaul, tractor unit TR-6047, and sealed trailer RF-1041. Current telemetry confirms the vehicle is moving within its approved corridor and remains inside the required temperature range.
+
+Dispatch released the load after the electronic manifest, driver credentials, seal number, pallet count, and dock clearance were verified. The assigned driver completed the pre-trip inspection, confirmed fuel and reefer levels, and departed gate N4 at 06:20 local time. Automated route monitoring has found no compliance exceptions, unauthorized stops, or geofence deviations.
+
+The next operational checkpoint is the Ridgeway transfer station, where the trailer will receive a seal scan and temperature audit before continuing to Central Metro. Traffic models currently show moderate congestion near corridor C18, but the available delivery buffer remains sufficient. Estimated arrival is 14:35 local time with an on-time confidence of 94 percent.
+
+If dwell time exceeds twenty minutes, dispatch will notify the destination dock and evaluate the approved bypass route. Any temperature variance above two degrees, seal mismatch, or missed checkpoint will automatically move this load into the exception queue and alert the network control team.
+
+Receiving bay 12 is reserved for this shipment. The consignee has confirmed unloading capacity, cold-storage availability, and electronic proof-of-delivery access. Final closure requires a verified seal break, pallet reconciliation, signed delivery record, and return of the empty handling units."
+
+(Use <br><br> between those 5 paragraphs.)
+
+Terminal footer .iterm left:1087 top:843 470×119 bg --pnl-rt border-top 1px --rule:
+- Four identical lines mono 11.7px #a4a4a4 at tops 13.87 / 32.87 / 51.87 / 70.87, left:14.5:
+  "> Tracking L-186 - Load LD-1300"  (the > is wrapped in <b>)
+- Green blinking .cursor left:34 top:89 9×14
+
+═══════════════════════════════════════
+JAVASCRIPT BEHAVIOR (MUST MATCH)
+═══════════════════════════════════════
+- Scale-to-fit: k = min(innerWidth/1586, innerHeight/992); stage transform scale(k); grow extra width/height into queue + inspector panels when viewport larger than stage
+- Wheel on .tscroll/.iscroll: scroll by deltaY/k (scale-corrected), preventDefault when scroll moves
+- Click .trow: exclusive .sel class
+- Responsive breakpoints:
+  • Mobile: width≤480 OR (height≤480 AND width≤950) → mobile-mode, unscaled full-viewport layouts, views: queue / filters / context / inspector, Escape returns to queue
+  • Tablet: width≤768 (and not mobile) → tablet-mode stacked vertical: nav strip → queue → inspector, scale vs 768×1024
+  • Desktop: three-column absolute layout as specified
+- Mobile creates runtime buttons: FILTERS · NONE, < BACK / < QUEUE / DONE, transparent hit targets, LOAD FILTERS sheet title
+- Listen resize, orientationchange (+120ms), visualViewport.resize
+- Preserve scroll positions when switching mobile views
+
+═══════════════════════════════════════
+AESTHETIC / HARD CONSTRAINTS
+═══════════════════════════════════════
+- Look: near-black ops terminal / freight control room UI, monospace telemetry labels, Instrument Sans for titles/body
+- Hairline rules, L-corner brackets on panels, chip IDs, status glow dots
+- Do NOT add purple gradients, cards with shadows, rounded-full pills, glassmorphism, or stock dashboard kits
+- Do NOT invent extra screens, charts, maps, or assets
+- Output one complete working index.html that matches this desktop composition pixel-for-pixel at 1586×992 before scaling
+` ` `
+
+---

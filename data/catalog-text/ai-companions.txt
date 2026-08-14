@@ -1,0 +1,121 @@
+Build a full-viewport cinematic hero landing page for a product called **Auria**. Recreate it pixel-faithfully as a single React component (Vite + React + TypeScript + Tailwind CSS v4). No extra sections, no cards, no footer — only the hero viewport described below.
+
+### Overall layout
+- Root container: `relative h-screen w-full overflow-hidden bg-black font-serif`
+- Full-screen black fallback behind everything
+- Two layers only:
+  1. Absolute full-bleed background video
+  2. Relative `z-10` content column (`flex h-full w-full flex-col`) sitting on top
+
+### Background video (exact asset + behavior)
+Use this exact CloudFront MP4 URL as the only media source:
+
+` ` `
+https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260806_134653_2b70d062-3521-429b-a824-8d9f98de488a.mp4
+` ` `
+
+Video element requirements:
+- `autoPlay`
+- `muted`
+- `loop`
+- `playsInline`
+- Classes: `absolute inset-0 h-full w-full object-cover`
+- Source: `type="video/mp4"` pointing to the CloudFront URL above
+- No overlay gradient, no dark scrim, no poster image — video alone fills the viewport edge-to-edge as the entire visual plane
+- The looping video is the page’s primary motion; do not add entrance animations, parallax, or JS motion libraries
+
+### Fonts (exact)
+Load from Google Fonts in `index.html`:
+
+` ` `html
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+` ` `
+
+In Tailwind `@theme`:
+- `--font-serif: 'Instrument Serif', serif;`
+- `--font-sans: 'Inter', sans-serif;`
+
+Usage:
+- Default page / brand name / H1 → Instrument Serif (`font-serif`)
+- Badge text, CTA button, body copy → Inter (`font-sans`)
+- The word **voices** inside the H1 must be italic Instrument Serif (`<em className="italic">voices</em>`)
+
+Page title in HTML: `Hero Section Development`
+
+### Navigation bar
+Centered top bar inside a wrapper:
+- Wrapper: `flex w-full justify-center px-4 pt-4 sm:px-6 sm:pt-6`
+- Nav pill: `flex w-full max-w-4xl items-center justify-between rounded-2xl bg-black/40 pl-5 pr-2 py-2 backdrop-blur-xl sm:pl-7 sm:pr-2.5 sm:py-2.5`
+- Frosted glass look: black at 40% opacity + heavy backdrop blur (`backdrop-blur-xl`), `rounded-2xl`
+
+**Left — logo + wordmark**
+- Flex row with `gap-2.5`
+- Logo SVG (white clover / rounded-square cutout mark), `viewBox="0 0 256 256"`, size `h-5 w-5 sm:h-6 sm:w-6`
+- Exact SVG path:
+` ` `
+M 78 0 C 105.614 0 128 22.386 128 50 C 128 22.386 150.386 0 178 0 L 256 0 L 256 78 C 256 105.614 233.614 128 206 128 C 233.614 128 256 150.386 256 178 L 256 256 L 178 256 C 150.386 256 128 233.614 128 206 C 128 233.614 105.614 256 78 256 L 0 256 L 0 178 C 0 150.386 22.386 128 50 128 C 22.386 128 0 105.614 0 78 L 0 0 Z
+` ` `
+- Fill: white
+- Wordmark text: `Auria`
+- Wordmark styles: `text-lg tracking-wide text-white/90 sm:text-xl` (Instrument Serif via inherited `font-serif`)
+
+**Right — CTA button**
+- Button: `flex items-center gap-2 rounded-xl bg-white px-4 py-2 font-sans text-xs font-medium tracking-wide text-black transition-all hover:bg-white/90 sm:px-5 sm:py-2.5 sm:text-sm`
+- Apple logo SVG (filled currentColor), size `h-4 w-4 sm:h-5 sm:w-5`
+- Exact Apple path:
+` ` `
+M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 21.99 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.1 21.99C7.79 22.03 6.8 20.68 5.96 19.47C4.25 17 2.94 12.45 4.7 9.39C5.57 7.87 7.13 6.91 8.82 6.89C10.1 6.87 11.32 7.75 12.11 7.75C12.89 7.75 14.37 6.68 15.92 6.84C16.57 6.87 18.39 7.1 19.56 8.82C19.47 8.88 17.39 10.1 17.41 12.63C17.44 15.65 20.06 16.66 20.09 16.67C20.06 16.74 19.67 18.11 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.07 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z
+` ` `
+- Label: `Get the App`
+- Only interaction/animation on the page besides the looping video: `transition-all hover:bg-white/90`
+
+### Hero content block
+Centered column below the nav:
+- Container: `flex flex-col items-center px-6 pt-10 text-center sm:pt-16 lg:pt-24`
+
+**1. Featured Pick badge**
+- Wrapper: `mb-6 flex items-center gap-2 rounded-full px-4 py-1.5 sm:mb-8 sm:px-5 sm:py-2`
+- No background fill, no border — just icon + text
+- Amber Apple icon (same Apple SVG path as CTA), classes: `h-4 w-4 text-amber-400 sm:h-5 sm:w-5`
+- Text: `Featured Pick`
+- Text styles: `font-sans text-xs font-medium tracking-wider text-amber-300 sm:text-sm`
+
+**2. Headline**
+- Exact copy:
+  `Speak with voices that once only lived in your imagination.`
+- Structure:
+  - `Speak with ` then `<em className="italic">voices</em>` then ` that once`
+  - Soft line break: `<br className="hidden sm:block" />` then ` only lived in your imagination.`
+- H1 styles: `max-w-4xl text-4xl leading-[0.95] font-normal text-white sm:text-5xl md:text-6xl lg:text-7xl`
+- Font: Instrument Serif, weight normal; only “voices” is italic
+
+**3. Supporting paragraph**
+- Exact copy:
+  `Meet AI guides, advisors, or friends whenever the moment calls.`
+  Soft break (`<br className="hidden sm:block" />`)
+  `Simply pick the voice you need, and begin your dialogue.`
+- Styles: `mx-auto mt-5 max-w-xl font-sans text-sm leading-snug font-light text-white/70 sm:mt-7 sm:text-base md:text-lg`
+
+### Motion / animation summary
+- Primary motion: infinite muted looping full-bleed background video
+- Secondary motion: CTA hover fade to `bg-white/90` via `transition-all`
+- No Framer Motion, GSAP, CSS keyframes, scroll effects, or typed text
+- No entrance fades, no stagger, no floating elements
+
+### Responsive behavior (must match)
+- Mobile-first Tailwind breakpoints (`sm` / `md` / `lg`) as listed above
+- Soft line breaks in H1 and body only appear from `sm` upward
+- Nav, badge, type, and CTA all scale via the exact class sets given
+- Always full viewport height, overflow hidden, no page scroll
+
+### Stack / constraints
+- Vite + React + TypeScript
+- Tailwind CSS v4 via `@tailwindcss/vite`
+- Single-page hero only; no routing, no Supabase usage required for this UI
+- Do not invent extra UI (stats, cards, rotating image carousels, overlays, badges on video, second CTAs, footers)
+- Brand-first: “Auria” in the frosted nav is the brand signal; H1 must not overpower with unrelated brand inventing
+- Visual atmosphere comes from the CloudFront video, not a flat black background or decorative gradient
+
+Recreate this exactly — same copy, same fonts, same SVG paths, same CloudFront video URL, same spacing/type scale classes, same frosted nav, same amber Featured Pick treatment, same white Apple CTA.

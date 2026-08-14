@@ -1,0 +1,305 @@
+# PROMPT: Recreate this exact page — visionOS liquid-glass book streaming dashboard
+
+Build a **single-file** `index.html` (inline CSS + minimal JS) that recreates this UI **pixel-faithfully**: an Apple **visionOS / Safari-in-Spatial** book streaming dashboard framed like a browser window floating over a blurred room background. Brand/domain in the URL bar: **steary.com**. Title: `steary.com — visionOS Streaming UI`.
+
+This is **not** a generic purple SaaS dashboard. It is a warm taupe/stone glass UI over a soft indoor study photo, with white text, pill chrome, and frosted panels.
+
+---
+
+## 0) Assets — DO NOT require local files; use placeholders as follows
+
+Explain to yourself what each image should look like, then use **any suitable placeholder** (Unsplash, picsum, generated covers, or solid gradient fallbacks):
+
+| Slot | What it should look like | Placeholder instruction |
+|---|---|---|
+| **Page background** |  https://stone-expand-60400629.figma.site/_assets/v11/6fb936dc2b3ba86a5b0851890365db8daecab54f.png?w=2048 
+| **Hero background** | Cinematic dark fantasy scene: submerged ancient library / drowned city archive underwater, deep navy-teal, a large hardcover floating in frame | Find a dark underwater library / fantasy book scene. Fallback: `#171a2e` |
+| **New Releases covers (6)** | Real-looking portrait book covers | Find 6 random book cover images as placeholders |
+| **Continue Reading thumbs (6)** | Same — small portrait covers | Find 6 more random book covers |
+| **You might like cards (5)** | Premium hardcover product shots filling the card | Find 5 random book images OR use rich CSS gradients as underlays (see colors below) |
+| **Fonts** | Helvetica Neue family | **Do not require OTFs.** Use: `font-family: "Helvetica Neue", Helvetica, Arial, sans-serif`. If self-hosting, map: 300→Light, 400→Roman, 500→Medium, **600→Medium** (no Semibold), 700→Bold |
+
+Inline SVG icons everywhere (no icon font). Avatar is an **inline SVG cartoon** (purple circle `#5b3fd4`, peach skin, dark hair, orange shirt) — not a photo.
+
+---
+
+## 1) Overall composition (desktop, ≥1131px)
+
+Full viewport, `overflow: hidden`, no page scroll on desktop.
+
+**Stack (back → front):**
+1. Fixed full-bleed blurred background image
+2. `#app` CSS Grid overlay:
+   - **Columns:** `var(--gutter) 1fr var(--gutter)` — mirrored gutters so the main window is centered; left gutter holds the vertical rail
+   - **Rows:** `auto 1fr` — Safari toolbar on top, body below
+   - Padding: `clamp(10px, 1.35vw, 26px) 0`
+   - Row gap: `clamp(9px, 1.05vw, 20px)`
+   - `--gutter: clamp(44px, calc((100vw - 1000px) / 2), 140px)`
+
+**Elements:**
+- **Top center:** Safari-style pill URL toolbar (max-width ~520–1040px)
+- **Left gutter, vertically centered:** Vertical pill nav rail (5 icons; Home active)
+- **Center:** Large rounded glass **window** containing header + 2-column body
+
+Inside the window:
+` ` `
+[ Search books ]   [ Discover | Fiction | Non-fiction | Mystery | More ] [bell] [profile]
+┌─────────────────┬──────────────────────────────────────────────────────┐
+│ New Releases    │  HERO (The Starless Archive)                         │
+│ (list)          │                                                      │
+├─────────────────┤──────────────────────────────────────────────────────┤
+│ Continue Reading│  You might like  ....................... See all     │
+│ (progress list) │  [card][card][card][card][card]                      │
+└─────────────────┴──────────────────────────────────────────────────────┘
+` ` `
+
+Window grid columns shared by header + body: `--wincols: minmax(180px, 23%) 1fr`  
+Side + main columns each split `1.15fr / 1fr` vertically (hero+releases taller than bottom row).
+
+---
+
+## 2) Design tokens (exact)
+
+` ` `css
+--white: #fff;
+--txt-dim: rgba(255,255,255,.66);
+--txt-dim2: rgba(255,255,255,.55);
+--glass-win: rgba(106,98,94,.40);          /* main window tint — NO backdrop-filter on window */
+--glass-panel: rgba(255,255,255,.24);      /* conceptual; panels use cooler fill below */
+--glass-pill-dark: rgba(0,0,0,.12);
+--glass-pill-light: rgba(255,255,255,.30);
+--stroke-soft: rgba(255,255,255,.12);
+--dot-green: #59E6B6;
+
+--pad: clamp(10px, 1.35vw, 26px);
+--gap: clamp(9px, 1.05vw, 20px);
+--gap-sm: clamp(6px, .7vw, 13px);
+--gap-xs: clamp(4px, .45vw, 8px);
+
+--shine-2: .5px;
+--shine-15: .5px;
+
+--r-win: clamp(18px, 1.9vw, 40px);
+--r-lg: clamp(14px, 1.5vw, 30px);
+--r-md: clamp(11px, 1.15vw, 22px);
+--r-pill: 999px;
+
+/* type */
+--t-2xs: clamp(9px, .70vw, 13px);
+--t-xs:  clamp(10px, .80vw, 15px);
+--t-sm:  clamp(11px, .92vw, 17px);
+--t-md:  clamp(12px, 1.05vw, 20px);
+--t-lg:  clamp(15px, 1.30vw, 26px);
+--t-xl:  clamp(18px, 1.65vw, 33px);
+--t-2xl: clamp(21px, 2.05vw, 42px);
+--t-hero:clamp(25px, 2.95vw, 60px);
+` ` `
+
+Global: white text, `letter-spacing: .02em`, `-webkit-font-smoothing: antialiased`, `html` fallback bg `#8d8a86`.
+
+---
+
+## 3) Liquid glass system (critical — this IS the look)
+
+### Rules of the material
+1. **Frosted glass** = semi-transparent fill + `backdrop-filter: blur(...)` (+ often `saturate` / `brightness`) + **inset white highlight stroke** via `box-shadow: inset 0 …` + soft outer shadow.
+2. **Main `.window` must NOT use `backdrop-filter`.** If it does, it becomes a backdrop root and child panels only sample the flat tint — glass dies. Window is only `background: rgba(106,98,94,.40)` + `box-shadow: inset 0 0 0 1px rgba(255,255,255,.36), 0 18px 48px rgba(0,0,0,.10)`.
+3. Panels frost the **page background** through the translucent window.
+4. Specular “liquid” rim: thin inset white edge (`.5px–1px`), never heavy borders.
+5. Prefer cool-white frosts over milky overlays — panels use ~10% white, not 14%+.
+
+### Exact glass recipes
+
+**Safari toolbar**
+- Fill: `rgba(132,126,125,.44)`
+- `backdrop-filter: blur(34px) saturate(1.05)`
+- Shadow: `inset 0 1.5px 0 rgba(255,255,255,.18), 0 24px 54px rgba(0,0,0,.16)`
+- Pill radius 999px
+
+**URL field (inner dark glass)**
+- `rgba(30,30,30,.32)`, pill, centered “🔒 steary.com”
+- Left: “AA” text-size control; right: refresh icon
+- Circles around back/forward: `rgba(255,255,255,.30)`
+
+**Left rail (desktop vertical)**
+- `rgba(100,95,90,.34)`, `blur(30px)`
+- `inset 0 0 0 .5px rgba(255,255,255,.28), 0 26px 56px rgba(0,0,0,.16)`
+- Active icon: circular `rgba(255,255,255,.32)`
+
+**Floating bottom rail (≤1130px) — richest liquid glass**
+` ` `
+background:
+  linear-gradient(135deg, rgba(255,255,255,.20), rgba(255,255,255,.075) 48%, rgba(255,255,255,.12)),
+  rgba(58,53,51,.30);
+box-shadow:
+  inset 0 1px 0 rgba(255,255,255,.42),
+  inset 0 -1px 0 rgba(255,255,255,.08),
+  0 2px 5px rgba(24,20,18,.10),
+  0 18px 44px rgba(24,20,18,.24);
+backdrop-filter: blur(38px) saturate(1.45) brightness(1.08);
+` ` `
+Plus `::before` top specular band (blurred white gradient) and `::after` soft oval highlight top-left. Active icon: `linear-gradient(145deg, rgba(255,255,255,.46), rgba(255,255,255,.22))` with inset highlight.
+
+**Content panels (New Releases / Continue Reading)**
+` ` `
+background: rgba(240,250,255,.10);
+backdrop-filter: blur(12px);
+border-radius: var(--r-lg);
+/* NO side border, NO outer drop shadow on panel */
+` ` `
+
+**Glass chips / See all / hero arrows / movie-card chips**
+- White translucent pills + `backdrop-filter: blur(12–16px)` + optional inset shine
+
+**Search pill:** `rgba(0,0,0,.12)`  
+**Active tab Discover:** `rgba(255,255,255,.16)` pill  
+**Bell:** circle `rgba(255,255,255,.10)` + green badge `#59E6B6`  
+**Profile pill:** `rgba(255,255,255,.14)` + inset shine
+
+---
+
+## 4) Typography & microcopy (exact strings)
+
+Font: Helvetica Neue stack. Mostly **weight 300–500** (light/air). Letter-spacing often `.04–.055em` on chrome labels.
+
+**Toolbar URL:** `steary.com`
+
+**Tabs:** Discover (active), Fiction, Non-fiction, Mystery, More
+
+**Search:** “Search books”
+
+**Profile:** name `Arfi Maulana`, handle `@arfimaulana_`
+
+**New Releases** — header “New Releases”, sort `Sort by: Latest`
+1. Fourth Wing — Rebecca Yarros  
+2. Iron Flame — Rebecca Yarros  
+3. The Housemaid — Freida McFadden  
+4. Project Hail Mary — Andy Weir  
+5. Tomorrow, and Tomorrow, and Tomorrow — Gabrielle Zevin  
+6. Yellowface — R. F. Kuang  
+Each row: cover | title+author | bookmark outline icon
+
+**Continue Reading**
+1. Atomic Habits — James Clear — **56%**  
+2. The Midnight Library — Matt Haig — **32%**  
+3. Educated — Tara Westover — **18%**  
+4. Sapiens — Yuval Noah Harari — **71%**  
+5. The Psychology of Money — Morgan Housel — **43%**  
+6. Circe — Madeline Miller — **24%**  
+Progress bar: track `rgba(255,255,255,.22)`, fill `rgba(255,255,255,.9)`, pill radius
+
+**Hero**
+- Chips: `Editor's Pick` · `Dark Fantasy` · `Mystery`
+- Title: **The Starless Archive**
+- Author: Elian Voss
+- Desc: `Beneath a drowned city, a disgraced archivist discovers a library that remembers every future erased from the stars.`
+- Buttons: white pill **Read Now** (book icon) · outline **Save** · outline ⋯ circle
+- Bottom-right: two glass circle chevron arrows (left dimmed `.45`, right full white)
+
+Hero overlays:
+- Left shade: `linear-gradient(90deg, rgba(2,5,10,.74) 0%, … transparent at ~76%)`
+- Bottom shade: soft fade from transparent mid to `.18` at bottom
+- Text shadow on title/author/desc for legibility
+
+Hero scales via **container query** on `.hero` with unit `--u: min(1cqi, 2.3cqh)` — all hero metrics are multiples of `--u` so the composition zooms as one unit.
+
+**You might like** + glass **See all**
+
+Cards (5), each with genre chip, title, author, rating `X.X ★` (star `#f5b72e`), ⋯ glass button top-right, white circular bookmark bottom-right, bottom gradient fade to dark:
+
+| Title | Author | Genre | Rating | Fallback gradient |
+|---|---|---|---|---|
+| Dune | Frank Herbert | Sci-Fi | 4.6 | `#8a4a2c → #5c3a30 → #20242f` |
+| The Hobbit | J.R.R. Tolkien | Fantasy | 4.8 | `#57636b → #39424a → #191d24` |
+| The Silent Patient | Alex Michaelides | Mystery | 4.3 | `#2b3fa0 → #5a2c8f → #171a3a` |
+| Lessons in Chemistry | Bonnie Garmus | Fiction | 4.5 | `#7c7466 → #4c5158 → #171b22` |
+| The Book Thief | Markus Zusak | Fiction | 4.6 | `#665443 → #3d3028 → #171515` |
+
+Card fade:
+` ` `
+linear-gradient(180deg,
+  transparent 0% 50%,
+  rgba(8,10,15,.16) 57%,
+  rgba(8,10,15,.58) 72%,
+  rgba(8,10,15,.88) 100%)
+` ` `
+
+Default ~4 cards visible width; at strip ≥700px switch to 5 slimmer cards. Aspect ~`.821` portrait.
+
+---
+
+## 5) Animations & interaction (exact — there are NO looping keyframes)
+
+Do **not** invent continuous floating/shimmer animations. Motion is interaction-only:
+
+1. **Rail icons (tablet/floating):**  
+   - hover → `background rgba(255,255,255,.16)` (`.18s`)  
+   - active press → `scale(.94)` (`.16s`)  
+   - selected → bright liquid gradient fill
+
+2. **Mobile hamburger:** 3 lines morph to X — lines 1/3 rotate ±45° with translate, middle fades (`.22s` / `.16s`)
+
+3. **Mobile menu panel:**  
+   - closed: `opacity:0; visibility:hidden; transform: translateY(-8px) scale(.98)`  
+   - open: fade + `translateY(0) scale(1)`  
+   - easing: `opacity .18s`, `transform .22s cubic-bezier(.2,.8,.2,1)`
+
+4. **Mobile menu items:** hover lighten, `:active scale(.98)`
+
+5. **JS (only):** toggle mobile menu; sync tab active state; close on outside click / Escape / resize >520px
+
+Optional subtle polish allowed: hover opacity on cards — but keep the restrained Apple feel; no bounce, no glow pulse, no purple neon.
+
+---
+
+## 6) Responsive breakpoints (must match)
+
+| Breakpoint | Behavior |
+|---|---|
+| ≤1180 | Side col slightly wider; hide profile handle |
+| ≤1130 | Collapse gutters; **rail becomes fixed horizontal floating glass dock** at bottom center (`translateX(-50%)`) |
+| ≤900 | Body becomes single column scroll: **Hero → (New Releases \| Continue Reading side-by-side) → You might like**. Hide profile text |
+| ≤680 | Hide inactive tabs; hide some toolbar icons |
+| ≤520 | Phone: search + hamburger only in header; glass dropdown menu with Browse + Your library grids; denser hero/cards; horizontal snap-scroll recommendation shelf |
+
+Also: CSS **container queries** on trailer/hero/cards for internal scaling (cqi/cqmin). Hide “Sort by:” label when panel <~170px wide.
+
+---
+
+## 7) Technical constraints
+
+- Single HTML file preferred
+- Fluid layout: `clamp()`, CSS Grid, nested flex, container queries — **no fixed 1440 artboard**
+- Desktop: window fills remaining viewport height; lists clip/scroll internally (`scrollbar-width: none`)
+- All icons: inline SVG, white strokes ~2.2–3.2
+- Cursor pointer on interactive chrome
+- Accessibility: aria-labels on toolbar/rail/menu
+
+---
+
+## 8) Visual quality bar / anti-patterns
+
+**Match:** warm stone glass, soft blur of real room photo behind, white light type, pill Safari chrome, quiet luxury streaming UI.
+
+**Avoid:** purple-on-white gradients, Inter/Roboto as primary, flat solid cards without frost, backdrop-filter on the outer window, heavy drop shadows on every panel, emoji, neon glows, dark-mode pure black chrome.
+
+---
+
+## 9) Acceptance checklist
+
+- [ ] Blurred study background visible through frosted panels  
+- [ ] Safari pill toolbar with `steary.com`  
+- [ ] Vertical glass rail (desktop) / floating liquid dock (≤1130)  
+- [ ] Window tint without blocking child backdrop-filters  
+- [ ] New Releases + Continue Reading lists with real titles/%  
+- [ ] Hero with chips, title, CTAs, glass arrows  
+- [ ] 5 “You might like” cards with fade + chip + rating  
+- [ ] Helvetica Neue stack, light weights, airy letter-spacing  
+- [ ] Mobile menu open/close animation only (no looping FX)  
+- [ ] Placeholders OK for all images as long as layout/glass/type match  
+
+**Output:** complete working `index.html` that looks like a visionOS book app preview inside Safari chrome.
+
+---
+
+That prompt encodes the real structure, glass recipes, copy, breakpoints, and motion. Image/font files are deliberately described as placeholders so another model can recreate the look without your local assets.

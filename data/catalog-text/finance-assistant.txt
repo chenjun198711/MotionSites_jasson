@@ -1,0 +1,131 @@
+Recreate EXACTLY this single-file HTML/CSS finance dashboard UI (title: "Wealth — Dashboard"). Pixel-faithful Motionsites / wealth-app style. No frameworks. Pure HTML + CSS. Design canvas ratio 1341×958. Scale everything with CSS variable:
+--u: min(100vw/1341, 100vh/958)
+Margins --m = 22u, gutter --g = 8u. Dark near-black stage #050605 / #060704 / #050604. NO dark veil/scrim over the hero photo (.veil { display:none }).
+
+════════════════════════════════════
+ASSETS (use these exact URLs)
+════════════════════════════════════
+1) Full-bleed hero portrait background (.bg uses background-size:cover, center):
+https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260730_094904_4a6cc87c-f65a-4838-8512-a8fb71943db9.png
+(Cinematic night photo of a woman in a dark knit sweater looking right toward a bokeh city skyline through a window; warm face light, cool city lights.)
+
+2) Growth card city skyline background:
+https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260730_095033_aeb84f6c-424c-4db6-81dc-fd401c670c8b.png
+(Vertical soft-focus night cityscape, navy/teal sky, yellow/white/red bokeh lights.)
+
+3) Circular account avatar (CSS border-radius:50%, cover):
+https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260730_095032_1ec7da6d-65a0-4ba5-a446-5f9e41d657aa.png
+(Smiling man with light brown hair, outdoor bokeh background.)
+
+4) Emoji / sticker to the RIGHT of headline "Hey, Need help?" (30u × 34u, contain, no-repeat):
+https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260730_100528_462fa6c5-c3cb-4e7e-82a7-27d23c7bb316_min.png&w=384&q=85
+
+CSS custom properties:
+--portrait: url(<asset1>);
+--city: url(<asset2>);
+--avatar: url(<asset3>);
+--emoji: url(<asset4>);
+--hero-tail: #070806;
+--track: #373a34;
+--card-line: rgba(255,255,255,.055);
+--font: 'Roboto','Helvetica Neue',"Segoe UI",system-ui,Arial,sans-serif;
+(Original embeds Roboto as 'RobotoE' woff2 weights 300/400/500/600 — use real Roboto with those weights.)
+
+════════════════════════════════════
+FONT / TYPE
+════════════════════════════════════
+Font family: Roboto (weights 300, 400, 500, 600). Antialiased.
+Exact copy & hierarchy:
+- Brand "Wealth" — 15.5u, weight 600, #f2f2f2, tracking -0.2u; under it "Dashboard" — 11.5u, muted gray
+- Center headline "Hey, Need help?" — ~26u, weight 400, #fff, tracking -0.29u; emoji sits at left: calc(50% + 79.5u)
+- Subhead "Just ask me anything" — ~38u, weight 300, #bdbab6, tracking +0.26u
+- Account "Alvie Wahed" 15.5u/500 #f4f4f4; "Product Manager" 11.5u #8f918e
+- Card titles 21u #f0efee tracking -0.85u; meta "Last 7 days" 13.5u #7c7d7c
+- Big numbers #fbfbfa (e.g. 27–30u); foot notes #9a9c99; positive foot #8fce9d
+All money in USD (not INR): $1,013 / $1.70k / $1.2k / $1.8k / $1.58k / $1,039 / $541
+
+════════════════════════════════════
+GLASS / MATERIAL SYSTEM (critical)
+════════════════════════════════════
+Cards (.card):
+border-radius 24u;
+background rgba(255,255,255,.107);
+border 1u solid rgba(255,255,255,.055);
+box-shadow: 0 10u 22u rgba(0,0,0,.20), inset 0 1u 0 rgba(255,255,255,.045);
+backdrop-filter: blur(30u); -webkit-backdrop-filter: blur(30u);
+
+Toolbar chips (.tb): height 38u, radius 19u, dual-layer gradient border (transparent border + gradient border-box), soft white→black fill gradient, blur(12u) saturate(1.03), text #e8e8e6 11u.
+
+Nav circles (.nav): 50u round, nearly clear fill rgba(0,0,0,.008), border rgba(255,255,255,.085), blur(10u). Active (.nav.on): solid #fdfdfd, dark icons #141414, shadow 0 4u 16u rgba(0,0,0,.55). Inactive icons stroke #f2f2f2.
+
+Plus button: 48u circle, border rgba(255,255,255,.16), fill rgba(0,0,0,.032), blur(10u).
+
+Growth icon discs (.gi): glass discs with radial fill + rotating conic-gradient faux border (white alpha ring), blur(6u), white SVG glyphs. One larger "big" disc for the bar-chart icon.
+
+Insights pills: small chart icon + label "Insights", muted #c6c8c4.
+
+════════════════════════════════════
+DESKTOP LAYOUT (bottom-anchored grid)
+════════════════════════════════════
+Left vertical rail (top ~85u, left 26u): 5 circular nav icons stacked gap 6u — Home (active white), Profile, Analytics bars, Notes clipboard, Network/users.
+
+Top-left: green circular logo 48u (radial #8fd6a4→#6cbe86→#57ad74) with white abstract “W/wealth” SVG mark; brand text to its right.
+
+Top-right account cluster: plus | circular avatar | name/role.
+
+Hero text centered over the woman’s face area; no dark overlay so photo stays bright.
+
+Toolbar floating above the card grid (bottom: gridH + bm + 15u, right 26u):
+[search] [edit] [date chip "15 – 28 July, 2026" with chevron] | [+ Add Wallet] [Create a Report]
+
+Bottom card grid (4 columns, bottom margin 24u):
+Row1 height 257u: Spending | Income | Portfolio | Growth (Growth spans full grid height 495u)
+Row2 height 230u: Wealth Score | Cash Flow (Growth already occupying right column)
+
+Card #1 Spending:
+- Teal tile icon gradient 150deg #2c5351→#3f6e64→#7fb09c, wallet SVG
+- Rows: Essentials 70% / Shopping 50% / Dining 30% with dark track #373a34 and green fill gradient #72bb89→#77c18c (bar widths ~75% / 53% / 34%)
+- Big "$1,013" + "Total Spent" with tag icon
+
+Card #2 Income:
+- Greener tile #3e5635→#547243→#a8d275
+- 3 vertical green bars (heights ~50/73/96u) labels "50K" "$1.2k" "$1.8k"
+- Big "$1.70k" + green "+18% from last week" with up-arrow
+
+Card #3 Portfolio:
+- Teal tile #35605c→#437470→#639a88, pie SVG
+- Horizontal stack bar: Stocks green 55% | Funds olive 30% | Cash yellow-olive 15% (flex ~139/77/60)
+- Big "+12.8%" + "1.6% vs last week"
+
+Card Growth (#g1) tall right:
+- City photo background, radius 26u, border rgba(255,255,255,.10), deep shadow
+- Top row of 7 frosted circular category icons (bank/card/pie/bars/kanban/badge/target)
+- Label "Growth"; soft olive radial glow; donut ring conic-gradient from 0deg: #d2dc4f 0–235deg then #5f9c6c to 360deg, masked to thin ring; center "68%"
+- Legend: green "Wealth" + yellow "Savings"
+- Title "Balanced Wealth & Savings"; sub "Overall Financial Health Index"
+
+Card #4 Wealth Score:
+- "Wealth Score" / centered "87" / "Strong" / "+5 vs weekly average York"
+- 10 segment bar (7 green, 1 yellow-green, 2 translucent white)
+- Score Avg 7.2h | Progress 82% | Insights
+
+Card #5 Cash Flow:
+- "Cash Flow" / "73" / "Healthy" / "Deep Work 14.5h"
+- In bar full green → $1.58k; Out bar ~55% yellow-green → $1,039
+- Avg Cash Inflow $1.58k | Savings $541 | Insights
+
+════════════════════════════════════
+RESPONSIVE
+════════════════════════════════════
+Tablet portrait (max-aspect 1/1, min-width 700, min-height 960): 2-col grid, --u from 688×1392.
+Mobile (max-aspect 1/1 and max-width 699 or max-height 959): single column scroll; hero ~480u; stacked headline; toolbar wraps; nav becomes floating bottom glass dock (blur 24u saturate 1.25, rgba white fill, radius 36u). Still no veil.
+
+════════════════════════════════════
+IMPLEMENTATION RULES
+════════════════════════════════════
+- Single index.html, absolute positioning with calc(* var(--u)), isolation on stage.
+- Glass must read as real frosted glass over the photo (backdrop-filter required).
+- Exact strings, USD figures, colors, radii, and asset URLs above — do not invent replacements.
+- Match iconography with simple inline SVGs (home, user, bars, clipboard, network, search, pencil, calendar, plus, wallet tiles, insights, up-arrows).
+- Output production-ready HTML/CSS that looks identical on a ~1341×958 desktop viewport.
+` ` `

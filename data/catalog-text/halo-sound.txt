@@ -1,0 +1,920 @@
+# Reproduction Prompt — "Halo S1" scroll-scrubbed WebGL hero
+
+Build a **single static HTML file** (`index.html`) containing all markup, CSS and JavaScript inline.
+No build step, no framework, no npm, no external JS libraries. Fonts come from Google Fonts, the two
+background videos stream from CloudFront by URL.
+
+The page is one full-viewport hero: two motion-controlled twin video clips scrubbed by scroll, with a
+WebGL pixel-dissolve transition between them, under a fixed typographic overlay in mint green.
+
+---
+
+## 0. Non-negotiable invariants
+
+Read this section before writing any code. Each item below is a thing that silently breaks the page
+if you deviate.
+
+1. **The page has no scrolling content.** `.stage`, `.overlay` are `position: fixed`. All scroll
+   length comes from one empty `.driver { height: 260vh }` element. Scroll position is the only
+   clock in the entire page.
+
+2. **Never animate `font-size` or layout properties on scroll.** The title shrink is
+   `transform: scale()` only.
+
+3. **`pow(max(sin(x), 0.0), 0.7)` — the `max()` is load-bearing.** `3.14159265` rounds *up* to
+   `3.14159274` in float32, which is greater than π. At `lt = 1` the sine lands at ≈ `-8.7e-8`, and
+   `pow()` of a negative base is undefined in GLSL — it returns NaN, which blackens the entire
+   fragment. Removing the `max()` produces a growing black blob from the centre of the screen.
+
+4. **Draw every animation frame. Gate the texture upload, never the draw.** See §8.3. A
+   "render only when dirty" optimisation freezes the picture outside the transition window, because
+   outside it the progress uniform is clamped constant and stops marking the canvas dirty.
+
+5. **Never detect "new video frame" by comparing `video.currentTime`.** `currentTime` returns the
+   *seek target* the instant it is assigned, not the time of the frame actually presented. During a
+   scrub the video is in `seeking` state ~90 % of the time, so a `currentTime`-based comparison
+   reports "unchanged" and starves the upload. Use `requestVideoFrameCallback`.
+
+6. **Hide the source videos with `opacity: 0`, never `display: none` or `visibility: hidden`.**
+   The latter two suspend the decoder, and then there is no frame to upload to the textures.
+
+7. **Both `<video>` elements need `crossorigin="anonymous"`** or WebGL refuses the texture upload.
+   The CDN returns `access-control-allow-origin: *`, but **only when the request carries an `Origin`
+   header** (`vary: Origin`) — a plain `curl -I` shows no CORS headers and is misleading.
+
+8. **`crossorigin` is a hard failure mode.** If a future clip is hosted somewhere without CORS
+   headers, the attribute makes the video fail to load *entirely*. Ship the guard in §9.1.
+
+9. **Serve over HTTP, not `file://`.** Opening the file directly blocks the remote video load. Use
+   any static server (`npx serve . -l 5176`).
+
+10. **`bindAttribLocation` must be called before `linkProgram`.**
+
+11. **The video textures are NPOT** (1928×1076 and 1936×1072). In WebGL1 that is legal only with
+    `CLAMP_TO_EDGE` wrapping and a non-mipmap min filter. Do not call `generateMipmap`.
+
+12. **`gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true)`** — without it the video renders upside down.
+
+---
+
+## 1. Layer map
+
+` ` `
+<body>  background #000
+│
+├── .stage                       position: fixed; inset 0 / 100vh; z-index: 0
+│   ├── video.stage__video--a    absolute inset 0; object-fit: cover   (lake)
+│   ├── video.stage__video--b    absolute inset 0; object-fit: cover   (city)
+│   │                            opacity: var(--fade, 0)   ← fallback path only
+│   └── canvas.stage__gl         absolute inset 0; the composited GL result
+│                                display: none unless .stage has .is-gl
+│
+├── .overlay                     position: fixed; inset 0; z-index: 10
+│   │                            flex column, justify-content: space-between
+│   │                            pointer-events: none
+│   ├── .overlay__top            flex row, space-between, align-items: flex-start
+│   │   ├── h1.title             oversized serif wordmark, scales down on scroll
+│   │   └── a.reserve            outlined pill, pointer-events: auto
+│   └── .overlay__bottom         grid, 12 columns, align-items: end
+│       ├── p.note               cols 1–3
+│       ├── ul.specs             cols 3–6
+│       └── div.about            cols 9–13
+│
+└── .driver                      height: 260vh — invisible, supplies scroll length
+` ` `
+
+When WebGL initialises, JS adds `.is-gl` to `.stage`. That single class swaps the page from the
+CSS-crossfade fallback to the GL pixel dissolve. Everything degrades gracefully if it never lands.
+
+---
+
+## 2. Document head
+
+` ` `html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Halo S1</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500&display=swap" rel="stylesheet">
+` ` `
+
+Two families only:
+
+- **Instrument Serif** — display face, weight 400, used exclusively for `.title`.
+- **Inter Tight** — everything else, weights 400 and 500.
+
+---
+
+## 3. Base & tokens
+
+` ` `css
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overscroll-behavior: none;   /* kills the macOS rubber-band bounce */
+  background: #000;
+}
+
+html {
+  font-size: 15px;             /* the whole rem scale is built on 15px, not 16px */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: 'Inter Tight', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+  color: var(--ink);
+  line-height: 1.3;
+}
+
+:root {
+  --progress: 0;                   /* 0 → 1, written by JS on every scroll event */
+  --grid-margin: 1.6rem;           /* 24px */
+  --grid-gutter: 1.3333333333rem;  /* 20px */
+  --ink: #00DEAA;                  /* all type + the pill border */
+}
+` ` `
+
+`--progress` and `--title-min-scale` are written to `document.documentElement.style` from JS.
+`--fade` is written only on the non-WebGL fallback path.
+
+---
+
+## 4. Stage
+
+` ` `css
+.stage {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 0;
+  background: #000;
+}
+
+.stage__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Fallback path only — a plain opacity crossfade used when WebGL is unavailable.
+   No CSS transition: the scroll is the only clock. The fallback value of 0 keeps
+   only A visible before JS runs and permanently under prefers-reduced-motion. */
+.stage__video--b { opacity: var(--fade, 0); }
+
+.stage__gl {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.stage:not(.is-gl) .stage__gl { display: none; }
+
+/* Once GL owns the picture the video elements are only frame sources. */
+.stage.is-gl .stage__video { opacity: 0; }
+` ` `
+
+---
+
+## 5. Overlay & typography
+
+` ` `css
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.6rem var(--grid-margin) 1.9rem;
+
+  color: var(--ink);
+  pointer-events: none;
+}
+
+.overlay a { color: inherit; text-decoration: none; }
+
+.overlay__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--grid-gutter);
+}
+
+.title {
+  margin: 0;
+  font-family: 'Instrument Serif', 'Times New Roman', serif;
+  font-weight: 400;
+  font-size: clamp(44px, 13.6vw, 200px);
+  line-height: 0.78;
+  letter-spacing: -0.01em;
+  margin-left: -0.045em;      /* optical: cancels the serif side bearing at the page edge */
+  white-space: nowrap;
+
+  transform-origin: left top;
+  transform: scale(calc(1 - (1 - var(--title-min-scale, 1)) * var(--progress)));
+  will-change: transform;
+}
+
+.reserve {
+  flex: none;
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  height: 3.6rem;
+  padding: 0 2.2rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  background: transparent;
+  font-size: 1.25rem;
+  letter-spacing: -0.011em;
+  white-space: nowrap;
+}
+.reserve:focus-visible { outline: 1px solid currentColor; outline-offset: 4px; }
+
+/* align-items: end is what puts note, specs and the last line of about
+   on one shared baseline. */
+.overlay__bottom {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--grid-gutter);
+  align-items: end;
+}
+
+.note  { grid-column: 1 / 3; }
+.specs { grid-column: 3 / 6; }
+.about { grid-column: 9 / 13; }
+
+.note, .specs {
+  margin: 0;
+  font-size: 1.05rem;          /* ≈16px */
+  line-height: 1.3;
+  letter-spacing: -0.006em;
+}
+
+.note__em { text-decoration: underline; text-underline-offset: 0.2em; }
+
+.specs { padding: 0; list-style: none; }
+.specs li::before { content: '\2022\00a0'; }   /* bullet + non-breaking space */
+
+.about__label {
+  margin: 0 0 0.9rem;
+  font-size: 1.2rem;
+  letter-spacing: -0.006em;
+  opacity: 0.6;
+}
+
+.about__text {
+  margin: 0;
+  font-size: clamp(20px, 2.6vw, 38px);
+  line-height: 1.16;
+  letter-spacing: -0.017em;
+  max-width: 26ch;
+}
+
+.driver { height: 260vh; }
+` ` `
+
+**No hover states anywhere.** The only interaction state in the whole page is
+`.reserve:focus-visible`.
+
+There is **no blend mode**. Type is flat `--ink` over the video.
+
+---
+
+## 6. Body markup — copy verbatim
+
+` ` `html
+<body>
+
+<div class="stage">
+  <video
+    class="stage__video stage__video--a"
+    src="https://d8j0ntlcm91z4.cloudfront.net/user_3GJaYKPxdnQG0Q9O26lu6DPmcHu/hf_20260804_164427_78ef2a38-8ea4-4302-8385-0569dc924e41.mp4"
+    crossorigin="anonymous"
+    autoplay muted loop playsinline preload="auto"
+    aria-hidden="true" tabindex="-1"></video>
+  <video
+    class="stage__video stage__video--b"
+    src="https://d8j0ntlcm91z4.cloudfront.net/user_3GJaYKPxdnQG0Q9O26lu6DPmcHu/hf_20260804_185805_e19cc819-d76c-4ce0-858a-e83be3c20fea.mp4"
+    crossorigin="anonymous"
+    autoplay muted loop playsinline preload="auto"
+    aria-hidden="true" tabindex="-1"></video>
+  <canvas class="stage__gl" aria-hidden="true"></canvas>
+</div>
+
+<div class="overlay">
+  <div class="overlay__top">
+    <h1 class="title">Halo S1</h1>
+    <a class="reserve" href="#">Reserve</a>
+  </div>
+
+  <div class="overlay__bottom">
+    <p class="note">Scroll to run<br><span class="note__em">the film.</span></p>
+
+    <ul class="specs">
+      <li>Chrome &amp; Onyx</li>
+      <li>Planar Magnetic $600</li>
+    </ul>
+
+    <div class="about">
+      <p class="about__label">About</p>
+      <p class="about__text">The first studio headphone built for the street. Sound you've never heard outside a mixing room.</p>
+    </div>
+  </div>
+</div>
+
+<div class="driver" aria-hidden="true"></div>
+` ` `
+
+All copy strings, verbatim, including the apostrophe in `you've` and the `$` in `$600`:
+
+| Slot | Text |
+|---|---|
+| `<title>` | `Halo S1` |
+| `.title` | `Halo S1` |
+| `.reserve` | `Reserve` |
+| `.note` | `Scroll to run` / *(line break)* / `the film.` (second line underlined) |
+| `.specs` li 1 | `Chrome & Onyx` |
+| `.specs` li 2 | `Planar Magnetic $600` |
+| `.about__label` | `About` |
+| `.about__text` | `The first studio headphone built for the street. Sound you've never heard outside a mixing room.` |
+
+---
+
+## 7. Responsive
+
+` ` `css
+@media (max-width: 1023px) {
+  :root { --grid-margin: 1.3333333333rem; }   /* 20px */
+
+  /* About lifts onto its own row, note + specs sit underneath.
+     The explicit grid-row is REQUIRED — without it auto-placement follows DOM
+     order and drops About below the other two. */
+  .about { grid-column: 1 / 13; grid-row: 1; margin-bottom: 1.6rem; }
+  .note  { grid-column: 1 / 5;  grid-row: 2; }
+  .specs { grid-column: 5 / 10; grid-row: 2; }
+
+  .about__text { max-width: 32ch; }
+  .reserve { height: 3.2rem; padding: 0 1.7rem; font-size: 1.1rem; }
+}
+
+@media (max-width: 699px) {
+  .overlay { padding-bottom: 1.6rem; }
+  .title { letter-spacing: 0; }
+
+  .note  { grid-column: 1 / 13; grid-row: 2; margin-bottom: 0.9rem; }
+  .specs { grid-column: 1 / 13; grid-row: 3; }
+
+  .reserve { min-height: 44px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .driver { height: 100vh; }
+}
+` ` `
+
+Reference measurements at **1470 × 827**, for checking the reproduction:
+
+| Element | Value |
+|---|---|
+| `.title` font-size | 199.92px, box height 155.9px, line width ≈ 36 % of viewport |
+| `.reserve` height | 54px, top edge y = 24 (same as the title's top edge) |
+| `.about` left edge | x = 985 ≈ **67 % of viewport width** |
+| `.note` / `.specs` / `.about` bottom edge | all exactly **799** — one shared baseline |
+| `--title-min-scale` | ≈ 0.346 |
+
+At 375 px wide the title is 51px and `--title-min-scale` clamps to exactly `1` (the title is already
+shorter than the pill, so it must not scale at all).
+
+---
+
+## 8. The engine
+
+One IIFE at the end of `<body>`. Order matters: measure → prime decoders → init GL → start rAF.
+
+### 8.1 Scroll progress and the scrub
+
+` ` `js
+var root  = document.documentElement;
+var vidA  = document.querySelector('.stage__video--a');   // lake — the lead video
+var vidB  = document.querySelector('.stage__video--b');   // city — revealed by the dissolve
+var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+var progress  = 0;   // 0 → 1 scroll position
+var current   = 0;   // smoothed playhead, shared by both videos
+var metaReady = false;
+var SCRUB_END = 6;   // scroll 0→1 maps onto this many seconds, not the full clip
+
+function readProgress() {
+  var max = root.scrollHeight - window.innerHeight;
+  progress = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+  root.style.setProperty('--progress', progress.toFixed(4));
+}
+
+window.addEventListener('scroll', readProgress, { passive: true });
+window.addEventListener('resize', readProgress);
+readProgress();
+
+// Reduced motion: video A keeps its native autoplay loop, nothing is scrubbed.
+// Leaving --title-min-scale unset lets the CSS fallback of 1 hold the title still,
+// and --fade unset keeps B invisible, so pause B to spare the decoder.
+if (reduce.matches) { vidB.pause(); return; }
+` ` `
+
+**Playhead smoothing**, frame-rate independent so it feels identical at 60 Hz, 120 Hz, or when rAF
+is throttled:
+
+` ` `js
+var dt = Math.min(0.1, (now - last) / 1000);
+last = now;
+
+var cap    = Math.min(SCRUB_END, vidA.duration - 0.05);
+var target = progress * cap;
+current += (target - current) * (1 - Math.exp(-dt * 8));
+if (Math.abs(target - current) < 0.002) current = target;
+` ` `
+
+**Seeking** — one seek at a time per video, or the decoder stalls:
+
+` ` `js
+function seekTo(v, t) {
+  if (!v.seeking && v.readyState >= 2 && Math.abs(v.currentTime - t) > 0.01) {
+    v.currentTime = t;
+  }
+}
+seekTo(vidA, current);
+seekTo(vidB, current);
+` ` `
+
+Both videos chase the same `current`, so they stay frame-locked and the dissolve window always has a
+live picture on both layers. Measured drift: **0.000–0.002 s**.
+
+**Decoder priming** — autoplay-then-pause is required on iOS/Safari before seeking works at all, and
+the tiny seek forces the first frame to paint:
+
+` ` `js
+function prime(v) {
+  v.addEventListener('loadedmetadata', function () {
+    if (v === vidA) metaReady = true;   // A is the lead — it gates the whole loop
+    var p = v.play();
+    if (p && p.then) p.then(function () { v.pause(); }).catch(function () {});
+    else v.pause();
+    v.currentTime = 0.001;
+  }, { once: true });
+  v.addEventListener('play', function () { if (metaReady) v.pause(); });
+}
+prime(vidA);
+prime(vidB);
+` ` `
+
+### 8.2 Title shrink
+
+The title scales down until its box height equals the Reserve pill's height exactly, driven by the
+same `--progress` as the video, **linearly** — the two must read as one gesture.
+
+` ` `js
+var title   = document.querySelector('.title');
+var reserve = document.querySelector('.reserve');
+
+function measureTitleScale() {
+  // offsetHeight is the LAYOUT height and ignores transforms, unlike
+  // getBoundingClientRect(), which would report the already-scaled box.
+  var th = title.offsetHeight, bh = reserve.offsetHeight;
+  // Clamped to 1: on narrow screens the title is already shorter than the pill,
+  // and without the clamp it would GROW on scroll instead of shrinking.
+  root.style.setProperty('--title-min-scale', th > 0 ? Math.min(1, bh / th).toFixed(4) : 1);
+}
+
+window.addEventListener('resize', measureTitleScale);
+measureTitleScale();
+` ` `
+
+Because both elements start at the same `y` and the origin is `left top`, at full scroll the title
+and the pill end up the same height and top-aligned — a compact header row.
+
+### 8.3 Render loop — draw always, upload on real frames
+
+> This is a **deliberate correction of the source**, not a copy of it. The original gated the draw
+> call behind a `glDirty` flag and detected new frames by comparing `video.currentTime`. Measured
+> result: **22 draws / 17 uploads inside the transition window, but 0 draws / 0 uploads outside it**
+> — the picture froze for most of the page. Implement it as written here.
+
+` ` `js
+var needA = true, needB = true;
+
+function watchFrames(v, mark) {
+  if (v.requestVideoFrameCallback) {
+    var step = function () { mark(); v.requestVideoFrameCallback(step); };
+    v.requestVideoFrameCallback(step);
+  } else {
+    // Firefox has no rVFC yet; for a scrub, `seeked` is the accurate signal.
+    v.addEventListener('seeked', mark);
+    v.addEventListener('loadeddata', mark);
+  }
+}
+watchFrames(vidA, function () { needA = true; });
+watchFrames(vidB, function () { needB = true; });
+
+function upload(v, tex, unit, sizeUni) {
+  if (!v.videoWidth) return false;
+  gl.activeTexture(gl.TEXTURE0 + unit);
+  gl.bindTexture(gl.TEXTURE_2D, tex);
+  try { gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, v); }
+  catch (e) { return false; }        // frame not decodable yet
+  gl.uniform2f(sizeUni, v.videoWidth, v.videoHeight);
+  return true;
+}
+
+function renderGL(f) {
+  resizeGL();
+  if (needA && upload(vidA, texA, 0, uni.uTexA)) needA = false;
+  if (needB && upload(vidB, texB, 1, uni.uTexB)) needB = false;
+  gl.uniform1f(uni.uProg, f);
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
+}
+` ` `
+
+A full-screen pass is one triangle and ~10 texture taps per fragment — cheap. The expensive
+operation is uploading two 2K frames to the GPU, and *that* is what the `needA` / `needB` latches
+gate.
+
+The transition progress fed to the shader:
+
+` ` `js
+var f = (current - FADE_START) / (FADE_END - FADE_START);
+f = Math.max(0, Math.min(1, f));
+` ` `
+
+Computed from the **smoothed playhead**, not raw scroll, so the dissolve tracks the frame actually on
+screen — i.e. the gesture in the footage. Passed to the shader **linearly**: the shader already eases
+every block individually, and a second smoothstep here would squash both ends of the window.
+
+### 8.4 Canvas sizing
+
+` ` `js
+function resizeGL() {
+  if (!gl) return;
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
+  var w = Math.max(1, Math.round(canvas.clientWidth * dpr));
+  var h = Math.max(1, Math.round(canvas.clientHeight * dpr));
+  if (canvas.width !== w || canvas.height !== h) {
+    canvas.width = w;
+    canvas.height = h;
+    gl.viewport(0, 0, w, h);
+    gl.uniform2f(uni.uRes, w, h);
+  }
+}
+` ` `
+
+---
+
+## 9. WebGL setup
+
+Request **WebGL 1** (`'webgl'`), not WebGL 2 — the NPOT video textures work fine under WebGL1 with
+clamped wrapping, and compatibility is wider.
+
+` ` `js
+gl = canvas.getContext('webgl', {
+  alpha: false, antialias: false, depth: false, stencil: false
+});
+` ` `
+
+Program setup, in this exact order:
+
+` ` `js
+var prog = gl.createProgram();
+gl.attachShader(prog, vs);
+gl.attachShader(prog, fs);
+gl.bindAttribLocation(prog, 0, 'aPos');   // MUST precede linkProgram
+gl.linkProgram(prog);
+gl.useProgram(prog);
+
+// One oversized triangle covers the viewport — cheaper than a quad.
+gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+gl.enableVertexAttribArray(0);
+gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+
+gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+` ` `
+
+Texture creation (identical for both):
+
+` ` `js
+function makeTex() {
+  var t = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, t);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  // 1x1 black placeholder so sampling is legal before the first video frame lands
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, 1, 1, 0, gl.RGB, gl.UNSIGNED_BYTE,
+                new Uint8Array([0, 0, 0]));
+  return t;
+}
+` ` `
+
+Constant uniforms, set once at init:
+
+` ` `js
+gl.uniform1i(uni.uA, 0);
+gl.uniform1i(uni.uB, 1);
+gl.uniform1f(uni.uBlock,  BLOCK_PX);
+gl.uniform1f(uni.uSpread, SPREAD);
+gl.uniform1f(uni.uBias,   BIAS);
+gl.uniform1f(uni.uWarp,   WARP);
+gl.uniform1f(uni.uSpark,  SPARK);
+gl.uniform2f(uni.uCenter, CENTER_X, CENTER_Y);
+` ` `
+
+`initGL()` must return `false` on **any** failure (no canvas, no context, shader compile error, link
+error). Only when it returns `true` does JS add `.is-gl` to `.stage`. Otherwise the page silently
+stays on the CSS crossfade.
+
+### 9.1 CORS guard — ship this
+
+` ` `js
+function guardCors(v) {
+  v.addEventListener('error', function () {
+    if (!v.hasAttribute('crossorigin')) return;
+    console.warn('video blocked with crossorigin; retrying without it, GL off');
+    v.removeAttribute('crossorigin');
+    useGL = false;
+    stage.classList.remove('is-gl');
+    v.load();
+  });
+}
+guardCors(vidA);
+guardCors(vidB);
+` ` `
+
+Register **before** `initGL()`. A missing-CORS clip with the attribute set fails to load entirely,
+which is worse than losing the effect.
+
+### 9.2 Fallback crossfade
+
+When `useGL === false`, run this instead of `renderGL(f)`:
+
+` ` `js
+if (!bLive && vidB.readyState >= 2) bLive = true;   // latch, not a per-frame check
+
+var s = f * f * (3 - 2 * f);       // smoothstep, only on the fallback path
+if (bLive && s !== lastFade) {
+  root.style.setProperty('--fade', s.toFixed(4));
+  lastFade = s;
+}
+` ` `
+
+`bLive` must be a **latch**. A per-frame `readyState >= 2` check starves the fade, because B is
+mid-seek on almost every frame of a continuous scrub.
+
+---
+
+## 10. The shaders — copy verbatim
+
+### Vertex
+
+` ` `glsl
+attribute vec2 aPos;
+varying vec2 vUv;
+void main(){ vUv = aPos * 0.5 + 0.5; gl_Position = vec4(aPos, 0.0, 1.0); }
+` ` `
+
+### Fragment
+
+` ` `glsl
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
+precision mediump float;
+#endif
+uniform sampler2D uA, uB;
+uniform vec2 uRes, uTexA, uTexB, uCenter;
+uniform float uProg, uBlock, uSpread, uBias, uWarp, uSpark;
+varying vec2 vUv;
+
+float hash(vec2 p){
+  p = fract(p * vec2(123.34, 456.21));
+  p += dot(p, p + 45.32);
+  return fract(p.x * p.y);
+}
+
+float vnoise(vec2 p){
+  vec2 i = floor(p), f = fract(p);
+  f = f * f * (3.0 - 2.0 * f);
+  return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), f.x),
+             mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), f.x), f.y);
+}
+
+// object-fit: cover, per texture (the two clips differ slightly in size)
+vec2 cover(vec2 uv, vec2 tex){
+  float ra = uRes.x / uRes.y;
+  float rt = tex.x / tex.y;
+  vec2 s = ra > rt ? vec2(1.0, rt / ra) : vec2(ra / rt, 1.0);
+  return (uv - 0.5) * s + 0.5;
+}
+
+// Average of the cell, not a single centre tap: one texel out of a 2K frame is
+// noisy and the flat blocks would shimmer.
+vec3 avg4(sampler2D t, vec2 tex, vec2 c, vec2 sz){
+  vec3 s = texture2D(t, cover(c + sz * vec2(-0.25, -0.25), tex)).rgb;
+  s += texture2D(t, cover(c + sz * vec2( 0.25, -0.25), tex)).rgb;
+  s += texture2D(t, cover(c + sz * vec2(-0.25,  0.25), tex)).rgb;
+  s += texture2D(t, cover(c + sz * vec2( 0.25,  0.25), tex)).rgb;
+  return s * 0.25;
+}
+
+void main(){
+  // Nested grid: the coarse cell picks the subdivision level, so every sub-grid
+  // aligns with the coarse one and no block is ever cut in half.
+  vec2 coarseN = uRes / uBlock;
+  vec2 cCell = floor(vUv * coarseN);
+  float lvl = floor(hash(cCell + 3.7) * 3.0);
+  vec2 fineN = coarseN * pow(2.0, lvl);
+  vec2 cell = floor(vUv * fineN);
+  vec2 cSize = 1.0 / fineN;
+  vec2 cMid = (cell + 0.5) * cSize;
+
+  // Threshold: radial sweep out from the headphones, edge roughened by noise,
+  // mixed with per-block scatter.
+  vec2 d = (vUv - uCenter) * vec2(uRes.x / uRes.y, 1.0);
+  float maxR = length(vec2(uRes.x / uRes.y, 1.0) * 0.5) + 0.15;
+  float rad = clamp(length(d) / maxR, 0.0, 1.0);
+  float sweep = clamp(rad + vnoise(vUv * 3.0) * uWarp - uWarp * 0.5, 0.0, 1.0);
+  float thr = mix(hash(cell + lvl * 17.0), sweep, uBias);
+
+  float lt = clamp((uProg - thr * uSpread) / (1.0 - uSpread), 0.0, 1.0);
+
+  // Mosaic bloom: peaks exactly at the flip, so both layers are already flat
+  // colour when they swap and the swap cannot read as a crossfade.
+  // max() is load-bearing — see invariant 3.
+  float mo = pow(max(sin(lt * 3.14159265), 0.0), 0.7);
+  vec3 a = mix(texture2D(uA, cover(vUv, uTexA)).rgb, avg4(uA, uTexA, cMid, cSize), mo);
+  vec3 b = mix(texture2D(uB, cover(vUv, uTexB)).rgb, avg4(uB, uTexB, cMid, cSize), mo);
+  vec3 col = mix(a, b, smoothstep(0.42, 0.58, lt));
+  col += uSpark * exp(-pow((lt - 0.5) * 6.0, 2.0));
+  gl_FragColor = vec4(col, 1.0);
+}
+` ` `
+
+### How the effect reads
+
+Three mechanics stacked:
+
+1. **Nested mixed-calibre grid.** The screen is cut into coarse `uBlock`-sized cells; a hash per
+   coarse cell picks subdivision level 0, 1 or 2 → sub-blocks of 1×, ½× or ¼× the coarse size.
+   Because the levels are powers of two of the same base grid, boundaries always align — you get
+   clusters of chunky slabs next to clusters of fine grit, never a torn half-block.
+
+2. **Per-block threshold.** A radial sweep outward from `uCenter` (the headphones), its edge
+   roughened by value noise, mixed `uBias` against a per-block hash. Each block therefore flips at
+   its own moment. `lt` is that block's local 0→1 progress, staggered by `uSpread`.
+
+3. **Mosaic bloom — the thing that makes it look designed.** `mo` peaks exactly at the block's flip
+   moment. At the peak the block takes the **average colour of its own area** (4 taps), i.e. it
+   collapses to one flat square. The swap `smoothstep(0.42, 0.58, lt)` therefore happens while both
+   layers are already flat colour, so it cannot read as a crossfade — it reads as "that pixel
+   changed colour". Then the block resolves back into detail.
+
+The net visual is a ring of chunky mosaic travelling outward from the centre, with the image
+re-sharpening behind it.
+
+### Tuning constants
+
+` ` `js
+var FADE_START = 4.3;   // video seconds — she starts lifting the headphones off
+var FADE_END   = 5.6;   // video seconds — headphones down, B fully in
+
+var BLOCK_PX = 64.0;    // coarse cell size in CSS px
+var SPREAD   = 0.62;    // how staggered the blocks are in time
+var BIAS     = 0.60;    // radial sweep vs. per-block scatter
+var WARP     = 0.25;    // raggedness of the wave edge
+var CENTER_X = 0.50;    // origin of the sweep — the headphones
+var CENTER_Y = 0.58;    // in vUv space, y measured from the BOTTOM
+var SPARK    = 0.045;   // micro flash at the flip; set to 0 to remove
+` ` `
+
+`SPARK` is the only purely decorative term. It is the first thing to zero out if the effect feels
+overdone.
+
+If the clips are ever swapped, only `FADE_START` / `FADE_END` need retuning — align them to the
+frames where the on-screen gesture starts and ends.
+
+---
+
+## 11. Assets
+
+| Role | URL | Intrinsic | fps | Duration |
+|---|---|---|---|---|
+| Video A (lake, lilac headphones) | `https://d8j0ntlcm91z4.cloudfront.net/user_3GJaYKPxdnQG0Q9O26lu6DPmcHu/hf_20260804_164427_78ef2a38-8ea4-4302-8385-0569dc924e41.mp4` | 1928 × 1076 | 24 | 7.042 s |
+| Video B (city crosswalk, silver headphones) | `https://d8j0ntlcm91z4.cloudfront.net/user_3GJaYKPxdnQG0Q9O26lu6DPmcHu/hf_20260804_185805_e19cc819-d76c-4ce0-858a-e83be3c20fea.mp4` | 1936 × 1072 | 30 | 7.033 s |
+
+The two clips are **motion-controlled twins**: identical camera and identical performance, different
+world. That is the entire premise of the transition — the pose matches frame-for-frame at 4.6 s,
+4.9 s and 5.2 s, so only the background changes.
+
+The differing frame rates do not matter: the scrub seeks by *time*, not by frame index.
+
+**Both clips are a single GOP** — exactly one keyframe, at 0.000 s. Every seek therefore re-decodes
+from the start of the file (measured ≈ 55 ms per seek, up to 94 ms). This is why the scrub cannot be
+made buttery on the remote files, and why the smoothing constant exists. If a future version needs a
+crisper scrub, re-encode all-intra and host locally; nothing else in this document changes.
+
+---
+
+## 12. Bake-in cheat sheet
+
+Values that must not drift.
+
+**Colour & base**
+- `--ink: #00DEAA` — every glyph and the pill border
+- Page background `#000`; `.stage` background `#000`
+- `html { font-size: 15px }` — the whole rem scale depends on it
+- `overscroll-behavior: none` on `html, body`
+
+**Layout**
+- `--grid-margin`: `1.6rem` (24px) desktop → `1.3333333333rem` (20px) ≤ 1023px
+- `--grid-gutter`: `1.3333333333rem` (20px), never changes
+- `.overlay` padding `1.6rem var(--grid-margin) 1.9rem`; bottom → `1.6rem` ≤ 699px
+- `.overlay__bottom` 12-column grid, `align-items: end`
+- Desktop columns: note `1/3`, specs `3/6`, about `9/13`
+- ≤1023: about `1/13` **row 1** + `margin-bottom: 1.6rem`, note `1/5` row 2, specs `5/10` row 2
+- ≤699: note `1/13` row 2 + `margin-bottom: 0.9rem`, specs `1/13` row 3
+- `.driver { height: 260vh }` → `100vh` under reduced motion
+
+**Type**
+- `.title`: Instrument Serif 400, `clamp(44px, 13.6vw, 200px)`, line-height `0.78`,
+  letter-spacing `-0.01em` (→ `0` ≤ 699px), `margin-left: -0.045em`, `white-space: nowrap`
+- `.title` transform: `scale(calc(1 - (1 - var(--title-min-scale, 1)) * var(--progress)))`,
+  `transform-origin: left top`, `will-change: transform`
+- `.reserve`: height `3.6rem` → `3.2rem` ≤1023 (`min-height: 44px` ≤699),
+  padding `0 2.2rem` → `0 1.7rem`, font-size `1.25rem` → `1.1rem`,
+  `border: 1px solid currentColor`, `border-radius: 999px`, `background: transparent`,
+  letter-spacing `-0.011em`
+- `.note`, `.specs`: `1.05rem`, line-height `1.3`, letter-spacing `-0.006em`
+- `.note__em`: `underline`, `text-underline-offset: 0.2em`
+- `.specs li::before`: `'\2022\00a0'`
+- `.about__label`: `1.2rem`, `opacity: 0.6`, `margin: 0 0 0.9rem`
+- `.about__text`: `clamp(20px, 2.6vw, 38px)`, line-height `1.16`, letter-spacing `-0.017em`,
+  `max-width: 26ch` → `32ch` ≤1023
+
+**Motion**
+- `SCRUB_END = 6` — scroll 0→1 maps onto the first 6 s only, not the full 7.04 s
+- Playhead lerp: `current += (target - current) * (1 - Math.exp(-dt * 8))`, `dt` capped at `0.1`
+- Snap threshold: `Math.abs(target - current) < 0.002`
+- Seek guard: `!v.seeking && v.readyState >= 2 && Math.abs(v.currentTime - t) > 0.01`
+- Playhead cap: `Math.min(SCRUB_END, vidA.duration - 0.05)`
+- `--progress` and `--fade` written with `toFixed(4)`; `--title-min-scale` with `toFixed(4)`
+- `--title-min-scale = Math.min(1, reserve.offsetHeight / title.offsetHeight)` — the `Math.min(1, …)`
+  is mandatory
+- Dissolve window `4.3 s → 5.6 s`, fed to the shader **linearly**
+- Fallback crossfade only: `smoothstep` = `f * f * (3 - 2 * f)`
+- Shader: `BLOCK_PX 64`, `SPREAD 0.62`, `BIAS 0.60`, `WARP 0.25`, `CENTER (0.50, 0.58)`,
+  `SPARK 0.045`, flip `smoothstep(0.42, 0.58, lt)`, mosaic exponent `0.7`,
+  spark falloff `exp(-pow((lt - 0.5) * 6.0, 2.0))`
+- Canvas backing store: `clientSize × Math.min(devicePixelRatio, 2)`
+
+**Behaviour**
+- No hover states anywhere; `.reserve:focus-visible` is the only interaction state
+- No blend modes
+- `.overlay` is `pointer-events: none`; `.reserve` is `pointer-events: auto`
+- Both videos: `crossorigin="anonymous" autoplay muted loop playsinline preload="auto"
+  aria-hidden="true" tabindex="-1"`
+- `.stage.is-gl .stage__video { opacity: 0 }` — never `display: none`
+
+---
+
+## 13. Acceptance checks
+
+1. At scroll 0 the canvas shows video A upright and sharp (not vertically flipped).
+2. Scrolling to the bottom drives `vidA.currentTime` to **≈ 6.0** with `duration` 7.04; scrolling
+   back drives it monotonically to 0.
+3. `Math.abs(vidA.currentTime - vidB.currentTime) < 0.05` at every scroll position.
+4. **Outside** the 4.3–5.6 s window, instrumenting `drawArrays` shows roughly one draw per rAF tick.
+   Zero draws there means invariant 4 was violated.
+5. At mid-window the frame shows mixed-size flat blocks, and sampling a horizontal scanline yields
+   constant-colour runs of ≥ 8 px. A smooth crossfade produces none.
+6. At mid-window, classifying grid samples against the pure-A and pure-B renders gives a **mix** of
+   both (measured ≈ 37 / 42 out of 84). All-one-way means the stagger is broken.
+7. At full scroll the frame is pure video B, sharp, with no black regions anywhere.
+8. `document.documentElement.scrollWidth === window.innerWidth` at 1470 px and at 375 px.
+9. At 375 px `--title-min-scale` is exactly `1` and the title does not change size on scroll.
+10. Forcing `initGL()` to return `false` degrades the page to the opacity crossfade — not a black
+    screen.

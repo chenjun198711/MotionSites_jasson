@@ -1,0 +1,291 @@
+Recreate a single-file static HTML page (`index.html`) that matches this site **exactly**. No frameworks. One HTML file with embedded CSS and JS.
+
+---
+
+## Identity & document
+
+- **Title:** `VANTA. — Avant-garde AI creative`
+- **Lang:** `en`
+- **Viewport:** `width=device-width, initial-scale=1`
+- **Page background:** pure black `#000000`
+- **Aesthetic:** avant-garde AI creative studio landing hero — black full-bleed video, white Inter type, absolute editorial composition on desktop, stacked mobile layout
+
+---
+
+## Fonts (exact)
+
+Load Google Fonts Inter weight 400 only:
+
+` ` `
+https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap
+` ` `
+
+With preconnect to `fonts.googleapis.com` and `fonts.gstatic.com` (crossorigin).
+
+**Body type stack (exact):**
+`"Inter","Inter var",system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif`
+
+**Global typography rules:**
+- `font-weight: 400` everywhere (no bold)
+- `letter-spacing: -0.02em` on all elements (`*`)
+- `-webkit-font-smoothing: antialiased`
+- `text-rendering: optimizeLegibility`
+- Text color default: `#ffffff`
+
+---
+
+## CSS variables (exact)
+
+` ` `css
+:root {
+  --bg: #000000;
+  --cream: #ffffff;
+  --ink: #000000;
+  --white: #ffffff;
+  --muted: rgba(255,255,255,.82);
+  --hair: rgba(255,255,255,.16);
+  --pad-x: 24px;
+  --pad-t: 22px;
+  --col: 46%;          /* left anchor of the centre column */
+  --ease: cubic-bezier(.23,1,.32,1);
+}
+` ` `
+
+---
+
+## Media assets (exact CloudFront URLs — do not substitute)
+
+### 1. Background hero video
+` ` `
+https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260724_061251_5b1af666-7df5-4284-abea-a19a14d1cc10.mp4
+` ` `
+- Element: `<video class="hero-bg" muted playsinline preload="auto" src="…">`
+- **Not autoplay / not loop** — scroll-scrubbed via JS (`currentTime`)
+- CSS: `position:fixed; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; background:#000`
+- Horizontal scroll-driven shift via `transform: translate3d(var(--shift, 0px), 0, 0)` and `will-change: transform`
+- **No dark overlay / full opacity:** companion `.hero-scrim` exists but `background: transparent` (video at 100% visual strength)
+
+### 2. Logo / brand video
+` ` `
+https://d8j0ntlcm91z4.cloudfront.net/user_3GJaYKPxdnQG0Q9O26lu6DPmcHu/hf_20260723_195927_ed99d7a6-2edd-42cb-ae51-494cc41a854d.mp4
+` ` `
+- Native size of this clip: **1470×630** (aspect ≈ 2.333∶1)
+- Element: `<video class="brand" autoplay muted loop playsinline preload="auto" src="…">`
+- JS must call `.play().catch(() => {})` as autoplay safety-net
+- Wrapper structure (critical for Safari blend):
+  ` ` `
+  .brand-layer (fixed, mix-blend-mode: lighten, z-index:2, pointer-events:none)
+    └── .brand-frame (overflow:hidden crop box)
+          └── video.brand
+  ` ` `
+- **`mix-blend-mode: lighten` MUST be on `.brand-layer`**, not nested inside overflow:hidden — Safari kills blend if nested under fixed/overflow ancestors
+- Desktop frame: **294×126px** (exact aspect of 1470×630)
+- Video fills frame: `width:294px; height:126px; object-fit:cover` (no negative margin crop)
+
+---
+
+## DOM structure (exact order & copy)
+
+` ` `html
+<video class="hero-bg" …src=BACKGROUND_URL></video>
+<div class="hero-scrim" aria-hidden="true"></div>
+
+<div class="brand-layer" role="img" aria-label="VANTA">
+  <div class="brand-frame">
+    <video class="brand" …src=LOGO_URL></video>
+  </div>
+</div>
+
+<main class="hero">
+  <p class="meta">
+    <span>Based in Berlin</span>
+    <span>Worldwide (12:50 PM)</span>
+  </p>
+
+  <div class="actions">
+    <button type="button" class="btn btn--pill btn--fill">Book a call</button>
+    <button type="button" class="btn btn--pill btn--ghost">Menu</button>
+  </div>
+
+  <p class="approach">Our creative approach</p>
+
+  <div class="title-block">
+    <p class="bullet">Open to new collaborations</p>
+    <h2 class="headline">
+      <span>Avant-garde work</span>
+      <span>that performs</span>
+    </h2>
+  </div>
+
+  <div class="divider" aria-hidden="true"></div>
+
+  <div class="cta">
+    <p class="cta__line">Let's build something that performs</p>
+    <button type="button" class="btn btn--cta">Start a project</button>
+  </div>
+
+  <ul class="services">
+    <li>AI Creative</li>
+    <li>Performance</li>
+    <li>Brand Films</li>
+    <li>Motion &amp; 3D</li>
+  </ul>
+</main>
+
+<div class="scroll-spacer" aria-hidden="true"></div>
+` ` `
+
+Buttons are decorative only (`cursor: default`, no navigation).
+
+---
+
+## Desktop layout (≥901px) — absolute editorial grid
+
+`.hero` is **fixed, full viewport**, `overflow:hidden`, `z-index:1`, `min-height:100svh`.
+
+All clusters absolutely positioned:
+
+| Element | Position |
+|--------|----------|
+| `.brand-layer` | `top: var(--pad-t)` (22px), `left: var(--pad-x)` (24px) |
+| `.meta` | `top: calc(var(--pad-t) + 6px)`, `left: var(--col)` (46%) — 13px, muted, two stacked spans, line-height 1.55 |
+| `.actions` | `top: calc(var(--pad-t) + 2px)`, `right: var(--pad-x)`, flex, gap 10px |
+| `.approach` | `top: 27%`, `left: var(--pad-x)` — 14px muted |
+| `.title-block` | `top: 27%`, `left: var(--col)`, `right: var(--pad-x)` |
+| `.divider` | `top: 70%`, `left: var(--col)`, `right: var(--pad-x)`, height 1px, `--hair` |
+| `.cta` | `top: 75.5%`, `left: var(--col)` |
+| `.services` | `top: 70.4%`, `left: var(--pad-x)`, width **290px** |
+
+**Bullet:** flex row, 9px gap, white 7×7px circle `::before`, text “Open to new collaborations”, 14px, margin-bottom 18px.
+
+**Headline:**
+- `font-size: clamp(40px, 5.5vw, 72px)`
+- `line-height: 0.98`
+- Each line in its own `<span>` with `display:block; white-space:nowrap`
+- Lines: “Avant-garde work” / “that performs”
+
+**Buttons:**
+- Base: 14px, no border-radius, transparent 1px border, inherit font
+- `.btn--pill`: padding `11px 18px`
+- `.btn--fill`: white bg, black text (“Book a call”)
+- `.btn--ghost`: `background: rgba(255,255,255,.10)`, white text (“Menu”)
+- `.btn--cta`: padding `15px 26px`, white bg, black text, 15px (“Start a project”)
+- CTA line above: 14px muted, margin-bottom 16px
+
+**Services list:** no bullets; each `li` has `border-top: 1px solid var(--hair)`, padding `9px 2px`, 15px, color `rgba(255,255,255,.9)`; list has `border-bottom: 1px solid var(--hair)`.
+
+**Scroll spacer:** `height: 350vh` (creates scroll room for scrubbing).
+
+---
+
+## Desktop animations / scroll engine (exact)
+
+Implement an IIFE with this behavior:
+
+### Constants
+- `K = 0.1` (lerp smoothing)
+- `DEADBAND = 0.02` (seconds — don’t seek unless delta exceeds this)
+- Min seek interval: **30ms**
+- At most **one seek in flight**; clear `seeking` on `seeked`
+- `MASK_START = 0.3` (title wipe begins at 30% through video)
+- `SHIFT_PX = 225` (initial left shift of bg video in px)
+- `CENTER_BY = 0.6` (video fully re-centered by 60% through duration)
+- Mobile gate: `matchMedia('(max-width: 900px)')` — wipe + shift **desktop only**
+- If `prefers-reduced-motion: reduce`, skip entire scrub engine (leave video on frame 0)
+
+### On `loadedmetadata`
+- `pause()` the bg video
+- Set `currentTime = 0.001`
+
+### Scroll mapping
+` ` `
+progress = clamp(scrollY / (scrollHeight - innerHeight), 0, 1)
+targetTime = progress * video.duration
+` ` `
+
+### rAF tick (always-on, never stop)
+1. Lerp: `curTime += (targetTime - curTime) * K`
+2. Seek if not seeking, `|curTime - currentTime| > DEADBAND`, and `now - lastSeek > 30`
+3. Desktop only, given `p = curTime / duration`:
+   - **Title wipe:** `--wipe = clamp((p - 0.3) / 0.7, 0, 1)` on `.title-block`
+   - **Video shift:** `--shift = (-225 * (1 - clamp(p / 0.6, 0, 1)))px`
+
+### Title wipe mask CSS (exact)
+` ` `css
+--wipe: 0; /* 0 = fully visible; 1 = wiped L→R */
+mask-image: linear-gradient(
+  to right,
+  transparent calc(var(--wipe) * 85% - 60%),
+  #000 calc(var(--wipe) * 85%)
+);
+mask-repeat: no-repeat;
+` ` `
+(Also `-webkit-mask-image` / `-webkit-mask-repeat`.)
+
+### Micro-interactions
+- Button transition: `transform`, `background-color`, `border-color` over **160ms** with `--ease`
+- `:active` → `scale(0.98)`
+- Hover only when `(hover:hover) and (pointer:fine)`:
+  - fill/cta hover → `#fff`
+  - ghost hover → `rgba(255,255,255,.16)`
+- Reduced motion: disable button transitions/active scale
+- Focus-visible: `outline: 2px solid #fff; outline-offset: 3px`
+
+---
+
+## Mobile layout (max-width: 900px)
+
+This is a **separate composition**, not a crushed desktop grid.
+
+### Tokens
+` ` `css
+--pad-x: 20px;
+--pad-t: 14px;
+--header-h: 72px;
+` ` `
+
+### Changes
+- `.scroll-spacer { height: 0 }` — no scroll scrub UI
+- Disable title mask entirely (`mask-image: none`)
+- `.hero-bg`: `transform: none; object-position: center center` (no horizontal shift)
+- Logo: **168×72px**
+- `.brand-layer` / `.actions`: respect `env(safe-area-inset-*)`
+- `.actions`: **fixed** top-right, z-index 2, gap 8px; pill buttons `10px 14px` / 13px
+- `.hero`: `position: relative`, flex column, `min-height: 100svh` and `100dvh`, padding top = safe-area + header-h + 28px, sides/bottom use safe-area
+- Absolute clusters → `position: static`
+- Flex **order:** approach(1) → title-block(2) → meta(3) → divider(4) → cta(5) → services(6)
+- Approach 13px; bullet 13px mb 14px; meta 12px, color `rgba(255,255,255,.72)`, mt 22px
+- Headline: `clamp(34px, 9.2vw, 52px)`, line-height 1.02; spans `white-space: normal; max-width: 12ch`
+- CTA line 13px, max-width 22ch; CTA button **full width**, padding `16px 22px`, 15px, centered text
+- Services full width; li padding `12px 2px`
+
+### Short viewport (`max-width:900px` and `max-height:700px`)
+Tighter padding/margins; headline `clamp(30px, 8.4vw, 44px)`.
+
+### Narrow phones (`max-width:400px`)
+- `--header-h: 64px`
+- Logo **149×64px**
+- Actions **column** stack, gap 6px; pills `9px 12px` / 12px, centered text
+
+---
+
+## What NOT to do
+
+- Do not use Inter bold, serif display fonts, purple gradients, cards, rounded-full pills, glow effects, or emoji
+- Do not darken the background video with a scrim (opacity must stay 100% / scrim transparent)
+- Do not put `mix-blend-mode` on the logo video inside the overflow crop — put **`lighten` on `.brand-layer`**
+- Do not autoplay/loop the background video — only scrub it
+- Do not wire real button destinations — decorative only
+- Single file, no build step
+
+---
+
+## Acceptance checklist
+
+1. Black page, Inter 400, letter-spacing -0.02em  
+2. Logo video = exact logo CloudFront URL, Lighten blend, 294×126 desktop  
+3. BG video = exact bg CloudFront URL, full opacity, fixed cover  
+4. Desktop absolute layout at the percentages/offsets above  
+5. Scroll (350vh) scrubs video with lerp + gated seeks; shifts bg left→center; wipes title L→R from 30%→100%  
+6. Mobile ≤900px stacks in the specified order with fixed compact header; no scrub spacer  
+7. Copy strings match character-for-character including “Worldwide (12:50 PM)” and “Motion & 3D”

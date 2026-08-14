@@ -1,0 +1,243 @@
+# Exact recreation prompt — Blind by Glamour
+
+Recreate this page **pixel-for-pixel** as a static site with `index.html`, `styles.css`, and `script.js`. No frameworks. Match every URL, string, layout value, and scroll animation below.
+
+---
+
+## Brand / page identity
+
+- **Title:** `Blind by Glamour`
+- **Look:** High-fashion eyewear landing. Pure white page background, black type, full-bleed scroll-scrubbed hero video. Fixed UI overlays with `mix-blend-mode: difference` so text/logo invert over light/dark video.
+- **No cards** except the product thumb square. No purple gradients, no Inter/Roboto. System Helvetica Neue + Georgia italic only.
+
+---
+
+## Exact media URLs (do not invent or replace)
+
+**1. Brand logo video** (top-left, autoplay / muted / loop / playsinline):
+
+` ` `
+https://d8j0ntlcm91z4.cloudfront.net/user_3GJaYKPxdnQG0Q9O26lu6DPmcHu/hf_20260723_195927_ed99d7a6-2edd-42cb-ae51-494cc41a854d.mp4
+` ` `
+
+**2. Hero background video** (full-bleed, muted / playsinline / NOT autoplay — scroll-scrubbed via JS):
+
+` ` `
+https://d8j0ntlcm91z4.cloudfront.net/user_3GJaYKPxdnQG0Q9O26lu6DPmcHu/hf_20260723_172008_6f130e07-eb0a-4962-b1ec-ade50ddca91e.mp4
+` ` `
+
+**3. Product thumbnail image:**
+
+` ` `
+https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUlRtRVj5FKnv5Y3ORh7yQ2gX21cFWOcqdSIlsrbdC96_SsVulylOGkEM&s=10
+` ` `
+
+Alt: `Portrait Fleuris 1005 eyewear frame`
+
+---
+
+## Exact copy (character-for-character)
+
+| Element | Text |
+|---|---|
+| Tagline | `WITH EVERY PROFILE WE PICKED, WE STRIVE TO AWAKEN THE VISION, AND GIVE THE BEST` |
+| Nav | `SHOP` (morphs to `MENU`), `BRANDS`, `SERVICES`, `EVENTS`, `ABOUT US` |
+| Account | `CART (0)`, `SIGN IN` |
+| H1 | `Frame your face's refined expression.` — word **refined** is italic serif |
+| CTA copy | `WE BELIEVE IN THE SEAMLESS RESTORATION OF ARTIST'S POETRY AND METICULOUS DEDICATION, THEREBY WE PROTECT THE COUTURE OF EVERY ARTISAN AND CRAFT.` |
+| CTA button | `SHOP NOW` |
+| Product name | `Portrait, Fleuris 1005` |
+| Product desc | `A HAND-CUT, ACETATE FRAME, AND FLORAL INLAY LENS THAT PROTECTS AND HELPS FOCUS EACH EYE WHILE YOU BLINK.` |
+| Price | `$4,650.00` |
+| Add button | `+` (aria-label `Add to cart`) |
+
+Use typographic apostrophes (`&rsquo;`) in HTML for “face’s” and “ARTIST’S”.
+
+---
+
+## DOM structure (exact order)
+
+` ` `
+header.site-header
+  .brand-frame > video.brand > source
+  p.tagline-hero
+  nav.menu > ul
+    li.menu-primary > a.menu-word
+      span.menu-word__a "SHOP"
+      span.menu-word__b "MENU" (aria-hidden, absolute overlay, starts opacity 0)
+    li.menu-secondary ×4: BRANDS, SERVICES, EVENTS, ABOUT US
+  .account > CART (0), SIGN IN
+
+h1.hero-title
+  "Frame your face's " + span.italic "refined" + " expression."
+
+section.hero
+  video.hero-bg-video > source
+
+.hero-footer
+  .cta
+    p.cta-copy
+    a.shop-now > span.shop-now__label "SHOP NOW"
+
+article.product
+  .product-thumb > img (object-fit: cover, fills box)
+  .product-info > h2, p.desc, span.price
+
+button.add-btn > span.add-btn__label "+"
+
+.scroll-spacer (height: 220vh, aria-hidden, pointer-events: none)
+` ` `
+
+---
+
+## Design tokens (CSS `:root`)
+
+` ` `css
+--bg: #fff;
+--surface: #fff;
+--ink: #000;
+--ink-inverse: #fff;
+--font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+--font-serif-italic: Georgia, "Times New Roman", serif;
+--space-4: 1rem;
+--space-5: 1.5rem;
+--space-6: 2rem;
+--radius-sm: 0.375rem;
+--radius-pill: 999px;
+--fs-ui: max(11px, 0.6875rem);
+--fs-brand: max(11px, 0.75rem);
+` ` `
+
+**Root fluid type:** `html { font-size: clamp(11px, 0.833vw, 16px); }`  
+**Body:** antialiased Helvetica Neue, black on white, `min-height: 100dvh`, `overscroll-behavior: none`.
+
+---
+
+## Layout / CSS (exact)
+
+### Fixed header (`.site-header`)
+- `position: fixed; top/left/right: 0; z-index: 50`
+- Flex row, `align-items: flex-start`, `justify-content: space-between`, gap `2rem`
+- Padding `1.5rem 2rem`
+- Transparent bg, color `#fff`, **`mix-blend-mode: difference`**, `pointer-events: none` (links re-enable)
+- **Brand frame:** 130×56px, overflow hidden  
+  **Brand video:** 168×56px, `object-fit: cover`, `margin-left: -19px` (cropped logo)
+- **Tagline:** uppercase, weight 700, `--fs-ui`, line-height 1.45, letter-spacing 0.01em, max-width `21.25rem`
+- **Menu:** column flex, gap `2px`; links uppercase weight 700, `--fs-ui`, line-height 1.55, letter-spacing 0.02em, no underline
+- **SHOP/MENU morph:** `.menu-word` relative; `.menu-word__b` absolute inset 0, opacity 0
+- **Account:** flex gap `1.5rem`, same uppercase UI type
+
+### Hero (`.hero`)
+- Fixed full viewport, `z-index: 10`, `margin-top: 30vh` at rest (JS lerps to 0), bg `#000`
+- Video absolute inset 0, `object-fit: cover`, no border/outline
+
+### Hero title (`.hero-title`)
+- Fixed, `z-index: 40`, left/right `2rem`, bottom `calc(70vh + 1.5rem)`
+- Color white, **`mix-blend-mode: difference`**, pointer-events none
+- Font: `2.5rem`, weight 500, line-height 1.05, letter-spacing `-0.01em`
+- `.italic`: Georgia / Times New Roman, italic, weight 400
+
+### Hero footer (`.hero-footer`)
+- Fixed bottom, left/right `2rem`, `z-index: 20`, flex end-aligned, gap `1.5rem`
+- White color, **`mix-blend-mode: difference`**, pointer-events none (CTA link re-enables)
+- **CTA block:** column, align end, text-right, `margin-left: auto`
+- CTA copy: same uppercase UI type as tagline
+- **SHOP NOW pill:** min-height `3rem`, padding `0 2.5rem`, bg `#fff`, color `#fff`, radius pill, font `--fs-brand` weight 700 letter-spacing `0.06em`
+- Label uses nested `mix-blend-mode: difference` so text stays readable on the white pill
+
+### Product card (`.product`)
+- Fixed bottom-left `2rem`, `z-index: 20`, flex row gap `1rem`, white text
+- Starts **`opacity: 0`** (JS fades in)
+- **Thumb:** square `calc(7rem * var(--card-scale, 1))`, white bg, radius `0.375rem`
+- **Img:** absolute fill, **`object-fit: cover`**, `object-position: center`, `border-radius: inherit` (fills entire box, no padding)
+- **H2:** `1.375rem` weight 500, line-height 1.15, letter-spacing `-0.01em`, mb `0.625rem`
+- **Desc:** uppercase UI type, max-width `34rem`, mb `0.875rem`
+- **Price:** `1.375rem` weight 400, letter-spacing `-0.01em`, `margin-top: auto`
+
+### Add button (`.add-btn`)
+- Fixed bottom `2rem`, size `3.375rem` circle, white bg, no border
+- Font size `1.625rem`, **`mix-blend-mode: difference`**, starts opacity 0
+- Label also difference-blended with `padding-bottom: 0.1875rem`
+- **Horizontal position set by JS:** `left = product.getBoundingClientRect().right + 1rem` (1 root em)
+
+### Scroll length
+- `.scroll-spacer { height: 220vh; }` — this is the scrub track
+
+---
+
+## Scroll animation system (exact JS behavior)
+
+Progress `p = scrollY / (scrollHeight - innerHeight)`, clamped 0–1.  
+Easing: **`easeOutCubic = 1 - (1-p)³`**. Respect `prefers-reduced-motion: reduce` (skip blur / use linear remap).
+
+### Phase constants
+` ` `
+A_END = 0.18
+B_END = 0.88
+HEADER_A_END = A_END * 0.7          // ≈ 0.126
+PRODUCT_ENTER = [A_END, A_END + 0.18]  // [0.18, 0.36]
+SCALE_WINDOW = [A_END + 0.18, B_END]   // [0.36, 0.88]
+` ` `
+
+### Phase A (p 0 → 0.18) — hero rise + title/CTA exit
+1. **Hero margin-top:** lerp from `0.3 * innerHeight` → `0` (full bleed)
+2. **Hero title + CTA** (same motion):
+   - opacity `1 → 0`
+   - `translateY(0 → -32px)`
+   - `blur(0 → 12px)`
+3. After `a > 0.98`, set `pointer-events: none` on title and CTA
+
+### Header exits (within `headerP` = remap(p, 0, HEADER_A_END))
+Blur-lift-fade exit Pattern P5 reverse: opacity `1→0`, `translateY(0→-12px)`, `blur(0→8px)`, easeOutCubic.
+
+Exit windows (fractions of `headerP`), **bottom-up order**:
+| Element | Window |
+|---|---|
+| Tagline | `[0.00, 0.45]` |
+| ABOUT US | `[0.08, 0.53]` |
+| EVENTS | `[0.16, 0.61]` |
+| SERVICES | `[0.24, 0.69]` |
+| BRANDS | `[0.32, 0.77]` |
+| SHOP (`menu-word__a`) | `[0.40, 0.85]` |
+
+Then **MENU** (`menu-word__b`) enters `[0.90, 1.00]`:
+- Start: opacity 0, `translateY(+6px)`, blur 6px → end: opacity 1, y 0, blur 0
+
+CART / SIGN IN / brand video stay visible (no exit animation).
+
+### Product + add button enter (p 0.18 → 0.36)
+- opacity `0 → 1`, blur `12px → 0` (easeOutCubic)
+- add-btn `pointer-events: none` until enter progress ≥ 0.02
+
+### Product scale (p 0.36 → 0.88)
+- CSS var `--card-scale` = `1 + 0.9 * scaleP` → thumb grows **1× → 1.9×**
+
+### Phase B — video scrub (p 0 → 0.88)
+- On `loadedmetadata`: pause video, set `currentTime = 0.001`
+- Target time = `remap(p, 0, B_END) * duration`
+- Smooth toward target: `scrubCurrent += (target - current) * K` where **`K = 0.1`**
+- Seek only if |delta| > **`DEADBAND = 0.02`** and ≥ **30ms** since last seek
+- `seeking` flag cleared on `seeked` event
+- Drive styles in a continuous `requestAnimationFrame` loop
+
+### Brand video
+- On boot: `brandVideo.play().catch(() => {})`
+
+### Resize
+- Debounce 120ms → remeasure resting margin-top
+
+---
+
+## Visual / motion summary for the prompt
+
+> Build a scroll-scrubbed fashion eyewear landing for “Blind by Glamour.” White page, Helvetica Neue UI + Georgia italic for “refined.” Fixed difference-blended header with cropped looping CloudFront logo video, uppercase tagline, vertical nav that collapses SHOP→MENU while secondary links blur-lift-fade out bottom-first, CART (0) / SIGN IN. Hero starts with 30vh top margin; scrolling expands it full-bleed while the H1 and bottom-right CTA blur-lift-fade up. Hero MP4 is paused and scrubbed with damped seeks (K=0.1, deadband 0.02). Mid-scroll, a bottom-left product card (Portrait, Fleuris 1005, $4,650.00) and circular “+” fade in; thumb image object-fit:cover fills a white rounded square that scales 1→1.9. Scroll track is 220vh. Exact CloudFront URLs and all CSS token values as specified above.
+
+---
+
+## Deliverables
+
+1. `index.html` — structure + exact URLs/copy above  
+2. `styles.css` — tokens + layout as specified  
+3. `script.js` — IIFE with phase constants, exit/enter helpers, rAF scrub loop  
+
+No other files. No libraries. Match these numbers exactly.

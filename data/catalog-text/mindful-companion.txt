@@ -1,0 +1,148 @@
+# Prompt: Recreate the "noola" Mindfulness App Landing Page (pixel-exact)
+
+Build a React 19 + Vite + Tailwind CSS v4 single-page landing site for a mindfulness app called **noola**. Use the `motion` package (`motion/react`, i.e. Motion One for React / Framer Motion API) for all animations. Everything below must be reproduced exactly — URLs, colors, easings, delays, sizes.
+
+---
+
+## 1. Stack & global setup
+
+- React 19, Vite, Tailwind CSS v4 via `@tailwindcss/vite` (CSS import: `@import 'tailwindcss';`), `motion` ^13.
+- `src/App.tsx` just renders `<LandingPage />`.
+- Components: `src/components/LandingPage.tsx`, `src/components/PhoneUI.tsx`, `src/components/BlurText.tsx`.
+
+### `src/index.css` (exact)
+
+` ` `css
+@import url('https://db.onlinewebfonts.com/c/69f2576e7ca287875bf8d089130e292c?family=TT+Firs+Neue');
+@import url('https://db.onlinewebfonts.com/c/0884d17cb11ba81fc10318f784a5133e?family=TT+Firs+Neue+Trl');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+@import 'tailwindcss';
+
+@theme {
+  --font-display: 'TT Firs Neue', sans-serif;
+  --font-body: 'TT Firs Neue Trl', sans-serif;
+  --font-inter: 'Inter', sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  background-color: #6574A4;
+  scroll-behavior: smooth;
+}
+
+.clouds-position { bottom: 0; }
+@media (min-width: 768px)  { .clouds-position { bottom: -15%; } }
+@media (min-width: 1024px) { .clouds-position { bottom: -30%; } }
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(144, 146, 227, 0.4); border-radius: 99px; }
+` ` `
+
+### Color palette
+- Page background: `#6574a4`
+- Accent purple (buttons, arcs): `#9092e3`
+- Nav-link / CTA text on white: `#706a9b`
+- Feature-card background: `#f0f3ff`
+- Feature-card body text: `#060cd1`
+- Meditation card title text: `#6b6893`
+- Mood-dial arc: `#8173F8`
+- Signature ease everywhere: `[0.22, 1, 0.36, 1]`
+
+---
+
+## 2. Assets (exact URLs)
+
+` ` `ts
+const heroBgVideo  = "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260808_022325_dcb1b04a-75f8-429b-a8dd-08272d030e7e.mp4";
+const imgClouds    = "https://jab-speak-07810027.figma.site/assets/355b52e3cf88c06096e719625a84afe3861c2727-BTnUzilu.png";
+const imgPeaceSymbol = "https://jab-speak-07810027.figma.site/assets/205cff25a34184bc8a6d049229042c52dfd558bf-ncz4dPKl.png"; // also used as avatar in PhoneUI
+const imgMedThumb1 = "https://jab-speak-07810027.figma.site/assets/f03f38dc1cbef6d3f79ae6fa9add02eab2f12003-DCXWJ372.png";
+const imgMedThumb2 = "https://jab-speak-07810027.figma.site/assets/54f786bf5983d305543d95fff6f61a7240658afa-tRA4vYp2.png";
+const imgMedThumb3 = "https://jab-speak-07810027.figma.site/assets/65dab302f45297096be0e98a219fdc9263e5ac7c-R-8QtYqa.png";
+const imgBottomNav = "https://jab-speak-07810027.figma.site/assets/image-1-Lt9hbaK5.png"; // phone UI bottom nav bar
+` ` `
+
+---
+
+## 3. `BlurText` component (word-by-word blur reveal)
+
+A `motion` component that splits `text` into words (or chars), observes itself with `IntersectionObserver` (threshold 0.1), and animates each word with staggered keyframes.
+
+Props & defaults: `delay=200` (ms per-word stagger), `animateBy="words"`, `direction="top"`, `threshold=0.1`, `rootMargin="0px"`, `stepDuration=0.35`, `easing = (t) => 1 - Math.pow(1 - t, 3)` (easeOutCubic), `as="p"`.
+
+- Default `from` for `direction="bottom"`: `{ filter: "blur(10px)", opacity: 0, y: 50 }` (for `"top"`: `y: -50`).
+- Default `to` keyframes: `[{ filter: "blur(5px)", opacity: 0.5, y: -5 }, { filter: "blur(0px)", opacity: 1, y: 0 }]` (`y: 5` mid-step for `"top"`).
+- Build combined keyframe arrays `[from, ...steps]` per property; `times` evenly spaced; total duration = `stepDuration * steps`; per-word `delay = index * delay / 1000`.
+- Container: `display: flex; flex-wrap: wrap`; each word an inline-block `motion.span` with `will-change-[transform,filter,opacity]`, joined by spaces.
+
+---
+
+## 4. `PhoneUI` component (iPhone mockup, prop `width` default 260)
+
+- Height = `width * (19.5/9)`; `borderRadius = width * 0.13`; `boxShadow: "0 0 0 4px white"` (white bezel); `overflow: hidden`; column flex.
+- Background gradient: `linear-gradient(170deg, #b8b4e0 0%, #cac7f0 25%, #dcd9f8 55%, #eceaff 100%)`.
+- **Status bar**: time "9:41" (font-body, 12px, 600, white, letterSpacing -0.3); centered black Dynamic Island pill (absolute, 80×24, top 10, borderRadius 999); right icons drawn as inline SVGs — 5-bar signal (bars at increasing heights, opacities 0.4/0.6/0.8/1/1), wifi arcs, battery (21×11 outline at 35% opacity, filled 17×8 inner rect, nub at 40%).
+- **Greeting row** (px-5, mt-3): 32px round avatar (`imgPeaceSymbol`, bg `#d0cce8`), text "Hello, **Kristina!**" (font-body 13px; "Hello," at white/50, name at white/90 weight 500). Right: 28px circle (bg white/10, border white/15) with an 11×11 white bell SVG, path:
+  `M9.55718 5.60049L8.81469 2.93313C8.57518 2.07365 8.05532 1.31887 7.33771 0.788685C6.62009 0.258505 5.74588 -0.0166579 4.85397 0.00691348C3.96206 0.0304848 3.1036 0.351439 2.41499 0.918782C1.72638 1.48613 1.24711 2.26732 1.05333 3.13824L0.479518 5.71872C0.403817 6.05941 0.405587 6.41275 0.484697 6.75267C0.563807 7.09258 0.718239 7.41039 0.936593 7.68264C1.15495 7.95489 1.43165 8.17464 1.74628 8.32565C2.06092 8.47667 2.40544 8.55511 2.75444 8.55518H2.92396C3.05882 9.02157 3.34158 9.43151 3.72964 9.72326C4.11771 10.015 4.59006 10.1728 5.07556 10.1728C5.56106 10.1728 6.03341 10.015 6.42148 9.72326C6.80954 9.43151 7.0923 9.02157 7.22716 8.55518H7.30895C7.6683 8.55522 8.02279 8.47217 8.34473 8.31253C8.66667 8.15289 8.94734 7.92097 9.16481 7.63489C9.38228 7.34882 9.53066 7.01634 9.59835 6.66342C9.66605 6.31051 9.65123 5.94672 9.55506 5.60049H9.55718ZM8.15485 6.86509C8.05647 6.99571 7.92897 7.10157 7.78249 7.17426C7.63601 7.24695 7.47459 7.28445 7.31107 7.28379H2.75444C2.59582 7.28376 2.43923 7.24811 2.29622 7.17947C2.15322 7.11083 2.02745 7.01096 1.9282 6.88722C1.82895 6.76349 1.75875 6.61904 1.72278 6.46455C1.68682 6.31006 1.686 6.14946 1.72039 5.99461L2.2942 3.40947C2.42597 2.8145 2.75298 2.2807 3.22318 1.89305C3.69338 1.5054 4.27974 1.28618 4.88893 1.2703C5.49811 1.25441 6.0951 1.44276 6.58487 1.80538C7.07464 2.16799 7.42902 2.68402 7.59162 3.27132L8.33242 5.93867C8.37711 6.09624 8.38433 6.26208 8.3535 6.42294C8.32267 6.5838 8.25464 6.73521 8.15485 6.86509Z` (viewBox `0 0 10.171 10.171`).
+- **Heading** (px-5, mt-3): "How do you\nfeel today?" — font-display, fontSize `width * 0.135`, weight 500, white, lineHeight 1.05, letterSpacing -1.
+- **Mood dial** (centered SVG 200×200, marginTop 12): outer circle r=80 white stroke 1.5 @ 0.9 opacity; inner circle r=58 white stroke 1 @ 0.3; three white dots r=4 @ 0.7 opacity at 270°, 0°, 180° on the outer ring; purple `#8173F8` arc stroke 2.5 round-cap from 220° to 90° clockwise (large-arc), with a filled `#8173F8` dot r=7 at the 90° end; labels "12 AM" above (y = cy−R−8) and "12 PM" below (y = cy+R+16), 9px font-body white @ 0.7; "Neutral" centered (y = cy−10, 11px, weight 500); center button: white circle r=12 @ 0.14 opacity at (cx, cy+10) with an upward white triangle @ 0.8 opacity.
+- Flex spacer, then `imgBottomNav` image full-width at the bottom.
+
+---
+
+## 5. Page layout (`LandingPage`)
+
+`<main class="min-h-screen">`, bg `#6574a4`, font-display, relative. Sections in order: Hero → FeaturesIntro → MoodTrackingCard → GuidedMeditationsCard.
+
+### 5a. Nav (inside hero, z-50, px-5/sm:8/md:10, pt-5/md:6, inner max-w-7xl)
+- Left: **noola logo** — white SVG, `viewBox="0 0 99 32"`, `h-6 sm:h-7`, 7 white paths (see §7).
+- Desktop (`md+`): links Features / Therapy / Meditations / About as white pill buttons (`px-5 py-3 bg-white rounded-xl`, text `#706a9b`, `text-xs uppercase tracking-widest`, hover bg-white/90); right CTA "Get the app" (`px-5 py-2.5 rounded-xl`, bg `#9092e3`, white, text-sm uppercase, hover opacity-90).
+- Mobile: 3-line hamburger (24×2px white bars, gap 1.5) morphing to an X — top bar `translateY(8px) rotate(45deg)`, middle fades/scaleX(0), bottom `translateY(-8px) rotate(-45deg)`, transition `0.35s cubic-bezier(0.4,0,0.2,1)`. Dropdown absolutely positioned below nav (left-5 right-5): `bg-white/10 backdrop-blur-md rounded-2xl`, maxHeight 0→400 + opacity, `0.45s cubic-bezier(0.4,0,0.2,1)`; each link staggers in at `i * 40ms` with translateY(-8px)→0; ends with a full-width purple "Get the app" button.
+
+### 5b. Hero
+- `<section>` relative flex-col, bg `#6574a4`, `overflow: visible`, `minHeight: 100svh`.
+- **Background video**: absolute inset-0, full-bleed `<video>` of `heroBgVideo`, `autoPlay muted loop playsInline`, `objectFit: cover; objectPosition: center top`, pointer-events-none.
+- Body (z-10, centered column, `pt-16 sm:pt-20 md:pt-24`, `pb-64 sm:pb-72 md:pb-80`):
+  1. Eyebrow "Find your balance" — white/70, text-sm/sm:base, weight 500; motion fade-up `{opacity:0,y:20}→{1,0}`, duration 1.0, delay 0.25, ease `[0.22,1,0.36,1]`.
+  2. `<h1>` "Your daily mindfulness companion" — centered white, `leading-[0.88] tracking-tighter`, `fontSize: clamp(2.8rem, 9vw, 7rem)`, `maxWidth: 9ch`, `mb-20 sm:mb-24`; rendered with **BlurText** `delay={190} direction="bottom" stepDuration={0.6}`.
+  3. **Phone mockup** — motion `{opacity:0, y:40, scale:0.92}→{1,0,1}`, duration 1.4, delay 0.6, same ease. Responsive: width 200 (mobile), 240 (sm), 268 (md+).
+  4. Sub-block (z-40, `pt-16 sm:pt-20 pb-44 sm:pb-52`): paragraph "A beautifully designed space to track your emotions, discover guided meditations, and connect with yourself." (white/85, weight 500, `clamp(0.875rem, 2vw, 1.125rem)`, max-w-sm/md) then white button "DOWNLOAD FOR IOS" (`rounded-xl bg-white`, text `#706a9b`, uppercase). Both `whileInView` fade-up (y:24→0), duration 1.1, delays 0.4 / 0.6, `viewport={{once:true, margin:"-40px"}}`.
+- **Clouds**: absolute full-width `<img>` of `imgClouds` (class `clouds-position`, z-30, pointer-events-none) — bottom 0 mobile / −15% md / −30% lg — with scroll **parallax**: `useScroll({ target: section, offset: ["start start","end start"] })` → `y: useTransform(progress, [0,1], ["0%","-25%"])`. Overlay a bottom fade div (height 40%, `linear-gradient(to bottom, transparent, #6574a4)`).
+
+### 5c. FeaturesIntro (`py-20 sm:py-28 md:py-36`, centered, max-w-5xl)
+- `<h2>` white, `tracking-tighter leading-[1.05]`, `fontSize: clamp(2.5rem, 8vw, 6.5rem)`, three BlurText lines (`delay={160} direction="bottom" stepDuration={0.58}`):
+  - Line 1: "Designed"
+  - Line 2 (inline-flex baseline wrap, gap-x-3): "for your" + inline **peace-symbol image** (`imgPeaceSymbol`, rounded 8px, `clamp(50px,6vw,88px)` square, `top: 0.05em`) + "peace". The "for your" BlurText uses explicit `animationFrom={{filter:"blur(10px)",opacity:0,y:50}}` and `animationTo=[{filter:"blur(5px)",opacity:0.5,y:-5},{filter:"blur(0px)",opacity:1,y:0}]`.
+  - Line 3: "of mindfull" *(sic — intentional spelling)*.
+- Below: "Tune into your feelings:" — white/80, weight 500, `mt-10 sm:mt-14`, max-w-md; whileInView fade-up duration 1.1 delay 0.4.
+
+### 5d. MoodTrackingCard (`px-4 sm:px-6 md:px-10 pb-6`)
+- Card: max-w-5xl, `rounded-[24px] sm:rounded-[28px]`, bg `#f0f3ff`, overflow-hidden; `useInView(ref, {once:true, margin:"-80px"})` triggers card fade-up (y:40→0, 1.1s).
+- Two columns (`min-h-[400px] sm:min-h-[420px]`; text is order-2 on mobile / order-1 on md):
+  - Left (md:w-[45%], justify-end, p-6→10): label "MOOD TRACKING" (text-xs uppercase tracking-widest, color `#9092e3`) and body "Log your daily emotions with an intuitive, interactive dial. Understand your emotional patterns and reflect on what truly matters to you." (weight 500, `clamp(1rem,2.5vw,1.35rem)`, color `#060cd1`, max 36ch). Both use a **blurIn** helper: `{opacity:0, filter:"blur(10px)", y:20} → {1, blur(0), 0}`, duration 1.05, delays 0.3 / 0.55.
+  - Right (overflow-hidden, minHeight 260): **PhoneUI cropped from the bottom edge** — absolutely positioned at `left: 50%, translateX(-50%)` with `bottom: -88%` @ width 220 (mobile), `bottom: -165%` @ 300 (sm), `bottom: -68%` @ 300 (md+); enters with `{opacity:0,y:40,scale:0.92}`, duration 1.4, delay 0.55.
+
+### 5e. GuidedMeditationsCard (`px-4 sm:px-6 md:px-10 pb-16 sm:pb-24`)
+- Same card shell/animations as 5d. Left column: label "GUIDED MEDITATIONS" + body "Recharge your mind with bite-sized meditation plans. Paired with surreal, calming visuals, it's the perfect way to wake up, breathe, or reflect."
+- Right column: vertical stack (gap-3, maxWidth 320) of three **MeditationItem** cards, each dropping in from above (`{opacity:0, y:-24}→{1,0}`, duration 0.85, delay `0.4 + i*0.22`):
+  1. "We wake up meditation" — 7 min — `imgMedThumb2`
+  2. "Breathe with the clouds" — 7 min — `imgMedThumb1`
+  3. "Monthly stress reflection" — 7 min — `imgMedThumb3`
+- **MeditationItem**: white `rounded-2xl` horizontal flex. Left (p-3, flex-col justify-between): title in **Inter** (`clamp(1.05rem,3.5vw,1.2rem)`, color `#6b6893`, medium) and a 32px purple `#9092e3` circle with a white play triangle (`M1 1.5l8 4.5-8 4.5V1.5z`). Right: 110px-wide thumbnail, `absolute inset-0 object-cover`, own `rounded-2xl`, with the duration badge ("7 min", Inter 11px white, pill padding 2px 8px) at top-right.
+
+---
+
+## 6. Animation summary
+- Signature ease `[0.22, 1, 0.36, 1]` on every motion transition.
+- Headlines: BlurText word-stagger blur reveals (blur 10→5→0, y 50→−5→0, opacity 0→0.5→1).
+- Hero: sequential eyebrow (0.25s) → headline words → phone (0.6s); clouds parallax on scroll.
+- Cards: whileInView/once — card fade-up, text blur-in staggered, phone rise, list items drop-in staggered 0.22s.
+- Hamburger ↔ X morph and staggered mobile-menu links, `cubic-bezier(0.4,0,0.2,1)`.
+
+---
+
+## 7. noola logo (Just test Noola) (white)
+
+` ` `

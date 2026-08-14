@@ -1,0 +1,145 @@
+# Prompt: Build "A Little Valentine Question" — an interactive Valentine's date invitation web app
+
+Build a single-page React 19 + TypeScript + Vite app called **"A Little Valentine Question"**. It is a sequence of five full-screen "cards" that walk a partner through: a Valentine proposal → a celebration → picking a date → picking food → a final confirmation "receipt". Use the `motion` package (`motion/react`, v12+) for all transitions. No router — screen state is a single `useState`.
+
+## Stack and setup
+
+- **Dependencies:** `react@19`, `react-dom@19`, `motion@^12`, `@fontsource-variable/fraunces@^5`
+- **Dev:** `vite`, `@vitejs/plugin-react`, `typescript`
+- **Fonts:** Import `@fontsource-variable/fraunces/wght.css` in `main.tsx`. Headings use `"Fraunces Variable", Georgia, "Times New Roman", serif` at `font-weight: 650`, `letter-spacing: -0.025em`, `line-height: 1.04`, `font-optical-sizing: auto`, `text-wrap: balance`. Body font is `"Avenir Next", Avenir, "Segoe UI", sans-serif`. Accent/italic text (notes, statuses, receipt values, calendar month label) uses `Georgia, "Times New Roman", serif`.
+- **`index.html`:** `<title>A Little Valentine Question</title>`, `<meta name="theme-color" content="#e93275">`, description "A sweet little Valentine invitation with a celebratory surprise."
+- The app never scrolls the page; `html`, `body`, `#root` are `100%` height with `overflow: hidden`, page background `#f8c4c6`, `overscroll-behavior: none`.
+
+## Image assets
+
+Download these 9 images and serve them from `public/` with exactly these filenames (convert the 4 backgrounds to WebP, quality ~85; keep cats as PNG):
+
+| Local path | Source URL |
+|---|---|
+| `/valentine-watercolor-bg.webp` | https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260731_070608_34b8e15d-98af-4bb7-b288-df94622b358d.png |
+| `/celebration-watercolor-bg.webp` | https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260731_070609_61ec898e-ffae-475f-bf4f-f66a663b6ef6.png |
+| `/schedule-watercolor-bg.webp` | https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260731_070609_18c1b7d6-7883-4c97-8f20-adb3faccaecb.png |
+| `/food-watercolor-bg.webp` | https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260731_070608_0b60a9f7-7f80-4caf-a110-12b9dc95c686.png |
+| `/shy-kitten.png` | https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260731_070609_5c3ef2af-5abf-46a7-9b65-73520c8905a8.png |
+| `/celebration-cat.png` | https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260731_070609_345f7b2d-a664-45a3-bc85-cf02ec247844.png |
+| `/food-picker-cat.png` | https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260731_070608_688e3fb5-66ab-4c4f-9a5a-cd8ca794253e.png |
+| `/final-cuddle-cats.png` | https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260731_070609_fcfc6c95-3a75-4449-9b4a-85d64ba4e456.png |
+| `/final-approval-cat.png` | https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260731_070609_04946883-d9f7-4a2b-97e0-95b2b4434dc3.png |
+
+## Design tokens (CSS `:root`)
+
+` ` `css
+--ink: #3c2836;          /* main text */
+--muted: #77636f;        /* secondary text */
+--rose: #e93275;         /* brand pink */
+--rose-dark: #ca245f;
+--card: rgba(255, 253, 255, 0.88);
+--title-size: clamp(1.9rem, 5.2vw, 2.45rem);
+--text-flow-gap: clamp(9px, 1.5vw, 12px);
+--section-gap: clamp(26px, 4vw, 32px);
+--body-leading: 1.55;
+` ` `
+
+## Architecture
+
+- `Screen` type: `"question" | "celebration" | "schedule" | "food" | "final"`, in that sequence.
+- **App shell:** a full-viewport `div.app-shell` containing, inside `<MotionConfig reducedMotion="user">`:
+  1. A background layer (`AnimatePresence mode="sync"`): a `motion.div.screen-stage.valentine-page` keyed by screen, cross-fading `opacity 0→1→0` with transition `{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }`. It holds per-screen decorations (below) and is `pointer-events: none`, absolute inset 0, z-index 0.
+  2. A `SectionReveal` celebratory particle overlay (below), `position: fixed`, z-index 4, pointer-events none.
+  3. `main.modal-viewport` (grid, place-items center, z-index 1) containing **one persistent** `motion.section.persistent-modal` with `layout` enabled and `transition={{ layout: { type: "tween", duration: 0.42, ease: [0.22, 1, 0.36, 1] } }}` — the card smoothly morphs size/shape between screens. Inside it: `div.card-scroll-region` (scrollable, thin pink scrollbar) wrapping an `AnimatePresence mode="popLayout"` with a `motion.div.modal-content-stage` keyed by screen: enter `{opacity: 0, y: 10}` → `{opacity: 1, y: 0}`, exit `{opacity: 0, y: -8}`, transition `{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }`.
+- A ref-based guard (`activeTransitionRef`) blocks navigation while content animates; cleared in `onAnimationComplete`. Scroll region resets to top on each screen change (`useLayoutEffect`). Preload the next screen's images with `new Image()` in a `useEffect`.
+- Card classes per screen: question `proposal-card`, celebration `proposal-card celebration-card`, schedule `schedule-card`, food `food-card`, final `final-card`. Set `aria-labelledby` to the screen's `h1` id.
+
+## Card look
+
+Glassmorphism over watercolor: white translucent background (`rgba(255,253,255,0.88–0.92)`), `backdrop-filter: blur(18–20px)`, 1px white border (`rgba(255,255,255,0.72–0.86)`), radius `clamp(26px, 5vw, 36–38px)`, layered rose shadows like `0 30px 80px rgba(130,52,75,0.2), 0 8px 24px rgba(126,61,79,0.11), inset 0 1px 0 rgba(255,255,255,0.86)`. Every card has a giant faint serif "♥" pseudo-element (font-size 120–180px, color `rgba(234,95,130,0.06–0.09)`, rotated ±9–20°) peeking past a corner. Question/celebration cards are `min(480px, 100vw - 32px)` wide; schedule/food/final are ~`min(590–610px, 100vw - 32px)`.
+
+## Page backgrounds (per screen)
+
+Each is a watercolor image with a soft gradient wash on top, plus a huge blurred radial "glow" ellipse (`min(720px, 90vw)`, `blur(60–78px)`, white-ish `rgba` at 0.35–0.52 alpha) centered behind the card:
+
+- **question:** `linear-gradient(rgba(255,228,230,0.12), rgba(248,176,182,0.22)), url(/valentine-watercolor-bg.webp) center/cover`
+- **celebration:** same pattern with `celebration-watercolor-bg.webp`
+- **schedule / food:** `center / cover fixed` attachments (`scroll` under 520px) with `schedule-watercolor-bg.webp` / `food-watercolor-bg.webp`
+- **final:** reuses `celebration-watercolor-bg.webp`, fixed
+
+Ambient decorations (all `aria-hidden`, absolute, `z-index: -1`):
+- **question:** 4 serif "♥" glyphs (22–60px, rose rgba 0.25–0.42, rotated ±10–15°, corners at ~10–24% offsets) + 3 "✦" sparkles (10–20px, warm white `rgba(255,250,220,0.85)` with glow `text-shadow: 0 0 14px`).
+- **celebration:** 6 confetti glyphs "◆ ● ★ ◆ ● ★" in pink `#ee4776`, gold `#f0a927`, purple `#9c57c7` etc., 18–32px, each with staggered delays (0–2.1s) on a shared `confetti-float` keyframe: `translateY(0)→(-12px) rotate(12deg)→back`, 4.6s ease-in-out infinite.
+- **final:** 4 floating glyphs "✦ ♥ ✧ ♥" (24–31px, rose/gold/purple rgbas) on the same float animation at 4.4s.
+
+## SectionReveal (screen-transition particle burst)
+
+On every screen change render a fixed overlay (fades in/out in 160ms) with:
+- A **wash**: centered radial-gradient circle `min(92vmax, 1120px)`, blur 3px, animating scale 0.38→1.18 / opacity 0→0.72→0 over 980ms `cubic-bezier(0.16,1,0.3,1)`.
+- A **sweep**: a 150vmax-wide, `min(26vmax, 360px)` tall gradient band rotated -6° (schedule: +4°) translating from `-112%` to `12%` across the screen over 880ms `cubic-bezier(0.65,0,0.35,1)`, opacity 0→0.74→0.4→0.
+- Two **halo** rings (outer `min(62vmin, 620px)`, inner `min(38vmin, 380px)`, inner delayed 70ms), 1px borders, scaling 0.36→1.32 with opacity 0→0.7→0 over 920ms.
+- **Particles** (seeded PRNG — mulberry32 with fixed seeds so layouts are deterministic per screen). Per-screen theme:
+
+| screen | seed | palette | motifs | count |
+|---|---|---|---|---|
+| question | 143 | `#ef6f91 #f6b0aa #fff0d1` | petal, ribbon, spark | 11 |
+| celebration | 277 | `#e95379 #f0a94e #f8c5a0` | ribbon, petal, spark | 15 |
+| schedule | 419 | `#de6887 #9d88b7 #f2c777` | orbit, ribbon, spark | 12 |
+| food | 563 | `#e46369 #ef9e53 #e9c46d` | steam, petal, spark | 13 |
+| final | 701 | `#d93c70 #f29a87 #e8b962` | vow, petal, spark | 16 |
+
+Each particle gets random x (7–93%), y (10–86%), drift (`±75px` x, `-48 to -156px` y), size 12–30px (orbit/vow ×1.45, spark ×0.72), rotation ±48°, spin ±55–165°, delay 0–0.24s, duration 0.78–1.12s, passed as CSS custom properties. Flight keyframe: from `translate3d(0, 22px, 0) scale(0.42) rotate(rot)`, opacity 0→0.88→0.72→0, to `translate3d(driftX, driftY, 0) scale(1.08) rotate(rot + spin)`. Motif shapes are pure CSS: **petal** (blob radius `82% 18% 72% 28%` with white highlight radial + inset shadow), **ribbon** (2.2×0.92 aspect, curved top/right borders, radius `50% 72% 18% 54%`), **orbit** (1.65×1.05 ellipse ring with a 6px dot + ring glow sitting on it), **steam** (0.8×2.15 curved left-border wisp, slight blur), **vow** (two overlapping 1.5px rings — the right one highlight-colored), **spark** (8-point star via `clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%)` with `box-shadow: 0 0 18px currentColor`).
+
+## Screen 1 — Question
+
+- **Portrait:** 104–132px rounded square (radius 28px, 5px padding) with bronze gradient frame `linear-gradient(145deg, #f6d3c6, #bd825b)`, containing `/shy-kitten.png` (alt: "A tiny gray kitten raising its paw"). A 36px circular "♥" badge overlaps the bottom-right corner (pink gradient `#f56c98→#dc2d69`, 3px white border).
+- **Copy:** eyebrow "A little question for you" (uppercase, 0.69rem, letter-spacing 0.19em, `#c65c7c`) → h1 `id="proposal-title"` **"Will you be my valentine?"** → supporting "this is a yes or yes situation, btw".
+- **Buttons:** pill **Yes!** button (min 230×62px, gradient `#f24d7f→#e91f75`, "✨" suffix, lifts -2px on hover) advances to celebration. Below it a **No** button (outlined pill, border `#e1a4b6`, text `#b57589`) with this exact escalating behavior:
+  - Reply labels cycle on click: `"No"` → `"Lol, nice try 😏"` → `"Aww, you're funny 😂"` → `"Still trying? 👀"` → `"Nope, catch me! 💨"` (final = "evasive" state).
+  - On first pointer-enter/focus it **dodges once**: switches to `position: absolute` and jumps to a random spot inside the card, avoiding a 14px zone around the Yes button (rejection-sample up to 16 attempts, 16px safe gap from card edges).
+  - After reaching the last label it dodges on **every** approach/click forever (cursor `not-allowed`). Pointer-down capture prevents the click from registering while dodging. Reposition on window resize. Left/top transitions animate at 160ms.
+  - A hidden placeholder copy of the button preserves layout space; an `aria-live` sr-only paragraph narrates the state.
+- **Footer note** (absolute bottom): "made with a whole lot of love" (italic Georgia, 0.7rem, faded).
+
+## Screen 2 — Celebration
+
+- Portrait frame in gold gradient (`#fff0c9→#eea548`) with `/celebration-cat.png` (alt: "A delighted orange cat standing with both paws raised") and a "✦" badge (orange gradient `#ffb842→#ef6c5d`).
+- Eyebrow "Plot twist!" → h1 **"Wait… you actually said yes??"** → "I was so ready for you to say no".
+- Row of 4 emojis 🎉 💃 🥹 💖 (1.45–1.85rem) each bouncing (`translateY(-6px) rotate(4deg)` at 50%) on a 2.5s loop, staggered 120ms apart.
+- Button: **"Okay okay! 😊"** → schedule. Footer note: "best answer ever".
+
+## Screen 3 — Schedule
+
+- Header: eyebrow "One tiny detail" → h1 `id="schedule-title"` **"So… when are you free?"** → "Pick a day, any day. I cleared my schedule."
+- **Calendar** (`min(390px, 100%)`, translucent white panel, radius 22px): toolbar with ‹ › round arrow buttons (prev disabled on current month) around a Georgia-serif "Month Year" label (`aria-live="polite"`); weekday row `Su Mo Tu We Th Fr Sa`; always 42 day cells (6 weeks) as circular buttons. Past dates and outside-month dates disabled (outside at 0.48 opacity); today gets a 1px inset rose ring; selected gets pink gradient `#f65b8c→#e52370`, white bold text, and a rose drop shadow; hover lifts 1px with a pink tint. Full-date `aria-label` on each day.
+- **Time picker** fieldset, legend "What time?" (lowercased serif). Five radio rows (hidden inputs, styled labels; selected row = pink border + blush fill + a "♥" check that scales in):
+  - 5:00 PM · "are we eating with the retirees?"
+  - 6:00 PM · "this is the right answer tbh"
+  - 7:00 PM · "you're making me hungry already"
+  - 8:00 PM · "are we eating dinner or breakfast?"
+  - 9:00 PM · "late night fun??"
+- Button **"Okay, next →"** disabled (gray gradient `#c7c4d4→#aaa9bf`) until both a date and time are chosen. Below it an italic status line reflecting the choice, e.g. "Friday, February 13 at 6:00 PM" (non-breaking space when empty so the layout doesn't jump).
+
+## Screen 4 — Food
+
+- Portrait in peach gradient (`#ffe3c4→#d99062`) with `/food-picker-cat.png` (alt: "A hungry tabby cat waiting eagerly behind an empty plate") and a 38px "🍴" badge (orange-pink gradient).
+- Header: eyebrow "The delicious part" → h1 **"What are we feeling?"** → "You can pick more than one, btw."
+- **3×2 grid** of multi-select toggle cards (`aria-pressed`), each with a big emoji (~2.45rem, drop-shadowed, scales 1.08 & rotates -2° on hover/selected), a bold name, a tiny note, and a pink circular "✓" mark that pops in at top-right when selected:
+  - Pizza 🍕 "cheesy & classic" · Sushi 🍣 "tiny fancy bites" · Pasta 🍝 "main character energy" · Burger 🍔 "messy but worth it" · Tacos 🌮 "always a good idea" · Ramen 🍜 "cozy bowl moment"
+- Button **"This one!! 🎉"** disabled until ≥1 selection; status line "N selected" below.
+
+## Screen 5 — Final
+
+- Hero: 116–150px framed `/final-cuddle-cats.png` (alt: "Two cats cuddling with their tails forming a heart", cream-bronze gradient frame) with a 40px "💞" badge.
+- Header: eyebrow "Officially official" → h1 **"It's a date."** → italic serif compliment "I'll be the happiest person you've ever seen ✨" → "You can't cancel btw. The cats have already been informed."
+- **Date receipt** panel (blush gradient, radius 23px, left-aligned; on ≥600px it becomes a 3-column grid with a vertical divider):
+  - Section label `// Date` (uppercase, letter-spaced, `#c64a74`) → big serif weekday (e.g. "Friday") → full date line → "at 6:00 PM".
+  - Divider, then `// Food` → chips (pill, white 0.7 alpha, emoji + name) for each chosen food, resolving emoji from the food list.
+- Small framed `/final-approval-cat.png` (alt: "An orange tabby giving an enthusiastic thumbs-up", 84–92px).
+- Note: "p.s. this is officially production-ready, so there's no taking it back 💌", then a hairline-separated sign-off: "made with ♥ and excellent taste" (♥ in rose).
+- On desktop ≥600px the final card grows to `min(820px, …) × min(760px, …)` and distributes content with `justify-content: space-evenly`, no scrolling.
+
+## Responsive & accessibility
+
+- Breakpoints: ≤520px (tighter paddings, 3-col food grid preserved, background attachment `scroll`), ≤690px height (compact portraits/paddings, hide footer notes), ≥600px (final-screen desktop layout), ≤360px (time rows re-grid). Food screen's scroll region is `overflow-y: hidden` (content must fit).
+- Focus-visible outlines `3px solid rgba(128,48,80,0.36)`, offset 4px, on all interactive elements.
+- `prefers-reduced-motion: reduce` collapses all animations/transitions to 0.01ms; `MotionConfig reducedMotion="user"` handles the motion components.
+- All decorative layers are `aria-hidden`; images have the descriptive alts given above; the No-button behavior is narrated via `aria-live`.
+
+---

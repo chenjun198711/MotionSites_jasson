@@ -1,0 +1,237 @@
+Recreate this **exact** static marketing page pixel-for-pixel. Stack: **Vite 5** (`vite-starter`), plain HTML + CSS + vanilla JS. No React, no Tailwind, no UI libraries. Files: `index.html`, `style.css`, `main.js`, `package.json`.
+
+## Brand / page meta
+
+- Title: `MAREA — Coast Homes`
+- `theme-color`: `#29bee4`
+- Viewport: `width=device-width, initial-scale=1.0, viewport-fit=cover`
+- Language: `en`
+- Body background: `#fff`
+- Ink/text color: `#0d2b3a`
+- Horizontal overflow clipped on `html`/`body`
+
+## Design tokens (CSS variables)
+
+` ` `css
+--sky: #29bee4;
+--sky-deep: #1496be;
+--ink: #0d2b3a;
+--terracotta: #c9705f;
+--nav-glass: rgba(255, 255, 255, 0.22);
+--nav-glass-border: rgba(255, 255, 255, 0.45);
+--ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+--ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+--dur-open: 0.55s;
+--dur-close: 0.35s;
+--leaf: clamp(230px, 30vw, 470px);
+` ` `
+
+## Fonts (exact)
+
+Load Google Fonts exactly as:
+
+` ` `
+https://fonts.googleapis.com/css2?family=Iosevka+Charon:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap
+` ` `
+
+With preconnect to `fonts.googleapis.com` and `fonts.gstatic.com`.
+
+Usage:
+
+| Element | Font stack | Weight / size |
+|---|---|---|
+| Body | `"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif` | default |
+| Hero SVG wordmark `MAREA` | `"Iosevka Charon", "Archivo Black", "Arial Black", sans-serif` | 700, SVG `font-size: 280px`, `letter-spacing: -0.01em`, fill `#fff` |
+| Nav logo `MAREA` | same as wordmark | 700, `28px` (`18px` ≤420px), `letter-spacing: -0.02em`, color `#fff` |
+| Intro title | Inter light | `clamp(32px, 5.6vw, 68px)`, weight `300`, line-height `1.12`, tracking `-0.03em` |
+| Intro title `<strong>calm</strong>` | `"Archivo Black", "Arial Black", sans-serif` | weight `400`, tracking `-0.02em` (Archivo Black is **fallback only** — not loaded from Google Fonts in this build) |
+| Intro eyebrow | Inter | `12px`, weight `600`, uppercase, tracking `0.22em`, color terracotta |
+| Nav pills | Inter | `14px` / `13px` / `12px` by breakpoint, weight `500` (active/CTA `600`) |
+| Mobile menu links | Inter | `clamp(26px, 7.5vw, 34px)`, weight `600` |
+
+## Exact asset URLs (do not substitute)
+
+### 1. Hero sky (full-bleed background)
+
+` ` `
+https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260806_125611_c5cd23eb-9a89-49c9-a868-ddf2300ccf10.png
+` ` `
+
+- Class: `hero__sky`
+- `object-fit: cover`, `object-position: center top`, `inset: 0`, `z-index: 0`
+- Decorative: `alt=""`, `aria-hidden="true"`
+
+### 2. Hero building (foreground PNG over sky)
+
+` ` `
+https://soft-zoom-63098134.figma.site/_assets/v11/35b65ca383f61b2c2f6851c3b6716839291c5904.png
+` ` `
+
+- Class: `hero__building`
+- Alt: `MAREA luxury Mediterranean resort residence`
+- Position: absolute, `left: 50%`, `transform: translateX(-50%)`, `bottom: -7vw`, `width: 100%`, `z-index: 2`
+- Responsive overrides:
+  - `min-aspect-ratio: 2/1`: `width: auto; height: 98svh; bottom: -6svh`
+  - `≤780px`: `width: auto; height: 68svh; bottom: -3svh`
+  - `≤420px`: `height: 62svh`
+  - landscape short (`max-height: 500px` + landscape): `width: auto; height: 86svh; bottom: -4svh`
+
+### 3. Leaves (same image left + right)
+
+Higgs CDN wrapper (use exactly):
+
+` ` `
+https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260806_164633_54c52399-9567-4a5a-b40a-a2f620ddda0b.png&w=1280&q=85
+` ` `
+
+Underlying CloudFront source (encoded in that URL):
+
+` ` `
+https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260806_164633_54c52399-9567-4a5a-b40a-a2f620ddda0b.png
+` ` `
+
+- Both: `alt=""`, `aria-hidden="true"`, `pointer-events: none`, `z-index: 5`
+- Anchored at seam between hero and intro: `position: absolute; top: 100svh; width: var(--leaf)`
+- Left (`.leaf--left`): `left: -2%`
+- Right (`.leaf--right`): `right: -2%`, also `rotate(180deg)` so it mirrors
+- Size: `--leaf: clamp(230px, 30vw, 470px)`; `≤780px` → `clamp(150px, 42vw, 260px)`; `≤420px` → `40vw`; short landscape → `26vw`
+
+## Page structure (exact DOM order)
+
+` ` `
+.page
+  section.hero
+    img.hero__sky
+    svg.hero__wordmark  → text "MAREA"
+    img.hero__building
+    div.hero__fade
+    nav.nav
+      a.nav__logo "MAREA"
+      ul.nav__links → Stay (active), Broker, Own/Rent, List, Ask Broker
+      a.nav__cta "Reserve Now"
+      button.burger (3 bars)
+    div#mobile-menu.menu
+      div.menu__bg
+      div.menu__inner
+        ul.menu__list (items --i:0..4 same labels)
+        a.menu__cta "Reserve Now"
+  img.leaf.leaf--left
+  img.leaf.leaf--right
+  section.intro
+    p.intro__eyebrow "Riviera Living Style"
+    h2.intro__title "Where the shoreline<br>becomes <strong>calm</strong>"
+` ` `
+
+All nav/menu links are `href="#"`.
+
+## Hero composition (first viewport)
+
+- Full viewport: `height: 100vh` + `100svh`, `overflow: hidden`, background `--sky`, `isolation: isolate`
+- **One composition**: sky photo → giant white centered wordmark behind building → building PNG → white bottom fade → glass nav on top
+- No cards, no stats, no hero overlays/badges
+
+### Wordmark (SVG)
+
+` ` `html
+<svg class="hero__wordmark" viewBox="0 0 1000 300" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+  <text x="500" y="260" text-anchor="middle">MAREA</text>
+</svg>
+` ` `
+
+- CSS: `top: 13%; left: 50%; transform: translateX(-50%); width: 88%; z-index: 1`
+- Mobile: `≤780px` → `top: 34%; width: 74%`; `≤420px` → `top: 36%; width: 82%`; short landscape → `top: 18%; width: 70%`
+
+### Bottom fade (`.hero__fade`)
+
+- `height: 34%` (30% on mobile), `z-index: 3`
+- Gradient:
+
+` ` `
+to bottom:
+  rgba(255,255,255,0) 0%,
+  rgba(255,255,255,0.35) 32%,
+  rgba(255,255,255,0.78) 58%,
+  rgba(255,255,255,0.96) 80%,
+  #fff 100%
+` ` `
+
+## Navbar (desktop)
+
+- Absolute over hero, `z-index: 60`, flex row, gap `24px`, padding `26px 40px` (safe-area top)
+- Parent `pointer-events: none`; children `pointer-events: auto`
+- Logo left; pill links centered (`margin: 0 auto`); CTA right
+- Pills: glass `rgba(255,255,255,0.22)`, border `rgba(255,255,255,0.45)`, `backdrop-filter: blur(6px)`, `border-radius: 999px`, padding `11px 26px`
+- Active (“Stay”) and CTA: solid white bg, ink text
+- Hover: glass → `rgba(255,255,255,0.4)`; active/CTA → `rgba(255,255,255,0.88)`
+- Breakpoints: shrink padding/font at `1100px` and `900px`
+- At `≤780px`: hide `.nav__links` and `.nav__cta`; show burger
+
+## Mobile menu + animations
+
+Show `.menu` as flex only `≤780px`. Open state = `body.is-open` (also locks `overflow: hidden`).
+
+### Open / close timings
+
+- Open duration: `0.55s` with `--ease-out`
+- Close duration: `0.35s` with `--ease-in`
+
+### Burger → X
+
+- Circular glass button `46px`, 3 white bars `20×2` stacked at `0 / 6 / 12px`
+- Open:
+  - bar1: `translate: 0 6px; rotate: 45deg`
+  - bar2: `opacity: 0; scale: 0.2 1`
+  - bar3: `translate: 0 -6px; rotate: -45deg`
+- Transition stagger: translate first, then rotate delayed `0.14s` on open (reverse on close)
+
+### Overlay
+
+- Fixed fullscreen, `z-index: 50`, starts `opacity: 0; visibility: hidden`
+- `.menu__bg`: diagonal gradient `158deg` from sky `#29bee4` → `#1496be` → ink `#0d2b3a` at ~94–95% alpha; `blur(26px) saturate(150%)`
+- Closed: `transform: scale(1.12)`; open: scale to `none` over `0.7s --ease-out`
+- Menu items: start `opacity: 0; translateY(18px)`; open stagger `calc(var(--i) * 55ms + 140ms)`, opacity `0.5s`, transform `0.65s --ease-out`
+- CTA pill: same enter, delay `420ms`
+- Link active press: `translateX(6px)`
+- Click link or outside `.menu__inner` closes; Escape closes and refocuses burger; desktop `≥781px` forces close
+
+## Intro section
+
+- White, centered grid, `min-height: 68svh`
+- Padding: `clamp(96px, 17vh, 190px) 24px clamp(80px, 12vh, 150px)`
+- Eyebrow: `Riviera Living Style`
+- Title (with line break after “shoreline”): `Where the shoreline becomes calm` — only **calm** is bold/black display face
+- Title `max-width: 16ch` (13ch on mobile)
+
+## Leaf scroll parallax (JS — exact)
+
+On scroll (rAF-throttled, passive listener), set CSS vars on each leaf:
+
+| Leaf | `--parallax-y` | `--parallax-x` |
+|---|---|---|
+| Left | `scrollY * -0.28` | `scrollY * -0.06` |
+| Right | `scrollY * -0.48` | `scrollY * 0.08` |
+
+Transforms:
+
+- Left: `translate3d(var(--parallax-x), calc(-50% + var(--parallax-y)), 0)`
+- Right: same + `rotate(180deg)`
+
+Skip updates when `prefers-reduced-motion: reduce`. Also respect global reduce-motion: force transition/animation durations near `0`.
+
+## Accessibility / behavior details
+
+- Burger: `aria-label` toggles “Open menu” / “Close menu”, `aria-expanded`, `aria-controls="mobile-menu"`
+- Wordmark SVG and decorative images: `aria-hidden="true"`
+- Images: `user-select: none`, `-webkit-user-drag: none`
+- Leaves: `will-change: transform`
+
+## Tech constraints
+
+- Vite only (`"vite": "^5.4.2"`), scripts: `dev` / `build` / `preview`
+- No framework components; keep BEM-like class names listed above
+- Do not invent extra sections, cards, stats, or different imagery
+- Match layering z-index exactly: sky `0` → wordmark `1` → building `2` → fade `3` → leaves `5` → menu `50` → nav `60`
+
+Build this so the first viewport reads as one branded Mediterranean resort hero (sky + centered white MAREA + building + glass nav), then white intro copy under mirrored leaf decorations that parallax apart while scrolling.
+
+---

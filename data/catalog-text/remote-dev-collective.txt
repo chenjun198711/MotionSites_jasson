@@ -1,0 +1,246 @@
+Recreate this exact single-page landing site pixel-for-pixel. Stack: React 18 + TypeScript + Vite + Tailwind CSS 3 + Framer Motion + Lucide React. No other UI libraries.
+
+═══════════════════════════════════════
+PAGE TITLE
+═══════════════════════════════════════
+DE</HELPERS - Outsourced Development Team
+
+═══════════════════════════════════════
+FONT (exact)
+═══════════════════════════════════════
+Load this stylesheet in <head>:
+https://db.onlinewebfonts.com/c/0e6de1ec911a2e267ff136bbdd384a44?family=Helvetica+Neue+Light
+
+Global body font-family:
+'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, sans-serif
+
+Antialiased text. Selection color: background rgba(168, 85, 247, 0.4), color #fff.
+html { scroll-behavior: smooth; }
+body background #000, color #fff.
+
+═══════════════════════════════════════
+ROOT BACKGROUND COLOR
+═══════════════════════════════════════
+Page root wrapper background: #0A061A (deep purple-black, NOT pure black).
+
+═══════════════════════════════════════
+BACKGROUND VIDEO (exact CloudFront URL — mandatory)
+═══════════════════════════════════════
+Sticky full-viewport video behind the first two sections:
+
+URL (exact):
+https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260721_194026_53c6f9fd-f0d7-4d7d-be62-cdd53b253fb3.mp4
+
+Attributes: autoPlay, muted, loop, playsInline
+CSS: w-full h-full object-cover
+
+Structure technique (exact):
+1. Outer relative z-0 container
+2. Inside: sticky top-0 h-screen w-full overflow-hidden containing the <video>
+3. Over the video bottom: absolute inset-x-0 bottom-0 h-[40%] pointer-events-none with linear-gradient(to bottom, transparent, #0A061A)
+4. Content overlay: relative z-10 -mt-[100vh] containing Nav + Hero + About
+5. Third section (TextFill + stats) sits BELOW in relative z-10 with NO video behind it — solid #0A061A only
+6. After text section: empty spacer div h-[10vh]
+
+═══════════════════════════════════════
+LIQUID GLASS CLASS (exact CSS — use on testimonial card + About card)
+═══════════════════════════════════════
+.liquid-glass {
+  background: linear-gradient(
+    165deg,
+    rgba(255, 255, 255, 0.005) 0%,
+    rgba(255, 255, 255, 0.002) 40%,
+    rgba(255, 255, 255, 0.001) 100%
+  );
+  backdrop-filter: blur(18px) saturate(1.4) brightness(1.05);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4) brightness(1.05);
+  border: none;
+  box-shadow: inset 0 0 12px rgba(255, 255, 255, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.liquid-glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: linear-gradient(180deg,
+    rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.025) 15%,
+    rgba(255,255,255,0.005) 40%, rgba(255,255,255,0.005) 60%,
+    rgba(255,255,255,0.025) 85%, rgba(255,255,255,0.06) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.liquid-glass::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, 0.01) 0%, transparent 50%),
+    radial-gradient(ellipse at center, transparent 55%, rgba(255, 255, 255, 0.005) 80%, rgba(255, 255, 255, 0.01) 100%);
+  pointer-events: none;
+}
+
+═══════════════════════════════════════
+1) FIXED NAV
+═══════════════════════════════════════
+fixed top-0 left-0 right-0 z-50
+padding: px-6 sm:px-8 md:px-12 py-5 md:py-6
+flex items-center justify-between
+
+LOGO (left):
+text-white font-light text-lg tracking-wide
+Literal text: DE</HELPERS
+where "HELPERS" is wrapped in <span className="font-normal"> so HELPERS is slightly heavier than "DE</"
+
+DESKTOP NAV (hidden md:flex, items-center gap-2):
+Links: "About", "Our cases", "Services", "Prices"
+All href="#"
+Active item = "About": border border-white/60 text-white, px-4 py-2 rounded-full text-sm
+Inactive: text-white/70 hover:text-white, px-4 py-2 rounded-full text-sm, transition-all duration-300
+CTA "Hire us": bg-white text-black text-sm font-medium px-5 py-2 rounded-full hover:bg-white/90 transition-all duration-300 ml-4
+
+MOBILE MENU BUTTON (md:hidden):
+w-10 h-10, Menu / X icons from lucide-react size={24}
+AnimatePresence mode="wait":
+- Open icon: initial {opacity:0, rotate:90} → animate {opacity:1, rotate:0} → exit {opacity:0, rotate:-90}, duration 0.2
+- Close icon: initial {opacity:0, rotate:-90} → animate {opacity:1, rotate:0} → exit {opacity:0, rotate:90}, duration 0.2
+
+MOBILE FULLSCREEN OVERLAY (AnimatePresence, md:hidden, z-[55]):
+- Overlay fade duration 0.3
+- Backdrop: absolute inset-0 bg-black/95 backdrop-blur-xl
+- Close X button absolute top-5 right-6
+- Centered column of links gap-6:
+  - Each link text-2xl font-light; active white, inactive white/60
+  - Stagger: initial {opacity:0, y:20} animate {opacity:1, y:0}, delay 0.15 + i*0.05, duration 0.3
+  - "Hire us" pill: mt-4 bg-white text-black text-lg font-medium px-8 py-3 rounded-full, delay 0.4
+
+═══════════════════════════════════════
+2) HERO SECTION
+═══════════════════════════════════════
+padding: px-6 sm:px-8 md:px-12 pt-24 md:pt-32 pb-20 md:pb-40
+Inner: max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-start
+
+LEFT COLUMN:
+H1 (white, font-light, leading-[1.1], tracking-tight):
+text-4xl sm:text-5xl md:text-6xl lg:text-7xl
+Exact line breaks:
+Outsourced
+development
+team
+
+Subcopy: text-white/50 text-sm mt-6 font-light
+"Built off-site. Feels in-house."
+
+RIGHT COLUMN (flex flex-col items-start md:items-end gap-4):
+Avatar stack (flex -space-x-2 mb-2) — 4 overlapping circular avatars, each w-8 h-8 rounded-full border-2 border-black/50 object-cover:
+1. https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=100
+2. https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=100
+3. https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=100
+4. https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=100
+
+Testimonial card: max-w-sm w-full rounded-2xl liquid-glass p-5
+Text: text-white/90 text-sm font-light leading-relaxed
+Exact copy:
+"Working with this team felt like unlocking a cheat code. I sent them a Figma + a wild idea, and a week later I had a working prototype with pixel-perfect animations. Fully remote, yet fully in sync."
+
+═══════════════════════════════════════
+3) ABOUT + FEATURES SECTION
+═══════════════════════════════════════
+section: px-6 sm:px-8 md:px-12 pb-20 min-h-screen flex items-center
+Inner max-w-7xl mx-auto w-full
+
+Outer card: w-full rounded-3xl liquid-glass
+
+TOP ROW (p-8 md:p-12 pb-0, flex flex-col md:flex-row items-start justify-between gap-8 mb-12):
+Left H2: text-white text-3xl md:text-4xl font-light — "About our team"
+Right (max-w-md):
+Paragraph text-white/70 text-sm font-light leading-relaxed mb-6:
+"We're a remote-first dev team that speaks the language of both startups and enterprise. From rapid prototyping to scalable architecture — we translate your vision into clean, elegant code. Always on time. Always in style."
+CTA button: inline-flex items-center gap-2 bg-white text-black text-sm font-medium px-6 py-3 rounded-full hover:bg-white/90
+Label: "Work with us" + lucide ArrowUpRight size={16}
+
+FEATURE GRID (grid-cols-1 md:grid-cols-3 gap-3, p-6 md:p-12 pt-8 md:pt-10):
+Each card: p-6 md:p-8 flex flex-col justify-between min-h-[260px] rounded-2xl bg-black/40
+
+01 — Smart development
+"We're not just coders — we solve problems. Expect fast, scalable, future-proof solutions tailored to your needs."
+
+02 — Super-fast delivery
+"We deliver MVPs in weeks, not months. Agile workflows and zero overhead mean you move faster than your competitors."
+
+03 — Global & synced
+"Remote doesn't mean distant. Our team works across time zones with seamless communication and reliable updates."
+
+Number: text-white/40 text-xs font-light mb-2 block
+Title: text-white text-xl md:text-2xl font-light
+Desc: text-white/60 text-sm font-light leading-relaxed
+Number/title at top of card, description at bottom (justify-between).
+
+═══════════════════════════════════════
+4) TEXT FILL + STATS SECTION (no video bg)
+═══════════════════════════════════════
+section: relative flex flex-col justify-end px-6 sm:px-8 md:px-12 py-16 md:py-24
+max-w-7xl mx-auto
+
+MANIFESTO TEXT (exact Unicode apostrophes/em dash):
+"You don’t need to see us to know we’re working. Our process is silent. Our output — loud and clear. Remote-first means frictionless. Just aligned teams, focused on your next release."
+(Use curly apostrophe U+2019 and em dash U+2014)
+
+Typography: text-2xl leading-snug tracking-tight sm:text-3xl md:text-5xl lg:text-6xl lg:leading-[1.15] mb-20 md:mb-32
+font-normal (via letter spans)
+
+CHARACTER FILL ANIMATION (Framer Motion + useInView):
+- useInView(containerRef, { once: true, margin: '-20% 0px' })
+- Split into words (inline-block whitespace-nowrap), then each character into AnimatedLetter
+- Each letter: relative inline-block; invisible spacer span for layout; absolute motion.span overlaid
+- initial opacity 0.3 (dim white)
+- when visible: animate to opacity 1, color white
+- transition: duration 0.05, delay = (index / totalChars) * 1.5
+- Spaces rendered as \u00A0
+Result: letters sequentially "fill" from dim to bright over ~1.5s when section enters viewport.
+
+STATS GRID (grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 mb-12):
+Each stat: relative rounded-lg overflow-hidden with CornerBrackets + inner px-6 py-8
+
+01 — 241 — Projects were done
+02 — 98% — Client satisfaction rate
+03 — 36 devs — Our talent pool scales with your needs
+
+num: text-white/40 text-xs font-light block mb-3
+value: text-white text-3xl md:text-4xl font-light block mb-2
+label: text-white/50 text-xs font-light
+
+CORNER BRACKETS (exact SVG corners on each stat card):
+Four absolute SVGs, size 20×20, stroke rgba(255,255,255,0.35), strokeWidth 2.5, strokeLinecap round, fill none, corner radius r=5:
+- top-left:     M0 20 L0 5 Q0 0 5 0 L20 0
+- top-right:    M0 0 L15 0 Q20 0 20 5 L20 20
+- bottom-left:  M0 0 L0 15 Q0 20 5 20 L20 20
+- bottom-right: M20 0 L20 15 Q20 20 15 20 L0 20
+
+BOTTOM CTA (flex justify-center):
+"Let's work" — bg-white text-black text-sm px-8 py-3 rounded-full
+hover:bg-[#B440CB] hover:text-white transition-all duration-300
+
+═══════════════════════════════════════
+VISUAL RULES / DO NOT
+═══════════════════════════════════════
+- DO use the exact CloudFront mp4 URL above — no substitutes
+- DO use Helvetica Neue Light from the onlinewebfonts link
+- DO implement liquid-glass with ::before mask border + ::after radial highlights exactly
+- DO use sticky video + -mt-[100vh] overlay pattern so video stays pinned under hero+about while scrolling
+- DO keep all copy character-exact including curly quotes/em dash
+- DO NOT use Inter/Roboto/system fonts as primary
+- DO NOT use purple-on-white themes; stay on #0A061A dark
+- DO NOT put video behind the text-fill/stats section
+- DO NOT add extra sections, cards, or nav items
+- Icons only from lucide-react: Menu, X, ArrowUpRight
+` ` `
+
+---

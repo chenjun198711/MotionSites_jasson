@@ -1,0 +1,208 @@
+Build a **single self-contained `index.html`** (inline CSS + JS, no build step) that pixel-matches this real-estate “fluid property UI” overlay. Title: **`Unitbers — 17-11 Linden St, Ridgewood`**. Language: `en`. Viewport: `width=device-width, initial-scale=1, viewport-fit=cover`. Body background `#000`. Page never scrolls on desktop; video is always the full-bleed subject behind glass UI.
+
+## 1. Background video (exact URL — do not substitute)
+
+Full-viewport fixed background video, behind everything:
+
+` ` `html
+<video class="bgv" autoplay muted loop playsinline preload="auto"
+       aria-hidden="true" tabindex="-1">
+  <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260723_031225_fc05f191-deb7-4ff2-857a-80763ab80495.mp4" type="video/mp4">
+</video>
+` ` `
+
+CSS for `.bgv`:
+- `position: fixed; inset: 0; z-index: -1`
+- `width/height: 100%`
+- `object-fit: cover; object-position: center`
+- `pointer-events: none`
+
+JS “kick” autoplay if Safari/low-power deferred it: on `canplay`, `visibilitychange` (when visible), and first `pointerdown`/`keydown`/`touchstart`, call `video.play().catch(()=>{})`.
+
+## 2. Typography / fonts (exact stack)
+
+Embed **three `@font-face` rules** for family name **`"UIFont"`** (this is Roboto packaged under that name), weights **400, 500, 700**, `font-style: normal`, `font-display: swap`, format **woff2** (base64-embedded or Google Fonts Roboto woff2 is fine if self-hosting the same faces).
+
+CSS variable:
+` ` `css
+--f-ui: "UIFont", Roboto, "Helvetica Neue", Arial, sans-serif;
+` ` `
+Global: `-webkit-font-smoothing: antialiased`. **No Inter / system-ui as primary.** All UI type uses `var(--f-ui)`.
+
+Exact type specs (desktop design px):
+
+| Element | Spec |
+|---|---|
+| Brand “Unitbers” | 400 16px / 19px, `#fff` |
+| Tab labels | 400 13px / 1, `#fff`; active same weight |
+| Info labels | 400 14px / 19px, `#cdd1da` |
+| Info values | 400 16px / 22px, `#fff` |
+| “View Floor plan” | 400 14.5px / 21px, `#cfdcec` |
+| Stat chip numbers | 500 13px / 1, `#e7eefa` |
+| Tool labels | 400 11.5px / 1, `#dbe6f4` |
+| Card1 price | 400 27.5px / 1, `#fff`, letter-spacing `-0.01em` |
+| Card1 address | 400 17.5px / 1, `#fff` |
+| Card1 spec values | 400 24.5px / 1, `#fff` |
+| Card1 spec labels | 400 17.5px / 1, `#92a5be` |
+| Card1 chips | 400 13.5px / 1, `#dce7f5` |
+| Card2/3 headers | 500 15.5px / 1, letter-spacing `-0.05em`, `#eaf1fc`, ALL CAPS text |
+| Card2 field labels | 400 13.5px / 1, `#92a5be` |
+| Card2 field values | 400 13.5px / 1, `#fff` |
+| “Down Payment” label | 400 16.5px / 1, `#92a5be` |
+| Money labels | 400 13.5px / 1, `#92a5be` |
+| Money values | 400 19.5px / 1, `#fff` |
+| Buttons | 500 12.5px / 1 |
+| Tour note | 400 12.5px / 1, `#9fb4ce` |
+| Similar price | 500 18px / 24px, `#fff` |
+| Similar address | 400 13.5px / 20px, `#dce7f5` |
+| Similar meta | 400 12.5px / 18px, `#92a5be` |
+| VIRTUAL TOUR badge | 500 8px / 1, letter-spacing `0.05em`, `#fff` |
+
+## 3. Design canvas & scaling system
+
+Reference canvas: **1448 × 1086** design pixels. CSS vars: `--W:1448; --H:1086; --s; --sr; --railh; --sm; --hairpx`.
+
+**JS viewport fitter** (must match exactly):
+` ` `js
+W=1448, H=1086, RAIL_MAX=1.2
+CARD_W=394, CARD_H=285.4, CARD_WFRAC=0.80, CARD_HFRAC=0.38
+s = min(clientWidth/W, clientHeight/H)
+sr = max(s, min(clientHeight/H, s * RAIL_MAX))
+--sm = min(1, vw*CARD_WFRAC/CARD_W, vh*CARD_HFRAC/CARD_H)
+--s = s; --sr = sr; --railh = vh/sr; --hairpx = (1/sr)+'px'
+` ` `
+Also snap `.rule` / `.vd` hairlines onto whole device pixels via tiny `translateY` / `translateX` corrections after measure. Re-run on `resize`, `orientationchange`, and `visualViewport.resize`.
+
+## 4. Glass / color system (exact tokens)
+
+` ` `css
+--bg-0:#16263f; --bg-1:#101f36; --bg-2:#0b1524;
+--txt:#ffffff; --txt-55:#92a5be;
+--chip:rgba(255,255,255,.065);
+--accent:#2f6fe8; --accent-ico:#6ea2ee;
+/* live glass (cards + Gallery/Room tools) */
+--tc:255,255,255; --t1:.14; --t2:.14;
+--bblur:34px; --bsat:115%; --cardr:14px;
+--edge:0; --hair:.055; --shad:.38;
+` ` `
+
+**Card / non-map tool glass** (identical):
+` ` `css
+background: rgba(var(--tc), var(--t1));
+backdrop-filter: blur(var(--bblur)) saturate(var(--bsat));
+border-radius: var(--cardr); /* 14px */
+box-shadow:
+  inset 0 0 0 1px rgba(255,255,255,var(--hair)),
+  0 22px 54px rgba(3,9,19,var(--shad));
+border: 0;
+` ` `
+
+Hairlines: `.rule` height `--hairpx`, alpha `.255`; `.vd` width `--hairpx`, alpha `.175`; color white.
+
+## 5. Layout architecture (desktop — always on, not optional)
+
+Do **not** letterbox a scaled stage. Unpack into edge-anchored zones:
+
+- `#stage` fixed full viewport; `.screen` absolute fill, transparent.
+- `.main` left area: `right: calc((394px + var(--gut)) * var(--sr))` with `--gut:24px`.
+- Zones `.z` use CSS `zoom: var(--s)` (pointer-events none on zone, auto on children):
+  - **`.ztl`** (top-left): width 700×340, `zoom: calc(var(--s) * var(--tl))` with `--tl:1.3`; republish `--ztlz` for stroke correction.
+  - **`.ztr`** (top-right): width 1052×230, top-right.
+  - **`.zbl`** bottom-left 240×160; **`.zbr`** bottom-right 320×120.
+- **Right rail** `.rail`: pinned `right: calc(var(--gut)*var(--sr))`, width `394px * --sr`, full height, overflow hidden.
+- `.railinner`: `zoom: var(--sr)`, width 394, height `--railh` px, flex column, `padding-top: 25px`.
+- Cards relative in column; gaps reproduce tops 25 / 336 / 712: `.c2 { margin-top: 25.6px }`, `.c3 { margin-top: 22.3px }` — **never stretch gaps**.
+
+Children keep **absolute design coordinates** inside zones (listed below).
+
+## 6. Exact UI elements & copy (desktop positions)
+
+### Top-left cluster
+1. **Back button** `.back` — absolute `left:31px; top:25px; 35×35; border-radius:10px; background:#071120`; chevron SVG 13×13 stroke `#fff` stroke-width 1.9 path `M15 5L8 12l7 7`. Hover → `#0c1a2d`. Transition background `.18s ease`.
+2. **Brand** `.brand` — `left:90.5px; top:33px; gap:10px`. Building SVG 17×17 stroke `#ffffff` 1.6 + text **Unitbers**.
+3. **Segmented tabs** `.seg` role=tablist — `left:91px; top:72px; height:35.5px; border-radius:10px; background:transparent; border: calc(1.5px / var(--ztlz,1)) solid #404e63; padding:1.5px 0`. Tabs (in order): **Water, Daylight, Electricity, Gas (active `.on` aria-selected), AC**. Tab chrome: padding `0 15.4px`, height 30.5, radius 8; active: `background:#404e63; border-radius:4px`. Transition color/background `.16s ease`. Click toggles `.on`.
+4. **Info** `.info` — `left:90px; top:146px`. Two groups, 16px gap:
+   - Lab “Annual gas utility costs” / Val “$1,196 / 1994 m²”
+   - Lab “Safety Features” / Val “Built-in gas detector”
+
+### Top-right cluster
+5. **View link** `.viewlink` — `left:740px; top:32px`. Markup: `View<br><i>Floor plan` + arrow SVG 15×12. Hover `#fff`.
+6. **Mini floor plan** `.mini` — `left:848px; top:30px; 162×172`. Four L-corner brackets `.br` 20×20, stroke `rgba(255,255,255,.28)`, offset ±22px / ±8px. Inside: white stroke SVG floorplan `viewBox="0 0 162 172"` opacity ~.85 with room rectangles (use the exact path set from the prototype: outer shell + internal walls + room boxes).
+
+### Bottom-left stats `.stats` — design `left:34px; top:944px` (fluid: `bottom:22px; left:34px`), column gap 9px. Three rows 70×34, radius 8, glass `rgba(255,255,255,.06)` + border `.075` + blur 14px. Icons stroke `#dbe6f4` 1.6:
+- Beds icon → **2**
+- Bath icon → **2**
+- Home/floors icon → **1**
+
+### Bottom-right tools `.tools` — design `left:736px; top:1000px` (fluid: `bottom:28px; right:22px`), gap 10px, align end.
+- **Gallery 18** — 78×58 radius 10; glass same as cards; photo SVG + label.
+- **Room view** — same size/glass; person SVG + label.
+- **Map** `.tool.map` — 96×58, `border: 2px solid rgba(255,255,255,.85)` (desktop: `border-width: calc(2px / var(--s))`), solid map SVG fill `#20496e` / streets `#3d739e` / `#5d95c2` / building `#2c5d85` / pin `#dfe9f3`, label “Map” bottom center white with text-shadow.
+
+## 7. Right rail — three cards (width 394 each)
+
+### Card 1 `.c1` — listing, height **285.4px**, top 25
+- Price `$274,567` at left 20.5 / top ~19.9
+- Address `17-11 Linden St, Ridgewood, NY 11385` at 20.5 / ~59
+- Horizontal `.rule` at top 91.7, insets left 20.2 / right 18
+- Specs columns (inline lefts): **2 Beds** @28.5, **2 baths** @124.5, **0.892 sqft** @214.0, **B Class** @310.8; vertical dividers at 107.4, 196.9, 293.0 (top 102.5, height 62.6)
+- Chips (height 36, radius 8, bg `--chip`, icon stroke `#6ea2ee`):
+  - “Apartment Building” left 20.5 top 180.1 width 170.4
+  - “3276/sqft” left 199.8 top 180.1 width 115.8
+  - “$550/mo HOA” left 20.5 top 225.8 width 141.6
+  - “Built in 2009” left 170.7 top 225.8 width 138.8
+
+### Card 2 `.c2` — valuation calculator, height **353.7px**, top 336
+- Header `VALUATION CALCULATOR`
+- Rule top 49.5; three vertical dividers lefts 16.1 / 152.9 / 283.0
+- Fields: Term **15 years**; Mortgage Type **Fixed**; Interest rate **3%** (exact absolute lefts: labels 27.7 / 167.9 / 299.3; values 28.6 / 167.9 / 298.7)
+- “Down Payment” label; track `left:16; top:159.9; width:362.3; height:4.6; radius:2.3; bg rgba(255,255,255,.13)`; fill `#2f81e8`; knob 22px circle `#c3c9d2` with two CSS triangle grips, grab cursor, `role=slider`
+- Money: Down Payment value + “Estimated pr. month.” `$1,298.47` style (initial ~26% down shows `$78 ,90` with space-before-comma quirk in formatter)
+- Buttons top 262.4 height 40.3 radius 8: **Request a tour** primary `#2f6fe8` width 185.2 left 16; **Contact agent** secondary transparent border `rgba(255,255,255,.16)` width 162.1 left 214.4
+- Note with blue info icon: `as early as today at 11:00 am`
+
+**Slider math (exact):** `PRICE=274567`, rate `0.03/12`, `n=180` months; `m = P * r / (1 - (1+r)^-n)`; drag/click/keyboard arrows; touch `preventDefault` while dragging; `touch-action:none` on knob on mobile.
+
+### Card 3 `.c3` — similar properties, height **421.5px**, top 712
+- Header `SIMILAR PROPERTIES`
+- Rules at 49.5 / 173.5 / 297.5; three `.sim` rows height 124, padding 21×20, gap 14
+- Thumbs 104×74 radius 8:
+  1. Unsplash `photo-1755735340764-3b077cab0c5c?w=416&h=296&fit=crop&crop=entropy&auto=format&q=80` — **$390,000** / `1033 Bay St NE, St. Petersburr.` / `Multifamily • 6 Units • $116,667/unit` / second meta line `730 Monroe Ave Apopka, FL 32703`
+  2. Unsplash `photo-1757125505346-2d71c70e6003?...` — **$425,000** / `Cherry Hill Apartments,` / same meta lines + **VIRTUAL TOUR** badge (play triangle) bottom-left of thumb
+  3. Unsplash `photo-1757287734708-1f49b0e26cab?...` — **$360,000** / `Oakwood Terrace,` / one meta line only
+
+## 8. Motion / interaction (there are no CSS keyframe animations)
+
+Recreate these behaviors only:
+1. **Looping background video** (autoplay muted loop).
+2. **Hover transitions** (~.16–.18s ease): back button fill, tab color/bg, tool fill, viewlink color.
+3. **Tab selection** instant class swap to squared `#404e63` pill.
+4. **Down-payment slider** live fill/knob + recalculated money strings.
+5. **`prefers-reduced-motion: reduce`** → disable all transitions/animations.
+6. **`:focus-visible`** outline `2px solid #7fb0ff`, offset 2, radius 6.
+
+Optional (present in source but **not part of the design**): gear tuner panel (`G` key) for live glass CSS vars — omit unless asked.
+
+## 9. Mobile ≤640px (exact behavior)
+
+- No page scroll: `100dvh` grid, **row 2 is empty breathing room = pure video**.
+- Grid: 2 cols × 4 rows; chrome scale `--mc:.82`; floorplan cluster `--mz:.52`; cards height `--cardh:285.4px` scaled by `--sm`.
+- `.main` / `.railinner` → `display:contents`.
+- Top-left: back+brand one line; tabs; info. Tabs compacted (height 32, label 11.5px, padding 0 10px), horizontal scroll if needed, transparent rail.
+- Top-right: “View Floor plan” stacked above mini plan, right-aligned.
+- Row 3: tools left, stats column right (gap 6).
+- Row 4: horizontal snap carousel of 3 cards (`scroll-snap-type:x mandatory`, align center, gap 12, padding 0 16), bottom-aligned.
+- Compact card2/card3 vertical metrics to fit 285.4 without changing card width 394 (override `--h-top/--tl-top/...`, rule/vd/track/btn tops; card3 row height 80.1, thumb 82×58, smaller type; hide `.simtxt .m + .m`).
+
+## 10. Absolute constraints for a faithful clone
+
+- Single HTML file; no React unless you reproduce the same DOM/CSS/JS behavior identically.
+- Video URL must be the CloudFront URL above.
+- Font family name in CSS should resolve to Roboto metrics via `"UIFont"` (+ Roboto fallback).
+- Preserve the **absolute pixel geometry** for cards (inline `left`/`top`/`width` values) — do not “clean up” to flex on desktop.
+- Glass cards float over live video; middle of the screen must remain mostly empty video on both desktop and mobile.
+- Do not add purple themes, cream paper looks, cards in the hero, or extra marketing chrome.
+
+Deliver the finished page so a 16:9 desktop shows: video full-bleed; Unitbers chrome top-left; floorplan top-right; beds/baths/floors bottom-left; Gallery/Room/Map bottom-right; three stacked frosted cards on the right rail with the listing, calculator, and similars exactly as specified.
+
+---

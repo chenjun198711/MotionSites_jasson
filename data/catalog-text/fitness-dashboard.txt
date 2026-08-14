@@ -1,0 +1,229 @@
+Build a  **Vitalis — Daily Activity Overview**. Match every measurement, color, URL, string, and behavior below. Do not invent alternate copy, imagery, or layout. Use rem with `1rem = 16` design px. Design reference frame: **1448 × 1086**.
+
+---
+
+## Tech / fonts
+
+- Single `index.html` with inline CSS + JS (no framework).
+- Google Fonts Inter weights **300, 400, 500, 600, 700, 800**:
+  - `https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap`
+  - Preconnect: `https://fonts.googleapis.com` and `https://fonts.gstatic.com` (crossorigin)
+- Body font stack: `"Inter","Segoe UI",system-ui,-apple-system,sans-serif`
+- Antialiased text; `overflow:hidden` on desktop body
+- Proportional root font:
+  `font-size: clamp(7px, min(100vw / 90.5, 100dvh / 67.875), 23px)`
+
+---
+
+## Exact image URLs (use these, not placeholders)
+
+**Hero background (CSS `background-image` on `.hero-photo`):**
+` ` `
+https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260730_081846_b55b106b-17b3-4020-8473-cacf0dcc852f.png&w=1920&q=85
+` ` `
+Hero photo CSS crop (desktop):
+- `background-size: 118.08% auto`
+- `background-position: 42.16% 16.47%`
+- `background-repeat: no-repeat`
+- Hero card fill behind photo: `#1599e5`
+
+**Profile (sidebar + mobile header):**
+` ` `
+https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=facearea&facepad=2.4&w=160&h=160&q=70
+` ` `
+Alt: `Andreas Voss`
+
+**Hero member avatars (3, stacked):**
+` ` `
+https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=facearea&facepad=2.6&w=140&h=140&q=70
+https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=facearea&facepad=2.6&w=140&h=140&q=70
+https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=facearea&facepad=2.6&w=140&h=140&q=70
+` ` `
+
+**Sleep card avatars (3, stacked):**
+` ` `
+https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=facearea&facepad=2.6&w=120&h=120&q=70
+https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=facearea&facepad=2.6&w=120&h=120&q=70
+https://images.unsplash.com/photo-1552374196-c4e7ffc6e126?auto=format&fit=facearea&facepad=2.6&w=120&h=120&q=70
+` ` `
+
+---
+
+## Color tokens (`:root`)
+
+| Token | Value |
+|---|---|
+| `--bg` | `#f0f8fc` |
+| `--surface` | `#ffffff` |
+| `--ink` | `#000000` |
+| `--ink-2` | `#3f4045` |
+| `--muted` | `#6b6c72` |
+| `--muted-2` | `#8c8c91` |
+| `--icon` | `#7f848c` |
+| `--hair` | `#e6eef4` |
+| `--chip` | `#eef6fc` |
+| `--blue` | `#3ea2e8` |
+| `--blue-deep` | `#0179da` |
+| `--blue-soft` | `#5db0e9` |
+| `--droplet` | `#055897` |
+| `--lime` | `#d2e659` |
+| `--lime-crown` | `#d7f17c` |
+| `--olive` | `#929e08` |
+| `--olive-nav` | `#94a103` |
+| `--track` | `#f3f3f3` |
+| `--wave` | `#7ec3dd` |
+| `--wave-soft` | `#dcecf3` |
+| `--shadow` | `0 .25rem 1.5rem rgba(21,71,110,.045)` |
+
+Layout tokens:
+- `--gap: 1.125rem` (18)
+- `--pad-l: 1.5rem` (24), `--pad-r: 1.0625rem` (17), `--pad-b: .8125rem` (13)
+- `--cpad-y: 2.125rem` (34), `--cpad-x: 1.9375rem` (31)
+- `--glass: 2.1875rem` (35)
+- `--rail: 6.875rem` (110)
+- `--r-lg: 2.375rem` (38), `--r-md: 2.25rem` (36)
+
+---
+
+## Shell / layout
+
+- Outer `.app`: flex row, `100% × 100dvh`, border `1px solid rgba(174,183,189,.7)`, radius `2.5rem`, bg `--bg`
+- **Left rail** fixed `110px` white column
+- **Main**: CSS grid rows `121fr / 469fr / 447fr`, gap 18, padding `0 17 13 24`
+- Row A (hero + hydration): columns `735fr / 546fr`, gap `1.0625rem`
+- Row B (sleep + calories + weight): columns `407fr / 439fr / 416fr`, gap 18
+- Cards: white, soft shadow, overflow hidden; large cards radius 38px, small 36px
+
+---
+
+## Sidebar (rail)
+
+**Logo:** SVG 45×45, olive dots `#8f9f05`, diamond 5×5 pattern (centers at pitch 9.4, radius 3.7). Aria-label `Vitalis`. Size 45×45, margin-top 37px.
+
+**Nav buttons** (52×52 circles), icons currentColor `#7f848c`:
+1. **Home** (active): filled home + center circle; active bg `#94a103`, white icon, shadow `0 .375rem .875rem rgba(148,161,3,.32)`
+2. **Activity**: rounded square + polyline chart
+3. **Messages** (`data-more`): chat bubble + dash
+4. thin rule 35×1 `#e3e8ec`
+5. **Notifications** (`data-more`): bell
+6. **Settings** (`data-more`): gear
+
+**Footer:** Sign out, Help (`data-more`), then profile ring (olive border `#94a103`, 54×54) with Andreas photo.
+
+**Mobile-only:** hamburger `.nav-b--menu` (hidden on desktop).
+
+---
+
+## Top bar — exact copy
+
+- H1: `Hi, Andreas!` — 36px / 700 / lh 1.15 / tracking `-0.021em`
+- Sub: `Let's look at your daily activity overview.` — 15.5px / 400 / `#6b6c72`
+- Search pill 319×66, radius 33px, white, border `#e6eef4`, placeholder **`Search for healthy metrics`**, input 18px
+- **Upgrade** black pill 66px tall: lime-crown crown SVG + text `Upgrade` in `#d7f17c`, 19px / 600
+
+---
+
+## Hero card — exact copy & placement
+
+- Headline: **`Your Home Workout Starts Here!`** — 52px / 600 / lh 62px / tracking `-0.032em`, absolute left 41px top 33px, white, light blue text-shadow, max-width ~10.95em
+- Center play button (60px circle) at `51.4% / 48.1%`: frosted white ring, white triangle play icon; aria-label `Play intro video`
+- Under play: **`Explore Now`** at `51.7% / 58.8%`, 23px / 500
+- Bottom-left join block:
+  - `Join program with:`
+  - 3 overlapping 54px avatars (overlap −14px, white ring)
+  - **`5.8K+`** / **`Members`**
+- Bottom-right CTA: black pill **`Start Free Trial`** + white circular arrow icon, ~296×70
+
+---
+
+## Hydration card
+
+- Gradient bg: `linear-gradient(145deg, #3199e5 0%, #3ea2e8 46%, #43a6ea 100%)`
+- Title: `Hydration Status` (20px / 600)
+- Body (with `<br>` after first sentence):
+  `Drive your goal water daily.`  
+  `Build healthy habits and achieve your focus.`
+- Lime chip button `#d2e659`: **`Well Done`** + thumbs-up SVG, text `#16180c`
+- **6×4 water-glass grid** (SVG symbol `#cup` viewBox `0 0 35 43`):
+  - Full fill `#055897`, empty `rgba(255,255,255,.94)`
+  - Exact fill pattern:
+    ` ` `
+    row1: 1 1 1 1 1 0
+    row2: 1 0 1 0 1 0
+    row3: 0 0 0 0 0 0
+    row4: 0 0 0 0 0 0
+    ` ` `
+  - Aria: `8 of 24 glasses logged`
+- Giant number: **`2.15L`** (90px / 300) + **`/Day`** (34px / 400), right-aligned
+- Range toggles D / W / M (62px circles); **D** pressed (white bg, black text); W/M translucent white
+
+---
+
+## Sleep card
+
+- 3 small stacked avatars (39px)
+- Title: **`Experience the Goodness of Deep Sleep`** (27px / 500 / lh 35px)
+- Black pill tag with moon SVG + **`Deep sleep`**
+- Body: `Discover tips and techniques for better, deeper sleep. Wake up refreshed and experience the true benefits of restful nights.` (`#6b6c72`)
+- Footer: **`2`**`/5` + prev/next circular pager buttons
+
+---
+
+## Calories card
+
+- Chip icon: black flame SVG on `#eef6fc` rounded square
+- Title `Calories` | right value **`2.350`**`Kcal`
+- Sub row: `Lack of physical activity` · `Daily dose`
+- Big: **`2.040`**`/Kcal` (60px)
+- Scale labels `0` · `2.350`
+- **30** vertical bars (7.5px wide, full height 62px, pill ends); **first 21 olive `#929e08`**, rest `#f3f3f3`
+- Macros bottom: **`269 Gram Carbohydrates`**, **`164 Gram Proteins`**, **`110 Gram Fats`**
+
+---
+
+## Weight card
+
+- Chip: left-right double arrow SVG
+- Title `Weight` | **`188`**`Cm`
+- Sub: `Healthy weight is 68 Kg - 84 Kg` · `Tall body`
+- Sparkline SVG `viewBox="0 0 351 116"`: two wavy strokes with opacity gradients `#6ec0da` (widths 11), highlight circle at `(81,14)` fill `#83c5dd` — keep the exact path `d` values from the source
+- Footer: giant **`82`**`kg` (119px) + right text:
+  `Of the weekly` / `plan completed` / bold **`Keep it up!`**
+
+---
+
+## Interactions (required JS)
+
+1. Build cups grid from the 6×4 pattern above into `#cups`
+2. Build 30 calorie bars (21 `.on`) into `#bars`
+3. D/W/M: exclusive `aria-pressed="true"`
+4. Mobile menu: `[data-menu]` toggles `.rail.is-open`; click-outside + Escape closes; `[data-more]` items hidden until open
+5. `:focus-visible` outline `#0f7fd0` (white on hero/hydration)
+6. `prefers-reduced-motion: reduce` → no transitions
+
+---
+
+## Responsive (must match)
+
+**Tablet** `(621–1180px)` and `max-aspect-ratio: 1/1`:
+- 2-column reflow: hero full width; hydration|sleep; calories|weight
+- Card interiors switch to content-flow (no absolute collisions)
+
+**Mobile** `≤620px`:
+- Column stack, body scrolls
+- Rail → fixed bottom glass pill tab bar (`backdrop-filter: blur(20px)`), primary icons + menu key
+- Sticky frosted topbar; profile moves to `.me-top`
+- Hero becomes vertical stack (photo `cover` / center); trial full-width
+- Cups stretch 6 across
+
+**≤400px:** tighten macros / titles / hero h2 to 32px
+
+---
+
+## Non-negotiables
+
+- Title tag: `Vitalis — Daily Activity Overview`
+- Exact strings, numbers (`2.15L`, `5.8K+`, `2.350`, `2.040`, `82kg`, `188 Cm`, macros), and Unsplash + Higgs URLs above
+- Inter only (no other display fonts)
+- Soft cyan page wash `#f0f8fc`, olive active nav, lime “Well Done” / crown accents, blue hero/hydration — not purple, not dark-mode
+- Desktop is a single non-scrolling composition that scales via the rem clamp; mobile scrolls with bottom tab bar

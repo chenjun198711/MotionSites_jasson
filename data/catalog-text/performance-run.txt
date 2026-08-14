@@ -1,0 +1,125 @@
+Recreate this exact single-viewport landing page hero for **RunPulse**, a running analytics app. Full-bleed background video, left-aligned copy, frosted glass nav, mobile hamburger drawer. One React component + Tailwind CSS. Match layout, typography, spacing, colors, and motion precisely.
+
+### Stack
+- React (Vite) + TypeScript
+- Tailwind CSS
+- Lucide React icons: `Check`, `Menu`, `X`
+- Google Fonts:
+  ` ` `
+  https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap
+  ` ` `
+- Tailwind `fontFamily`: `sans: ['Inter', 'system-ui', 'sans-serif']`, `serif: ['Playfair Display', 'Georgia', 'serif']`
+- Default body/UI font: **Inter**. Page title: `RunPulse`.
+
+### Background video (exact URL — do not substitute)
+` ` `
+https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260806_114005_01ddc8ab-a73c-44d2-85da-51d3a7686830.mp4
+` ` `
+- Full-bleed `<video>`: `absolute inset-0 h-full w-full object-cover object-right`
+- Attributes: `autoPlay`, `loop`, `muted`, `playsInline`
+- Content: close-up of a woman runner with reflective orange-gradient sunglasses; subject sits on the right so left side stays readable for text
+
+### Overall structure
+` ` `
+<section class="relative min-h-screen w-full overflow-hidden">
+  <video ... />
+  <div class="relative z-10 flex min-h-screen flex-col">
+    [navbar]
+    [mobile menu overlay]
+    [main content — flex-1, vertically centered]
+    [bottom bar]
+  </div>
+</section>
+` ` `
+No dark overlay gradient. White/translucent text on the video. Horizontal padding: `px-5 sm:px-6 md:px-12 lg:px-16`.
+
+### Navbar
+Row: `flex items-center justify-between`, `py-5`.
+
+1. **Logo** (left): text `RunPulse` — `text-lg font-medium tracking-tight text-white`
+2. **Desktop links** (`hidden md:flex`, `gap-8`): Features, Pricing, FAQ, Download  
+   - Each: `href="#features"` etc. (lowercase)  
+   - Style: `text-sm text-white/80`, hover → `text-white` (`transition-colors`)
+3. **Desktop CTA** (`hidden md:inline-flex`): `Link Strava / Apple Health`  
+   - `rounded-full bg-white/10 px-5 py-2 text-sm font-medium text-white backdrop-blur-md`  
+   - Hover: `bg-white/20`
+4. **Mobile hamburger** (`md:hidden`, `z-50`): circular 40×40 (`h-10 w-10`)  
+   - `rounded-full border border-white/20 bg-white/10 backdrop-blur-md`  
+   - Hover: `bg-white/20`  
+   - Crossfade icons over `duration-300`: Menu fades/rotates out (`rotate-90 opacity-0`), X fades/rotates in (`rotate-0 opacity-100`); reverse when closing  
+   - Icons: Lucide `Menu` / `X`, `h-5 w-5 text-white`
+
+### Mobile menu overlay
+- Only below `md`
+- `fixed inset-0 z-40 bg-black/80 backdrop-blur-xl`
+- Open: `opacity-100 pointer-events-auto`; closed: `opacity-0 pointer-events-none`
+- Transition: `duration-500 ease-out`
+- Click backdrop closes; stopPropagation on inner panel
+- When open: lock `document.body.style.overflow = 'hidden'`; restore on close/unmount
+- Centered column of links: Features, Pricing, FAQ, Download — each `text-2xl font-medium text-white`, `px-4 py-4`
+- Staggered entrance when opening: each link `translate-y-8 → translate-y-0` + `opacity-0 → 100`, `duration-500 ease-out`, delay `i * 80 + 100` ms (0→100, 1→180, 2→260, 3→340)
+- Closing: all delays `0ms`, reverse transform/opacity
+- Below links: same “Link Strava / Apple Health” pill (`border border-white/20 bg-white/10 px-8 py-3 …`), delay `(4 * 80 + 100) = 420ms`
+
+### Main hero copy (left column)
+Wrapper: `flex flex-1 flex-col justify-center` + same horizontal padding. Inner: `max-w-xl`.
+
+1. **H1** (exact line break):
+   ` ` `
+   Watch Your Runs Get
+   Stronger, Day by Day
+   ` ` `
+   - `text-3xl sm:text-4xl md:text-5xl lg:text-[3.4rem]`
+   - `font-semibold leading-[1.15] tracking-tight text-white`
+
+2. **Subcopy** (`max-w-md`, `mt-4 sm:mt-5`, `text-[14px] sm:text-[15px] leading-relaxed text-white/70`):
+   > RunPulse logs speed, mileage, HR bands, and **habits**—then shapes them into sharp, inspiring charts you'll genuinely love to check out.
+   - Word **habits**: `<strong class="font-semibold text-white/90">`
+   - Em dash immediately after habits (no space before —)
+
+3. **Primary CTA**: `Try It Free`  
+   - `mt-6 sm:mt-8 rounded-full bg-white px-14 py-3.5 text-sm font-semibold text-gray-900`
+   - `shadow-lg shadow-black/10`
+   - Hover: `scale-[1.03] shadow-xl`; active: `scale-[0.98]`; `transition-all`
+
+4. **Feature list** (`mt-6 sm:mt-8 space-y-2.5`), Lucide `Check` `h-3.5 w-3.5 text-white/50` + `gap-2.5`, text `text-[12px] sm:text-[13px] text-white/70`:
+   - Heart rate zones (Z1–Z5 splits)  ← en-dash U+2013
+   - Exportable charts for coaches
+   - Syncs with Apple Health & Strava
+
+### Bottom bar
+`flex flex-col gap-4` → `sm:flex-row sm:items-end sm:justify-between`, `pb-6 md:pb-8`.
+
+**Left — social proof**
+- Label: `Loved by 12,000+ athletes` — `text-[11px] sm:text-xs tracking-wide text-white/40`
+- Logo row (text logos, not images), `gap-x-5 sm:gap-x-8`, `text-white/60`:
+
+| # | Text | fontFamily | size | weight | style | letterSpacing |
+|---|------|------------|------|--------|-------|---------------|
+| 0 | Nike | `"Playfair Display", serif` | 1.1rem | 700 | italic | 0.02em |
+| 1 | STRAVA | Inter, sans-serif | 0.95rem | 700 | normal | 0.15em |
+| 2 | GARMIN. | Inter, sans-serif | 1rem | 700 | normal | of 0.08em |
+| 3 | Polar | Inter, sans-serif | 0.9rem | 500 | normal | 0.1em |
+| 4 | COROS | Inter, sans-serif | 0.85rem | 600 | normal | 0.12em |
+
+**Right — scroll hint** (`hidden sm:flex`)
+- Link `href="#milestone"`: `Find your next personal best` + down arrow
+- `text-sm text-white/60`, hover → `text-white`, `gap-1.5`
+- Arrow in `<span class="inline-block translate-y-px">` (character ↓ / U+2193)
+
+### What NOT to add
+- No extra sections below the hero
+- No gradient/scrim over the video
+- No cards, stats strips, or floating badges on the media
+- No purple/indigo AI-default theme — keep monochrome white-on-video
+- No Inter/Playfair substitutes
+- Do not change or invent a different video URL
+
+### Acceptance check
+Desktop: full-bleed looping CloudFront video, RunPulse nav + frosted “Link Strava / Apple Health”, left H1/sub/CTA/checks, bottom athlete logos + “Find your next personal best ↓”. Mobile: hamburger → blurred black overlay with staggered link reveal and body scroll lock. CTA scales slightly on hover.
+
+---
+
+CloudFront URL to paste as-is:
+
+`https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260806_114005_01ddc8ab-a73c-44d2-85da-51d3a7686830.mp4`

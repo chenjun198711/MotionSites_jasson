@@ -1,0 +1,215 @@
+# Recreate exactly: Infinite / Portale — full-viewport scroll-locked landing (2 scenes + transition video)
+
+Build a **single-page React + Vite + TypeScript + Tailwind** app that matches this product landing **pixel-for-behavior**, not approximately. Page title: `Infinite - Premium Credit Card`. Root canvas: `h-screen overflow-hidden bg-[#F4F0ED]`. Default UI font: **Geist**. Hero section forces **Helvetica Neue Roman**. No page scroll — only a wheel/touch state machine that transitions Hero → Video → Card.
+
+---
+
+## Exact asset URLs (use these exactly)
+
+Images are loaded via Higgs CDN wrappers (webp, `w=1920`, `q=85`). Raw CloudFront originals are listed too.
+
+### Hero base image (`BG_IMAGE_1`)
+` ` `
+https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260721_161708_64fad17a-06cc-4227-b6d2-1fefec159ec7.png&w=1920&q=85
+` ` `
+Raw CF: `https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260721_161708_64fad17a-06cc-4227-b6d2-1fefec159ec7.png`
+
+### Hero spotlight reveal image (`BG_IMAGE_2`)
+` ` `
+https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260721_161933_6afd5ffe-5710-4fe1-9d61-11843a494893.png&w=1920&q=85
+` ` `
+Raw CF: `https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260721_161933_6afd5ffe-5710-4fe1-9d61-11843a494893.png`
+
+### Card section base image (`CARD_IMAGE_1`)
+` ` `
+https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260721_181520_8e5bcf81-0d47-45a4-83a5-ad3dcfbf1b8d.png&w=1920&q=85
+` ` `
+Raw CF: `https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260721_181520_8e5bcf81-0d47-45a4-83a5-ad3dcfbf1b8d.png`
+
+### Card section spotlight reveal image (`CARD_IMAGE_2`)
+` ` `
+https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260721_182252_81b91edf-7491-454c-9c19-2203b871032c.png&w=1920&q=85
+` ` `
+Raw CF: `https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260721_182252_81b91edf-7491-454c-9c19-2203b871032c.png`
+
+### Transition video (`VIDEO_SRC`) — CloudFront MP4, no Higgs wrapper
+` ` `
+https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260722_103029_2c529df7-48ee-452e-925a-3301b74de32b.mp4
+` ` `
+
+### Local fonts
+- `@font-face` family name: `'Helvetica Neue Roman'`
+- Files: `/fonts/HelveticaNeue-Roman.woff2` and `/fonts/HelveticaNeue-Roman.woff`
+- weight 400, style normal, `font-display: swap`
+- Geist via Google Fonts:  
+  `@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&display=swap');`
+- Global: `* { font-family: 'Geist', sans-serif; }`
+- Hero only: `.font-helvetica-neue, .font-helvetica-neue * { font-family: 'Helvetica Neue Roman', 'Helvetica Neue', Helvetica, Arial, sans-serif; }`
+
+### Icons
+`lucide-react`: `Play`, `Menu`, `X`, `User`, `Plus`
+
+---
+
+## Architecture / layer stack
+
+Single full-viewport app. Z-order:
+
+1. **Page bg** `#F4F0ED`
+2. **CardSection** absolute inset, z-1 (under hero)
+3. **Fixed video** `fixed inset-0 object-cover z-[2]`, opacity 1 only while `videoPhase === 'playing'`, else 0; `muted playsInline preload="auto" pointer-events-none`; opacity transition `duration-500`
+4. **HeroSection** absolute inset z-3; fades out when `videoPhase !== 'idle'` (`opacity-0 pointer-events-none`, `duration-700`)
+5. **Nav** fixed z-60
+6. **Mobile menu** panel z-55, overlay z-54
+
+State machine (`VideoPhase = 'idle' | 'playing' | 'done'`):
+
+| Event | From | To | Side effects |
+|---|---|---|---|
+| Wheel down / swipe up (>40px) | `idle` | `playing` | `sectionVisible=false`; video `currentTime=0; play()` |
+| Video `timeupdate` when `currentTime >= 2` | any during play | keep playing | `sectionVisible=true` (Card fades in under video) |
+| Video `ended` | `playing` | `done` | Card images become visible (`imagesVisible`) |
+| Wheel up / swipe down (<-40px) | `done` | `idle` | `sectionVisible=false`; video pause + `currentTime=0` |
+
+`navDark = (videoPhase === 'done' || sectionVisible)` — nav switches white→dark `#18161B` with `transition-colors duration-500`.
+
+Constants:
+- `SPOTLIGHT_R = 260`
+- `GRID_CELL = 48`
+
+---
+
+## Spotlight reveal (both Hero + Card)
+
+Hidden canvas draws a radial gradient mask at smoothed cursor; apply as CSS `mask-image` / `-webkit-mask-image` on a full-bleed cover background image.
+
+Gradient stops at radius `SPOTLIGHT_R`:
+- 0 → `rgba(255,255,255,1)`
+- 0.4 → `rgba(255,255,255,1)`
+- 0.6 → `rgba(255,255,255,0.75)`
+- 0.75 → `rgba(255,255,255,0.4)`
+- 0.88 → `rgba(255,255,255,0.12)`
+- 1 → `rgba(255,255,255,0)`
+
+Cursor smoothing (rAF):  
+`smooth += (mouse - smooth) * 0.1`
+
+Hero also parallax-offsets the SVG grid:
+- normalize cursor vs section rect → `cx, cy` in [-0.5, 0.5]
+- `gridOffset += (cx*16 - gridOffset) * 0.06` (same for y)
+- pattern `x/y` = that offset
+
+---
+
+## CSS keyframes (exact)
+
+` ` `css
+@keyframes fadeSlideUp {
+  0% { opacity: 0; transform: translateY(24px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+.anim-stagger {
+  opacity: 0;
+  transform: translateY(24px);
+  animation: fadeSlideUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.anim-fade {
+  opacity: 0;
+  animation: fadeIn 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+` ` `
+Tailwind extend: `transitionDuration.400 = 400ms`.
+
+---
+
+## Nav (fixed, all breakpoints)
+
+Padding: `px-5 sm:px-8 md:px-10 py-4 sm:py-5`
+
+**Left — logo SVG 24×24 viewBox 0 0 256 256** path fill white or `#18161B` when dark:
+` ` `
+M 128 192 L 128 256 L 64.5 256 L 32 223 L 0 192 L 0 128 L 64 128 Z
+M 256 192 L 256 256 L 192.5 256 L 160 223 L 128 192 L 128 128 L 192 128 Z
+M 128 64 L 128 128 L 64.5 128 L 32 95 L 0 64 L 0 0 L 64 0 Z
+M 256 64 L 256 128 L 192.5 128 L 160 95 L 128 64 L 128 0 L 192 0 Z
+` ` `
+Wordmark: `INFINITE` — `text-sm font-medium tracking-wide uppercase`, white / `#18161B`.
+
+**Center pill (md+ only)** absolute centered: `backdrop-blur-md rounded-full px-1.5 py-1.5`; bg `bg-white/10` or `bg-[#18161B]/10`. Items: Card, Rewards, Travel, Plans, Support. **Card** is active pill: white/`bg-[#18161B]` filled. Others: `text-white/70` or `text-[#18161B]/70` with hover to full.
+
+**Right (md+)**: Account pill (User icon 14px stroke 1.8 in 28×28 circle) + Get Started solid pill.
+
+**Mobile**: hamburger toggles Menu↔X with rotate/opacity 300ms. Overlay `bg-black/60 backdrop-blur-sm`. Dropdown from top: `bg-[#0A0B11]/98`, items Card…Support with staggered `transitionDelay: 80 + i*40ms`, then Account + Get Started at 300ms delay. Ease: `cubic-bezier(0.16,1,0.3,1)`.
+
+---
+
+## HeroSection (`font-helvetica-neue`, 100vh, overflow clip)
+
+Layers bottom→top:
+1. SVG grid: opacity **0.08**, stroke `#94a3b8`, strokeWidth 0.5, 48×48 cells
+2. Base BG image cover, class `anim-fade`, delay **0.1s**
+3. RevealLayer with BG_IMAGE_2 (spotlight)
+4. Bottom gradient: `h-72 bg-gradient-to-t from-[#0A0B11] via-[#0A0B11]/60 to-transparent` z-40
+5. Bottom content grid `md:grid-cols-12`, padding `px-6 sm:px-10 md:px-14 pb-12 sm:pb-16 md:pb-20`
+
+**Left (cols 7–8):**
+- Dot `w-2.5 h-2.5 rounded-full bg-white/80` + text: `World Banking system awards winner` (`text-sm sm:text-[15px] text-white/80`) — stagger delay **0.3s**
+- H1 (light, white, clamp `2.2rem / 6.5vw / 5rem`, leading 0.95, tracking -0.03em):  
+  `Enter New Places` + line break + `Without Starting Over` — delay **0.5s**
+- Buttons delay **0.7s**:
+  - Primary: white bg, gray-900 text, rounded-full, “See Benefits”
+  - Ghost: `bg-white/5 backdrop-blur border border-white/10`, filled Play icon size 13 + “Watch Demo”
+
+**Right (cols 4–5)** delay **0.85s**:
+> Portale is a relocation card designed for people starting life abroad. Open remotely, spend instantly, exchange currencies fairly, and arrive already connected.
+
+Copy is `text-white/75`, `15px`→`base`.
+
+---
+
+## CardSection (100vh)
+
+Visible when `sectionVisible`; opacity 0→1 `duration-700`. Images opacity only when `imagesVisible` (`videoPhase === 'done'`), also `duration-700`.
+
+Layers:
+1. Giant watermark behind: `INFINITE` uppercase, clamp `4rem/15vw/14rem`, `font-medium`, `text-white/[0.04]`, tracking -0.02em, centered
+2. CARD_IMAGE_1 full cover
+3. CARD_IMAGE_2 spotlight-masked
+4. Top-left H2 delay 0.15s: `Instantly Active` — `text-[#18161B]`, font-light, clamp `2rem/7vw/5.5rem`, leading 0.95, tracking -0.03em; padding `pt-16 sm:pt-28 md:pt-32 px-5 sm:px-10 md:px-14`
+5. Top-right “+ More” pill delay 0.3s: `Plus` 15 + More; `bg-[#18161B]/10 border border-[#18161B]/15 text-[#18161B]/80`
+6. Bottom-right H2 delay 0.5s: `Before You Swipe` (right-aligned, same type as Instantly Active)
+7. Bottom-left delay 0.7s max-w-md:
+   > Get approved in seconds, receive your virtual card instantly, and arrive with cashback, travel perks, and spending insights already active.  
+   Button: `Apply now for free` — `bg-[#18161B] text-white rounded-full`
+
+Stagger elements start `opacity-0` until `inView` (set when `visible` becomes true), then `anim-stagger`.
+
+---
+
+## Interaction checklist (must match)
+
+1. On load: Hero visible, cream page bg, video opacity 0, Card hidden, nav white over dark hero
+2. Mouse moves: soft spotlight reveals alternate hero image; grid drifts ±16px
+3. Scroll/swipe down: hero fades, video plays full-bleed; at t≥2s Card fades in under video; nav goes dark; when video ends, card images appear with spotlight
+4. Scroll/swipe up only from `done`: resets to idle hero, video rewind/pause
+5. Mobile menu open/close with blur overlay and staggered links
+6. All CTAs are present (non-routing is fine) with exact labels above
+
+---
+
+## Tech constraints
+
+- React 18 + Vite + Tailwind 3 + TypeScript
+- One main `App.tsx` (HeroSection, RevealLayer, CardSection, App) is fine
+- `requestAnimationFrame` for cursor smoothing / mask redraw
+- No traditional document scroll; `overflow-hidden` on root
+- Responsive breakpoints as specified (`sm`/`md`/`lg` Tailwind defaults)
+- Match colors exactly: `#F4F0ED`, `#0A0B11`, `#18161B`, white opacities as listed
+
+Do not invent new sections, stats, cards in the hero, purple themes, or alternate copy. Recreate this exact 2-scene Infinite/Portale experience with the URLs, fonts, timings, and behaviors above.
+
+---

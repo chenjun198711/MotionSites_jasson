@@ -1,0 +1,200 @@
+Build a single full-viewport Tesla Model Three Edition hero landing page in React + Vite + TypeScript + Tailwind CSS. One page only — no nav, no footer, no other sections. Exact pixel-faithful recreation of the following design system, media, fonts, layout, and animation choreography.
+
+═══════════════════════════════════════
+TECH STACK
+═══════════════════════════════════════
+- React 18 + Vite + TypeScript + Tailwind CSS 3
+- Path alias `@/` → `src/`
+- No extra UI libraries. No Framer Motion. CSS transitions only.
+- Page title: "Tesla Model Three"
+- Root renders only `<Hero />` inside a full-width wrapper.
+
+═══════════════════════════════════════
+FONTS (exact)
+═══════════════════════════════════════
+1) In index.html <head>, load Signate Grotesk Black:
+   <link href="https://db.onlinewebfonts.com/c/d1ba7b0e870de70d90c21471d186f5c9?family=Signate+Grotesk+Black" rel="stylesheet">
+
+2) In CSS, import Inter:
+   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+3) Body default: font-family: 'Inter', sans-serif; antialiased.
+
+4) Giant headline class `.hero-heading`:
+   - font-family: 'Signate Grotesk Black', sans-serif
+   - font-weight: 900
+   - font-size: clamp(2.2rem, 14vw, 17rem)
+   - line-height: 0.9
+   - color: #1a1a1a
+   - letter-spacing: -0.02em
+   - text-transform: uppercase
+
+═══════════════════════════════════════
+MEDIA ASSETS (exact URLs — do not substitute)
+═══════════════════════════════════════
+
+INTRO VIDEO (fullscreen splash, plays once muted):
+https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260801_105009_11ee5801-b84c-47de-aeb9-c2d6b09cc9b1.mp4
+
+BACKGROUND SCENE IMAGE (lavender studio room with plant + white pedestal, behind the car):
+https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260801_103814_7a9c8d16-a4d8-4c35-bc37-7ebdf371f007.png&w=1280&q=85
+(raw CloudFront PNG equivalent:)
+https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260801_103814_7a9c8d16-a4d8-4c35-bc37-7ebdf371f007.png
+
+FOREGROUND CAR IMAGE (white Tesla sedan cutout / transparent PNG, layered IN FRONT of the giant headline so the car visually overlaps the text):
+https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260801_104712_62bfc705-99e6-431f-916e-079e958caac6.png&w=1280&q=85
+(raw CloudFront PNG equivalent:)
+https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260801_104712_62bfc705-99e6-431f-916e-079e958caac6.png
+
+═══════════════════════════════════════
+PAGE BACKGROUND COLOR
+═══════════════════════════════════════
+#F5F3F8 (soft lavender-gray) — used for section bg, video splash overlay on mobile, and edge fade gradients.
+
+═══════════════════════════════════════
+LAYER / Z-INDEX STACK (critical for look)
+═══════════════════════════════════════
+Section: relative, h-screen, w-full, overflow-hidden, bg-[#F5F3F8]
+
+z-0  Background image (full bleed)
+z-20 Giant "MODEL THREE" heading (behind the car)
+z-30 Car image (pointer-events-none) + top brand + slide dots + bottom bar
+z-40 Transparent content flex column overlay (relative h-full)
+z-50 Video splash (covers everything until video ends)
+
+═══════════════════════════════════════
+LAYOUT STRUCTURE
+═══════════════════════════════════════
+
+1) BACKGROUND IMAGE LAYER
+   - Absolute inset-0, centered.
+   - Mobile: image is w-full h-auto (letterboxed feel).
+   - sm+: image is w-full h-full object-cover.
+   - Soft edge fades (pointer-events-none):
+     • Top: h-24 gradient from-[#F5F3F8] to-transparent
+     • Bottom: h-24 gradient from-[#F5F3F8] to-transparent
+
+2) VIDEO SPLASH LAYER (z-50)
+   - Absolute inset-0.
+   - bg-[#F5F3F8] on mobile, sm:bg-black on desktop.
+   - Video: autoPlay, muted, playsInline, NO loop. onEnded → fade out.
+   - Same responsive sizing as background image (w-full h-auto mobile; object-cover desktop).
+   - Mobile only: same top/bottom #F5F3F8 edge gradients over the video.
+   - When video ends: opacity-0 + pointer-events-none over transition-opacity duration-700.
+   - After video ends, wait 300ms then reveal UI content (contentVisible = true).
+
+3) GIANT HEADING (z-20, behind car)
+   - Absolute inset-x-0, top-[19%], centered.
+   - Text exactly: "MODEL THREE"
+   - Class hero-heading, text-center, select-none, px-4 sm:px-8.
+   - Reveal animation when contentVisible:
+     opacity-0 scale-95 → opacity-100 scale-100
+     transition-all duration-700 delay-300
+
+4) CAR IMAGE (z-30, in front of heading)
+   - Absolute inset-0, pointer-events-none.
+   - Uses CAR_IMAGE_URL above.
+   - Mobile: w-full h-auto centered; sm+: w-full h-full object-cover.
+   - draggable={false}
+   - This must sit ABOVE the headline so the white car body occludes parts of "MODEL THREE".
+
+5) CONTENT COLUMN (z-40, transparent, flex flex-col h-full)
+
+   A) TOP BRAND BAR
+      - Centered, pt-7 pb-4
+      - Text exactly: "T E S L A" (spaces between letters)
+      - text-[10px] sm:text-[11px] font-bold tracking-[0.3em] sm:tracking-[0.4em] uppercase text-neutral-800
+      - Reveal: opacity-0 -translate-y-4 → opacity-100 translate-y-0
+        transition-all duration-700 delay-200
+
+   B) CENTER STAGE (flex-1 relative)
+      - Right-side vertical slide indicators, absolute:
+        right-4 sm:right-8 md:right-12, top-1/2 -translate-y-1/2
+        flex-col items-center gap-3 sm:gap-5
+      - Exactly 5 slides (SLIDE_COUNT = 5). Active slide is #4 (ACTIVE_SLIDE = 4).
+      - Inactive dots: w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full border border-neutral-400 hover:border-neutral-600 (empty buttons)
+      - Active indicator: w-6 h-6 sm:w-8 sm:h-8 containing:
+        • SVG circle ring (viewBox 0 0 32 32):
+          circle cx=16 cy=16 r=14, fill=none, stroke=#333, strokeWidth=1.5,
+          strokeDasharray=88, strokeDashoffset=22, origin-center -rotate-90
+        • Centered number "4" as text-[10px] font-bold text-neutral-800
+      - aria-label="Slide {n}" on each button
+      - Reveal: opacity-0 translate-x-4 → opacity-100 translate-x-0
+        transition-all duration-700 delay-[600ms]
+
+   C) BOTTOM INFO BAR
+      - px-5 sm:px-8 md:px-12 lg:px-16
+      - pb-6 sm:pb-8 md:pb-10
+      - flex flex-col md:flex-row items-start md:items-end justify-between gap-4 sm:gap-6
+      - Reveal: opacity-0 translate-y-6 → opacity-100 translate-y-0
+        transition-all duration-700 delay-700
+
+      LEFT DESCRIPTION BLOCK (max-w-[420px]):
+      - Horizontal flex with a 3px-wide vertical bar: w-[3px] bg-neutral-800 shrink-0 rounded-full
+      - Headline (exact): "Tesla Model Three Edition"
+        text-xs sm:text-sm font-bold tracking-wide text-neutral-900 uppercase leading-tight mb-2
+      - Body (exact copy):
+        "Unleash the future of driving in the Tesla Model Three Edition. A leap in innovation that fuses instant acceleration with intelligent control. This all-electric performance car is built for those who pursue progress and precision, delivering a seamless fusion of range and elegance that redefines every mile into an experience."
+        text-[10px] sm:text-[11px] md:text-xs leading-[1.6] sm:leading-[1.7] text-neutral-600
+        line-clamp-4 on mobile, line-clamp-none on sm+
+      - pr-10 on mobile so text clears the slide dots; sm:pr-0
+
+      RIGHT CTA BUTTONS (flex flex-wrap gap-2 sm:gap-2.5):
+      Shared `.hero-btn`:
+        px-4 py-2 text-[10px] sm:px-5 sm:py-2.5 sm:text-xs font-semibold tracking-wide uppercase rounded-full transition-all duration-200 cursor-pointer
+
+      1) "Compare Now" — outline: border border-neutral-800 text-neutral-800 bg-transparent; hover → bg-neutral-800 text-white
+      2) "Configure" — same outline style
+      3) "Order Now" — filled: bg-neutral-900 text-white border border-neutral-900; hover → bg-neutral-700 border-neutral-700
+
+═══════════════════════════════════════
+ANIMATION / STATE MACHINE (exact timing)
+═══════════════════════════════════════
+State:
+  videoEnded: boolean = false
+  contentVisible: boolean = false
+
+On video `onEnded`:
+  1. set videoEnded = true  → splash fades out over 700ms (opacity)
+  2. after 300ms timeout → set contentVisible = true
+
+When contentVisible becomes true, staggered reveals (all duration-700):
+  - Brand "T E S L A":        delay-200,  fade + slide down from -translate-y-4
+  - Heading "MODEL THREE":    delay-300,  fade + scale-95 → scale-100
+  - Slide indicators:         delay-[600ms], fade + slide left from translate-x-4
+  - Bottom bar:               delay-700,  fade + slide up from translate-y-6
+
+Video splash itself: transition-opacity duration-700 when fading out.
+
+Buttons: transition-all duration-200 on hover fill/invert.
+
+No other animations. No parallax. No scroll effects. Page is h-screen overflow-hidden (no scrolling).
+
+═══════════════════════════════════════
+RESPONSIVE BEHAVIOR
+═══════════════════════════════════════
+- Mobile (< sm): media shown as natural-width letterboxed images/video with #F5F3F8 edge fades; video splash bg is #F5F3F8; description line-clamped to 4 lines; smaller type/padding/gaps as specified above.
+- Desktop (sm+): media object-cover full bleed; video splash bg black; description fully visible; larger padding and tracking.
+
+═══════════════════════════════════════
+DO NOT
+═══════════════════════════════════════
+- Do not invent different fonts, colors, copy, or media.
+- Do not add cards, stats, badges, overlays on the car, nav, footer, or extra sections.
+- Do not loop the video.
+- Do not put the headline above the car — the car MUST visually cover parts of "MODEL THREE".
+- Do not change the active slide away from 4.
+- Do not use purple gradients, cream newspaper layouts, or generic AI landing patterns — stick exactly to #F5F3F8 + Inter + Signate Grotesk Black + the three CloudFront assets.
+` ` `
+
+---
+
+**Key assets to paste as-is:**
+
+| Asset | URL |
+|--------|-----|
+| Video | `https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260801_105009_11ee5801-b84c-47de-aeb9-c2d6b09cc9b1.mp4` |
+| Background | `https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260801_103814_7a9c8d16-a4d8-4c35-bc37-7ebdf371f007.png` |
+| Car cutout | `https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260801_104712_62bfc705-99e6-431f-916e-079e958caac6.png` |
+| Display font | Signate Grotesk Black via `db.onlinewebfonts.com/c/d1ba7b0e870de70d90c21471d186f5c9?family=Signate+Grotesk+Black` |
+| UI font | Inter (Google Fonts, 300–700) |

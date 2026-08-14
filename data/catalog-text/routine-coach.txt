@@ -1,0 +1,260 @@
+Build a pixel-accurate recreation of the **Steadyflow** marketing landing page: a single-page React + Vite + TypeScript + Tailwind CSS + Framer Motion site. Page title: `Steadyflow - Daily routines that never break`. Page background: `rgb(247, 247, 247)`. Smooth scroll on `html`. Antialiased text. `overflow-x: hidden` on body.
+
+Stack: React 18, Vite 5, Tailwind 3, Framer Motion 12, Lucide React. No router needed (single page). App composition in order:
+
+1. `Navbar` (fixed)
+2. `Hero`
+3. `Achievements`
+4. `Counter`
+
+---
+
+## Fonts (exact)
+
+**Google Fonts (in `<head>`):**
+- `Google Sans Flex` weight 500 — https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@500&display=swap
+- `Geist` weight 700 — https://fonts.googleapis.com/css2?family=Geist:wght@700&display=swap (loaded; primary UI uses the two below)
+
+**Custom @font-face:**
+` ` `css
+@font-face {
+  font-family: 'Stack Sans Headline';
+  src: url('https://framerusercontent.com/modules/VqG9xS8K2qN3B8RHWMKb/UQYzREmGJ3JWCi77B0rN/StackSans-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+` ` `
+
+**Usage rules:**
+- Headlines / big numbers / brand display → `'Stack Sans Headline', sans-serif`, weight 500
+- Body / UI / CTAs / nav → `'Google Sans Flex', sans-serif`, weight 500/medium/semibold as specified
+
+---
+
+## Color system
+
+| Token | Value |
+|--------|--------|
+| Page bg / curve fill | `rgb(247, 247, 247)` |
+| Near-black (hero fallback, nav buttons, overlays) | `rgb(19, 21, 21)` |
+| Accent blue | `#4382BC` |
+| Logo fill | `#5BB8F0` |
+| Muted gray text | `rgb(73, 77, 77)` |
+| Soft gray (card job labels) | `rgb(184, 184, 184)` |
+| White | `#fff` / `rgb(255,255,255)` |
+| Nav pill shadow | `0px 8px 20px rgba(5, 8, 12, 0.1)` |
+
+---
+
+## Assets (exact URLs — do not substitute)
+
+### Hero background video (MUST use this exact URL)
+` ` `
+https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260728_015819_1b3ec855-d586-4018-96c8-8bf90cada037.mp4
+` ` `
+Attributes: `autoPlay` `muted` `loop` `playsInline`, `object-cover`, absolute fill of hero.
+
+### Counter section video
+` ` `
+https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260625_213350_6343fcfb-2892-4dcc-8573-1161447cacf5.mp4
+` ` `
+With `mix-blend-mode: darken`, tall crop (`h-[800px]` desktop / `h-[500px]` mobile), container `max-w-[1080px]`, height `440px` / `280px` mobile, `aspect-ratio: 2.45` on wrapper. Bottom fade gradient: `linear-gradient(to bottom, transparent, #F6F6F6)`.
+
+### Cloud overlay image (Counter)
+` ` `
+https://res.cloudinary.com/dy5er7kv5/image/upload/v1782423467/clouds_vtypge.png
+` ` `
+Absolute, full width, `bottom: -60px` (−30px mobile), `pointer-events: none`.
+
+### Stars SVG (Achievements)
+` ` `
+https://framerusercontent.com/images/FfmG8vzlH3tOeU2kFU0oUxANr9Y.svg
+` ` `
+Height 16px.
+
+### Video overlay (modal iframe)
+` ` `
+https://www.youtube.com/embed/b-jRHsYdomY?autoplay=0&mute=1
+` ` `
+Title: `Habitline Demo`. Max width 800px, `aspect-video`, `rounded-[20px]`.
+
+### Achievement card images (higgs.ai CDN → CloudFront originals)
+1. Maya: `https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260625_213624_40d877b4-92a9-44d3-be3c-5d3332db4402.png&w=1280&q=85`
+2. Daniel gray: `https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260625_213908_9574cadd-4c04-4380-af84-a753e484415a.png&w=1280&q=85`
+3. Aaron Lee: `https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260625_213950_c1686b87-f412-4878-b7fe-96ba5085ba01.png&w=1280&q=85`
+4. Priya: `https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260625_214012_f14ffda8-1f1c-48bc-893f-1ad05f6bc2d9.png&w=1280&q=85`
+5. Leo: `https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260625_214103_cadf49e5-cae8-42e2-9bec-955b7347f850.png&w=1280&q=85`
+6. Ramya: `https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260625_214142_c7344da9-f597-42b7-8c31-7ca5228503fb.png&w=1280&q=85`
+
+### Avatar strip images
+1. `https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260625_223420_17676c11-c7c0-46d4-89f2-dc3ac2a54835.png&w=1280&q=85`
+2. `https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260625_223437_0de72ad0-bb6a-4c9e-b398-2fa61fe9ca26.png&w=1280&q=85`
+3. `https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260625_223443_0b27ccfe-9b4c-4e2d-bd00-9ff50a2daed1.png&w=1280&q=85`
+
+### Brand logo SVG path (28×28 desktop / 24×24 mobile, viewBox `0 0 256 256`, fill `#5BB8F0`)
+` ` `
+M 228 0 C 172.772 0 128 44.772 128 100 L 128 0 L 0 0 L 0 28 C 0 83.228 44.772 128 100 128 L 0 128 L 0 256 L 28 256 C 83.228 256 128 211.228 128 156 L 128 256 L 256 256 L 256 228 C 256 172.772 211.228 128 156 128 L 256 128 L 256 0 Z
+` ` `
+
+---
+
+## Shared motion primitives
+
+**Hero spring fade-up:**
+` ` `js
+{ type: 'spring', duration: 0.6, bounce: 0, delay }
+// initial: { opacity: 0, y: 20 } → animate: { opacity: 1, y: 0 }
+` ` `
+Delays: pill `0.1`, headline `0.2`, subtitle `0.3`, CTAs `0.4`, phone `0.6`.
+
+**CTA / store button hover:** `whileHover={{ scale: 0.95 }}`, spring `{ type: 'spring', duration: 0.45, bounce: 0.25 }`.
+
+**Section scroll fade-up (Achievements + Counter):** trigger with `useInView(ref, { once: true, margin: '-100px' })`, transition `{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94], delay }`, same `opacity 0→1`, `y 20→0`.
+
+**Marquee CSS:**
+` ` `css
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-33.3333%); }
+}
+.marquee-track { animation: marquee 60s linear infinite; width: max-content; }
+.marquee-container:hover .marquee-track { animation-play-state: paused; }
+` ` `
+Render cards array **tripled** (`[...CARDS, ...CARDS, ...CARDS]`), gap `30px`, `cursor-ew-resize`.
+
+---
+
+## 1. Navbar
+
+### Desktop (`lg+`, fixed, `z-10`, `py-[30px]`, centered)
+Three white rounded pills (`rounded-[20px]`) in a row, max width `1260px`, horizontal padding `30px`.
+
+**Scroll behavior:** when `window.scrollY > 50`, animate container `gap` from `0px` → `12px` and `justifyContent` from `space-between` → `center`. Duration `0.45`, ease `[0.44, 0, 0.56, 1]`.
+
+**Left — Brand pill:** white bg, `p-[16px]`, gap `10px`, logo + “Steadyflow” at `18px` semibold `rgb(19,21,21)`.
+
+**Center — Nav menu pill:** white, `px-[32px]`, `h-[64px]`. Links (14px medium, hover opacity 0.7):
+- How it works
+- Features
+- Results
+- AI Coaching  
+All `href="#"`, gap `32px`.
+
+**Right — Store pill:** white, `p-[6px]`, gap `6px`. Two buttons `52×52`, `rounded-[14px]`, bg `rgb(19,21,21)`:
+- Apple App Store → `https://www.apple.com/in/app-store/` (white Apple glyph SVG)
+- Google Play → `https://play.google.com/store/` (multicolor Play glyph: `#4285F4`, `#34A853`, `#EA4335`, `#FBBC05`)
+
+### Mobile/tablet (`< lg`)
+Single white bar: `max-w-[360px]` / `md:max-w-[760px]`, `rounded-[16px]`, `p-[10px]`, shadow same. Brand left (16px name). Right: smaller store buttons (`40/44px`, `rounded-[12px]`) + hamburger (`32/40px`, `rounded-[10px]`, dark bg) that morphs two white bars into an X (rotate ±45, duration 0.3).
+
+**Mobile menu:** when open, lock `body.overflow = hidden`. Backdrop: fixed inset, `backdrop-blur-md bg-black/40`, fade 0.3s. Panel below nav (`top 80/100px`): white `rounded-[16px]`, `p-[24px]`, links 16px, enter/exit `y ±20`, ease `[0.44, 0, 0.56, 1]`, duration 0.45.
+
+---
+
+## 2. Hero (`#hero`)
+
+- Full width, centered, overflow hidden, fallback bg `rgb(19, 21, 21)`.
+- Absolute full-bleed looping muted hero video (URL above), `object-cover`.
+- **Bottom curved SVG fade** to page bg: absolute `z-[2]`, oversized horizontally (`left/right` −60/−100/−180/−250px by breakpoint), `bottom: -10px`. SVG viewBox `0 0 5688 1886`, path filled `rgb(247,247,247)` with Gaussian blur `stdDeviation="125"`. Exact path:
+` ` `
+M2733.25 1264.78C706.858 1264.78 -50.5828 573.265 -177 202.5V2088.5H5865V202.5C5664.75 539.923 4759.65 1264.78 2733.25 1264.78Z
+` ` `
+
+**Content column:** `max-w-[980px]`, `px-[30px]`, gap `80px`, `paddingTop: clamp(160px, 15vw, 200px)`, `pb-[120px]`, `z-[1]`.
+
+### Copy stack (centered, gap 40px between copy group and CTAs; 20px inside copy group)
+
+1. **Pill:** frosted — border `1px solid rgba(255,255,255,0.2)`, bg `rgba(255,255,255,0.1)`, `rounded-full`, `pl-[6px] pr-[18px] py-[6px]`. Inner dark chip “New” (`rgb(19,21,21)` bg, white 14px) + “A gentler path to daily growth” (white 14px).
+
+2. **H1:** “Daily routines that” + line break at `lg` + “never break”. White, Stack Sans Headline, `44 / 60 / 90px` (sm/md/lg), `line-height: 1em`, `text-wrap: balance`, centered.
+
+3. **Subtitle:** “We show each routine at its ideal moment so your schedule always feels balanced.” White, Google Sans Flex 500, `18 / 20 / 22px`, `line-height: 1.4em`, `max-w-[500px]`.
+
+4. **CTAs** (gap 20px, wrap):
+   - Primary link `/contact`: white bg, text `rgb(19,21,21)`, `rounded-full`, `px-[34px] py-[16px]`, 16px — **“Begin your streak today”**
+   - Secondary button opens video modal: frosted same as pill, `h-[54px] px-[28px]`, Lucide `Play` 16 filled white + **“See it live”**
+
+### Phone mockup (glass UI, not a screenshot)
+
+- Width `300 / 340px`, `rounded-[44px]`, `backdrop-blur-xl`
+- bg `rgba(13, 17, 23, 0.55)`, border `1px solid rgba(255,255,255,0.12)`
+- shadow: `0px 0px 0px 8px rgba(255,255,255,0.05), 0px 60px 120px rgba(0,0,0,0.5)`
+- padding `20px 16px 12px`
+- Black notch pill `90×26`
+- Header: “Good morning!” (20px Stack Sans white) + “Your daily routines are waiting.” (12px white/40); Bell icon button + blue Plus button
+- Stats card (dark `rgba(0,0,0,0.35)`, `rounded-[16px]`): Flame in `#4382BC`, **18** Day streak | **21** Check-ins this week; 7 weekday bars M–S with `today` on second Thursday colored blue; active days blue bars height ~14–28px
+- “Today's Habits” + “3 of 4 completed”
+- Habit rows (stagger fade from left, delay `0.8 + i*0.12`, duration 0.4):
+  1. 🚶 Morning walk — At least 20 minutes — 85% — 12/14 — completed
+  2. 💧 Hydrate before lunch — Before 12:00 pm — 100% — 9/9 — completed
+  3. 📖 Read 15 pages — Before winding down — 67% — 6/9 — not completed  
+  Completed = blue filled check circle; incomplete = empty ring. Percent + 40×3px progress bar in `#4382BC`.
+- Dashed “Create a routine” / “Start something new” row with blue Plus
+- Bottom nav: Today (blue Home), Habits, Stats, Profile (inactive white/25)
+
+### VideoOverlay modal
+Fixed `z-[100]`, backdrop `rgba(19,21,21,0.9)`, fade 0.3s. Close button top-right `30px`, `40×40`, bg `rgb(247,247,247)`, `rounded-[8px]`, X from two rotated bars. Video panel scales `0.9→1` with opacity.
+
+---
+
+## 3. Achievements
+
+Section: `pt-[200px]` (`130px` ≤810px), overflow hidden, light page bg.
+
+Header row in `max-w-[1260px] px-[30px]`:  
+- Left H2 (flex 0.7): **“What people are building with Steadyflow”** — Stack Sans, `48 / 42 / 38px`, `rgb(19,21,21)`, `line-height 1.2`  
+- Right column width 320px: AvatarStrip + stars SVG + “Loved everywhere” (`rgb(73,77,77)`, 18px)
+
+**AvatarStrip:** three 40px circular overlapping avatars (`margin-left: -8px`, white 2px border) + dark count chip cycling every 2s through `51+`, `52+`, `53+`, `54+` with spring scale animation (`duration 0.7, bounce 0`).
+
+**Cards (380×480 / 320×450 ≤810px), `rounded-[20px]`, full-bleed photo + vertical gradient:**
+` ` `
+linear-gradient(180deg, rgb(19,21,21) 0%, rgba(255,255,255,0) 50%, rgb(19,21,21) 100%)
+` ` `
+Padding 40/20. Top: `Name · Job`. Bottom: optional large stat + description.
+
+| Name | Job | Stat | Description |
+|------|-----|------|-------------|
+| Maya | Student | — | Maintained 21-day streak using Steadyflow |
+| Daniel gray | Founder | 87% | Boosted his weekly follow-through |
+| Aaron Lee | Remote Engineer | — | No longer drops routines on weekends after switching to Steadyflow |
+| Priya | Busy Parent | — | Tracked 40 deep-work sessions this month with Routine Stacks |
+| Leo | Creative Professional | 10 Days | Nailed hydration goals |
+| Ramya | Software Developer | — | At last keeps her schedule on track with time-blocked routine groups |
+
+Marquee starts `mt-[50px]`.
+
+---
+
+## 4. Counter (`#counter`)
+
+`pt-[200px]` (`130px` ≤810px), centered, `max-w-[1260px]`, internal gap `60px`.
+
+**Top cluster (`max-w-[500px]`):**
+1. White pill border `1px solid rgba(19,21,21,0.1)`: **“Real streaks, real progress”**
+2. H2: **“How people stay on track every single day”** (same headline scale as Achievements)
+3. Giant **“84,000+”** in `#4382BC`, Stack Sans, `120 / 100 / 60px`, `line-height 1`
+4. Sub: **“Habits completed this quarter”** (`rgb(73,77,77)`)
+
+**Visual:** Counter video + Cloudinary cloud + absolute blurred white slab under (`1600×300`, blur 10px, `bottom: -240px`).
+
+**Three stats row** (`max-w-[840px]`, gap 50/32): animated count-up (1s cubic ease-out `1 - (1-p)^3`) when in view:
+
+| Value | Suffix (color `#4382BC`) | Description |
+|------|---------------------------|-------------|
+| 93 | % | Of users report feeling more consistent |
+| 38 | (none) | Habits built on average per user monthly |
+| 41 | + | Regions with growing Steadyflow communities |
+
+Numbers: Stack Sans `68px` / `40px` mobile, `line-height 0.9`. Descriptions Google Sans Flex 18/16, `rgb(73,77,77)`.
+
+---
+
+## Implementation constraints
+
+- Match all copy, spacing numbers, radii, shadows, blend modes, and URLs exactly — no redesign.
+- Hero video **must** be the `hf_20260728_015819_…` CloudFront URL.
+- Use Framer Motion for listed animations; Lucide for icons (`Play`, `Check`, `Flame`, `Plus`, `Bell`, `Home`, `CheckCircle2`, `BarChart3`, `User`, `Clock`, `ChevronRight`).
+- Responsive breakpoints used in source: `md`, `lg`, and custom `max-[810px]` / `md:max-[1024px]`.
+- Do not add extra sections (no footer in this page).

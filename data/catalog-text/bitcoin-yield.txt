@@ -1,0 +1,210 @@
+**Recreate this exact one-page marketing site for “Meridian” (Bitcoin yield protocol). Match layout, copy, type, colors, assets, scroll behavior, and animations precisely. Stack: React + Vite + TypeScript + Tailwind CSS. Single-page app; all UI lives in one `App` component.**
+
+## Fonts (exact Google Fonts load)
+
+Load in `<head>`:
+
+` ` `html
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+` ` `
+
+- **Body / display default:** `'Instrument Serif', serif` (roman + italic)
+- **CTA button only:** `'Inter', sans-serif`, weight `500`
+- Document title: `Meridian`
+- Page background / base text: `#031429` background, `#ffffff` text
+- Antialiased font smoothing on body
+
+## Color system
+
+| Token | Value |
+|--------|--------|
+| Page / navy | `#031429` |
+| White | `#ffffff` |
+| Overlay panel | `rgba(0, 0, 0, 0.88)` + `backdrop-filter: blur(8px)` |
+| Body muted in panel | `rgba(255,255,255,0.70)` |
+| “Scroll” label | `rgba(255,255,255,0.40)` |
+| Inactive progress pip | `rgba(255,255,255,0.30)` |
+| Nav subtitle | white at `opacity: 0.7` |
+| TVL/APY labels | white at `opacity: 0.5` |
+| CTA fill | white bg, text `#031429` |
+
+## Asset URLs (use these exact URLs — do not substitute)
+
+**1) Hero → scroll overlap (tree canopy PNG, full-bleed, sits on the seam between hero and story section):**
+
+` ` `
+https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260801_172201_8b00dc4a-1166-48d6-aa18-ce87d9f1ba3c.png&w=1280&q=85
+` ` `
+
+Source PNG:  
+`https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260801_172201_8b00dc4a-1166-48d6-aa18-ce87d9f1ba3c.png`
+
+**2) Story background image A (first landscape / forest-mist scene):**
+
+` ` `
+https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260801_171015_7de4500b-a558-43e7-8ebd-2485bd5c5e2a.png&w=1280&q=85
+` ` `
+
+Source:  
+`https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260801_171015_7de4500b-a558-43e7-8ebd-2485bd5c5e2a.png`
+
+**3) Story background image B (second landscape / path-through-trees scene):**
+
+` ` `
+https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260801_172157_8d04d1f9-4e2c-419e-ac0e-65842ae7ff0f.png&w=1280&q=85
+` ` `
+
+Source:  
+`https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260801_172157_8d04d1f9-4e2c-419e-ac0e-65842ae7ff0f.png`
+
+All three are atmospheric dark forest / mist photography with cool teal-navy grading that matches `#031429`. Empty `alt=""`. No other images on the page.
+
+## Exact copy
+
+**Nav (right):** `Meridian Rewards`  
+**Hero eyebrow line 1:** `True Yield` (uppercase, not italic)  
+**Hero line 2:** `for ` (italic) + `Bitcoin` (not italic, uppercase)  
+**Stats:** `TVL:` `85 BTC` · `APY:` `6%`  
+**CTA:** `mint merBTC`  
+**Giant wordmark:** `Meridian`  
+
+**Floating panel — section 0:**  
+- Title: `Capital sits dormant across the BTC network`  
+- Body: `Billions in Bitcoin remain idle, locked away with no productive use. Lacking a native yield layer, BTC exists apart from active participation in DeFi.`
+
+**Floating panel — section 1:**  
+- Title: `Meridian activates idle Bitcoin for yield`  
+- Body: `By converting BTC into a yield-generating token, Meridian enables holders to capture real earnings while preserving full exposure to Bitcoin.`
+
+**Panel footer:** label `Scroll` + two progress pips (active = longer white bar).
+
+## Layout architecture (critical)
+
+Root wrapper: `bg-[#031429] text-white`.
+
+### 1) Fixed navbar — `z-50`
+- `fixed top-0 left-0 right-0`
+- Flex row, space-between
+- Padding: `px-4 py-4` → `sm:px-8 sm:py-6` → `md:px-12`
+- **Left:** white SVG logo, `w-6 h-6` / `sm:w-7 sm:h-7`, viewBox `0 0 256 256`, path:
+
+` ` `
+M 0 128 C 70.692 128 128 185.308 128 256 L 64 256 C 64 220.654 35.346 192 0 192 Z M 256 192 C 220.654 192 192 220.654 192 256 L 128 256 C 128 185.308 185.308 128 256 128 Z M 128 0 C 128 70.692 70.692 128 0 128 L 0 64 C 35.346 64 64 35.346 64 0 Z M 192 0 C 192 35.346 220.654 64 256 64 L 256 128 C 185.308 128 128 70.692 128 0 Z
+` ` `
+
+(Four curved “petal/corner” shapes forming a pinwheel / quatrefoil mark.)
+
+- **Right:** `Meridian Rewards` — `text-xs sm:text-sm`, `tracking-widest`, `uppercase`, `opacity-70`
+- Entrance: `animate-fade-in`, delay `0.2s`, starts `opacity: 0`
+
+### 2) Fixed hero — `z-0`, full viewport
+- `fixed inset-0 h-screen flex flex-col overflow-visible`
+- Scroll-linked fade/parallax (see Animations): opacity `1 - heroScroll`; when `heroScroll >= 1`, `pointer-events: none`
+- Upper block centered: flex-1, center content
+  - Inner content also translates up: `translateY(-heroScroll * 80px)` and fades with same opacity
+- **“True Yield”** `h2`: `text-2xl sm:text-4xl md:text-5xl`, `tracking-[0.1em] sm:tracking-[0.15em]`, uppercase, `mb-1`, fade-in-up delay `0.4s`
+- **“for Bitcoin”** `h1`: same size/tracking, italic overall; word “Bitcoin” `not-italic uppercase`; fade-in-up delay `0.5s`
+- Stats row: gap `4 / 6 / 10`, `mt-4 sm:mt-6`, fade-in-up delay `0.6s`
+  - Labels: `text-xs sm:text-sm tracking-[0.2em] uppercase opacity-50`
+  - Values: `text-sm sm:text-base tracking-wider`
+- CTA: `mt-6 sm:mt-8`, fade-in-up delay `0.7s`
+  - White hexagon/chevron pill via clip-path:  
+    `polygon(12px 0%, calc(100% - 12px) 0%, 100% 50%, calc(100% - 12px) 100%, 12px 100%, 0% 50%)`
+  - Padding `px-8 py-2.5` / `sm:px-10 sm:py-3`
+  - Text `text-[10px] sm:text-xs`, `tracking-[0.2em] sm:tracking-[0.25em]`, uppercase, Inter medium
+  - Hover: `opacity-90`, transition `300ms`
+- Bottom giant **Meridian** wordmark:
+  - Wrapper: `animate-scale-in`, delay `0.9s`, `animation-fill-mode: forwards`
+  - Text: `text-[14vw] sm:text-[22vw] md:text-[18vw]`, `leading-[0.85]`, centered, `whitespace-nowrap`, white, `select-none`
+  - Bottom padding on wordmark: `pb-4 sm:pb-12 md:pb-16`
+
+### 3) Hero scroll spacer
+- Non-fixed `div.h-screen` so the page can scroll while hero stays pinned.
+
+### 4) Fixed floating content box — `z-index: 30`
+- Full-viewport centered overlay, `pointer-events-none` on wrapper; box itself `pointer-events-auto`
+- Dark glass panel (`rgba(0,0,0,0.88)` + blur 8px)
+- **Phase machine** when story section enters viewport:
+  1. `hidden` → height `0`, opacity `0`, width `2px`
+  2. `line` (immediate on enter) → height `min(320px, 55vh)`, width still `2px` (thin vertical line)
+  3. after **300ms** → `expand`: width animates to `min(420px, 88vw)` over **0.5s** with `cubic-bezier(0.22, 1, 0.36, 1)`; height transition **0.4s ease**
+  4. after **800ms** → `content`: padding `clamp(20px, 5vw, 40px)`; title/body/footer fade in
+- Content layout: flex column, space-between
+- Title: italic, `text-lg sm:text-2xl md:text-3xl`, `leading-snug`, `mb-3 sm:mb-6`
+- Body: `text-xs sm:text-sm md:text-base`, `leading-relaxed`, `text-white/70`
+- Footer: “Scroll” `text-[10px] tracking-[0.3em] uppercase text-white/40` + two pips `h-[3px] rounded-full`
+  - Active pip: `w-6 bg-white`; inactive: `w-3 bg-white/30`; `transition-all duration-300`
+- Content opacity transitions: title/body `0.5s ease 0.1s`; footer `0.5s ease 0.2s`
+- On leave: back to `hidden` with opacity/height `0.3s ease`
+
+### 5) Background images section — `relative z-10`
+- Height: `h-[200vh]` on mobile, `md:h-auto` on desktop
+- **Overlap image:** absolute, full width, `z-20`, `pointer-events-none`, `top: 0`, `transform: translateY(-50%)` so the tree canopy straddles the hero/content seam; `w-full h-auto`
+- **Mobile (`md:hidden`):** sticky full-screen stack — two images each `h-[50vh]`, `object-cover object-center` (image A then B)
+- **Desktop (`hidden md:block`):** each image full native aspect, `w-full h-auto block` (no crop), stacked
+
+## Scroll logic (exact)
+
+Track `window.scrollY` (passive listener):
+
+` ` `
+heroScroll = clamp(scrollY / (vh * 0.35), 0, 1)
+` ` `
+
+For the BG section ref:
+
+` ` `
+enterThreshold = vh * 0.5
+if rect.top < enterThreshold && rect.bottom > vh * 0.2:
+  scrolled = enterThreshold - rect.top
+  totalRange = (rect.height + enterThreshold) - vh * 0.2
+  progress = clamp(scrolled / totalRange, 0, 1)
+  activeSection = progress > 0.4 ? 1 : 0
+else:
+  activeSection = -1
+` ` `
+
+When `activeSection` goes from `-1` → `0|1`, run the box phase sequence (`line` → `expand` @300ms → `content` @800ms). When content index changes while visible, swap title/body; pips update to match `activeSection`.
+
+## CSS keyframe animations (exact)
+
+` ` `css
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.animate-fade-in-up { animation: fadeInUp 0.8s ease-out forwards; }
+.animate-fade-in    { animation: fadeIn 1s ease-out forwards; }
+.animate-scale-in   { animation: scaleIn 0.6s ease-out forwards; }
+` ` `
+
+Load-order delays: nav `0.2s` → True Yield `0.4s` → for Bitcoin `0.5s` → stats `0.6s` → CTA `0.7s` → Meridian wordmark `0.9s`. Elements that animate start at `opacity: 0` until the animation fills forwards.
+
+## What this page is NOT
+
+- No cards, no purple gradients, no glow, no pill badge clusters, no secondary nav links, no footer, no video, no loader overlay beyond the timed fade/scale entrances
+- No local `/public` images in the live UI (only the three Higgs CDN URLs above)
+- CTA is visual only (no navigation handler required unless you add one)
+
+## Interaction summary
+
+1. On load: navy screen; logo + “Meridian Rewards” fade in; hero type stacks up; hex CTA appears; giant “Meridian” scales in at bottom of viewport.
+2. Scroll ~0–35vh: hero fades and drifts up; pointer events disable at full fade.
+3. Tree canopy image reveals overlapping the transition into the forest photography.
+4. Midway into the photo section: black glass box draws as a thin vertical line, expands to a ~420px panel, then reveals italic headline + body + Scroll pips.
+5. Continue scrolling: at progress > 0.4, panel copy swaps to the second message; second pip activates.
+6. Mobile: sticky dual 50vh crops; desktop: full uncropped stacked landscapes.
+
+**Deliver a pixel-faithful clone of this Meridian landing experience using the exact assets, fonts, copy, clip-path CTA, scroll math, and animation timings above.**
+
+---
