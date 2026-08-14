@@ -1,0 +1,109 @@
+```
+Create a single-page dentistry landing page called "Denta — Total Oral Wellness & Aesthetic Dentistry" as a single `index.html` file using Vite (no frameworks, no JS bundling beyond Vite's dev server). The page is a full-viewport hero with no scrolling.
+
+---
+
+**FONT:**
+- Google Fonts: "Plus Jakarta Sans" weights 400, 500, 600, 700.
+
+---
+
+**LAYOUT:**
+- The entire page is a fixed, full-viewport (`position: fixed; inset: 0`) dark container (`#111` background).
+- Inside is `#stage` — an absolutely positioned full-size layer (`inset: 0`) with `overflow: hidden`, black background, white text, z-index 1.
+
+---
+
+**BACKGROUND VIDEO:**
+- A `<video>` element with class `bg`, set to `autoplay muted loop playsinline`.
+- Source URL: `https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260714_020722_788a0de7-fdcd-486d-9438-6562942869a5.mp4`
+- CSS: `position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center;`
+
+---
+
+**CSS VARIABLES (`:root`):**
+` ` `
+--edge-x: clamp(20px, 3.4vw, 48px);
+--edge-y: clamp(20px, 4.8vh, 48px);
+--title-fs: clamp(40px, 8.45vw, 120px);
+--title-h: calc(var(--title-fs) * 0.9 * 3);
+--title-gap: clamp(20px, 4vh, 56px);
+` ` `
+
+---
+
+**TOP MENU BAR** (absolutely positioned, left/right/top using `--edge-x`/`--edge-y`, flexbox row):
+1. **Logo:** A white 32x32 SVG mark (a grid of 8 rounded squares arranged in a pattern — like a dental cross/grid motif) plus the text "Denta" in white, 700 weight, `clamp(18px, 1.9vw, 26px)`.
+2. **Nav links** (desktop only): "Implants", "Preventive Care", "Price" — each prefixed with a small 6px white circle (20% opacity). Font: 500 weight, `clamp(13px, 1.25vw, 18px)`.
+3. **"Contact Us" button** (desktop only, pushed right with `margin-left: auto`): White pill button (#FFF bg, #000 text), 500 weight, `border-radius: 100px`, padding `clamp(9px, 1.1vw, 12px) clamp(16px, 1.7vw, 24px)`.
+4. **Burger button** (mobile only, `<=640px`): 46x46px circle, `border: 1px solid rgba(255,255,255,0.28)`, `background: rgba(0,0,0,0.2)`, `backdrop-filter: blur(2.5px)`, containing a hamburger SVG icon.
+
+---
+
+**ANNOTATION/TIP BOX** (upper-left area):
+- Positioned with `right: 65.77%; bottom: 65.5%` (anchored by bottom-right corner), `width: 22.11%`, `aspect-ratio: 314/140`.
+- Has a glowing border effect using `::before` pseudo-element with 4 radial gradients (one per corner, white fading to transparent) masked to show only the border ring (mask-composite: exclude).
+- Contains:
+  - A veneer teeth image at `left: 7.32%; top: 15.71%; width: 35.99%; height: 68.57%` — source: `https://soft-zoom-63098134.figma.site/_assets/v11/301262aba8cffd7a5ea97a79cc06c898db9dab99.png`
+  - Text "Veneer Installation System" at `left: 50.32%; top: 17.86%`, font-size `7.64cqw`, 500 weight, using container query units.
+
+---
+
+**CONNECTOR LINE + MARKER:**
+- A stretched SVG (`viewBox="0 0 1420 1000"`, `preserveAspectRatio="none"`) draws a white 1px line from (486, 345) to (580, 439).
+- Two HTML dots (`.cdot`, 8px white circles): one at `left: 34.23%; top: 34.5%` (tip corner), one at `left: 40.85%; top: 43.9%` (marker center).
+- A **marker circle** at `left: 40.85%; top: 43.9%; transform: translate(-50%,-50%)` — `clamp(44px, 4.5vw, 64px)` size, `border-radius: 100px`, `background: rgba(0,0,0,0.2)`, `border: 1px solid rgba(255,255,255,0.2)`, `backdrop-filter: blur(2.5px)`.
+
+---
+
+**RATING SECTION** (positioned at `left: 40.77%`, bottom anchored relative to title height):
+- Three overlapping circular avatar images (negative margin on middle one):
+  - `https://soft-zoom-63098134.figma.site/_assets/v11/9fd8f643bdff42172bee39379e8da54eec70d888.png`
+  - `https://soft-zoom-63098134.figma.site/_assets/v11/895fc7c6cd2d211f3d47a624ef167f2df35f0ca3.png`
+  - `https://soft-zoom-63098134.figma.site/_assets/v11/f7c6bc3c2b464e94297a8093fc7bd4f8dea80e12.png`
+- Size: `clamp(32px, 4.5vw, 64px)` each, `border-radius: 100px; object-fit: cover`.
+- Text column: "2,500" (600 weight) above a row of 5 gold star SVGs (`fill: #FFCC6D`) + "Reviews" label. All at `clamp(14px, 1.69vw, 24px)`.
+
+---
+
+**TITLE** (bottom-left, full width):
+- Three lines: "Total Oral" / "Wellness & Aesthetic" (right-aligned) / "Dentistry Services"
+- `font-size: var(--title-fs)`, weight 500, `line-height: 0.9`, `letter-spacing: -0.04em`, `text-transform: capitalize`.
+
+---
+
+**"BOOK A CONSULTATION" BUTTON** (bottom-right):
+- Black pill button (`#000` bg, white text), `border-radius: 100px`.
+- Contains a calendar SVG icon (28x28, white stroke, no fill) + text.
+- Padding: `clamp(11px, 1.69vw, 24px) clamp(17px, 2.54vw, 36px)`.
+- Font: `clamp(11px, 1.69vw, 24px)`, weight 500, z-index 4.
+
+---
+
+**MOBILE DRAWER** (`<=640px`, toggled via JS on body class `drawer-open`):
+- Full-screen overlay: `background: rgba(10, 8, 7, 0.72); backdrop-filter: blur(16px)`.
+- Fades in/out with `opacity` + `visibility` transition (0.25s ease).
+- Contains: logo + close button (46px circle with X icon), nav links (30px, 500 weight, with 8px bullet dots), and a full-width "Contact Us" white pill button at the bottom (`margin-top: auto`).
+- Opened by burger button click, closed by `[data-drawer-close]` elements or Escape key.
+
+---
+
+**MOBILE LAYOUT** (`max-width: 640px`):
+- `--title-fs` overridden to `clamp(24px, 7.4vw, 36px)`.
+- Background video shifts: `object-position: 77% center; transform: scale(1.28); transform-origin: 77% center`.
+- Tip box moves to `left: 20px; top: 130px; width: min(50vw, 195px)`.
+- Desktop SVG connector hidden; replaced by a JS-driven `.mobile-line` (1px white div, rotated at 47 degrees, length = `vw * 0.28`). Marker and dot are repositioned by JS to the line endpoint.
+- Title: all lines left-aligned, `white-space: nowrap`.
+- Book button: full-width, fixed 20px inset, bottom 24px.
+- Rating: left 20px, stacked above title.
+
+---
+
+**JAVASCRIPT** (inline, IIFE):
+1. Drawer open/close logic (toggles `drawer-open` class on body, updates `aria-expanded`).
+2. Mobile connector line calculator: on resize/orientationchange, if viewport <= 640px, calculates tip dot position, draws line at 47-degree angle scaled to `0.28 * vw`, positions marker + dot at endpoint. On desktop, clears inline styles so CSS positioning resumes.
+
+---
+
+**BUILD:** Plain Vite project, no frameworks. Single `index.html` with embedded `<style>` and `<script>`. No local image assets needed — all images/video are remote URLs.
+```

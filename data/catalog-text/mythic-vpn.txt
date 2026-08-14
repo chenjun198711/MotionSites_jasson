@@ -1,0 +1,217 @@
+```
+**Build a premium VPN landing page called "Legion VPN" using React, Vite, Tailwind CSS v4 (`@tailwindcss/vite` plugin), Motion (the `motion/react` package), and Lucide React icons.**
+
+## Tech Stack & Setup
+
+- React 19, Vite 6, TypeScript
+- Tailwind CSS v4 with `@tailwindcss/vite` plugin (NOT PostCSS config — use `@import "tailwindcss"` in CSS)
+- `motion` package (import from `motion/react`, NOT `framer-motion`)
+- `lucide-react` for icons: `ArrowDown`, `ArrowUpRight`, `Shield`, `Globe`, `Lock`, `Server`, `Menu`, `X`
+
+## Fonts (Google Fonts)
+
+Import in CSS:
+` ` `
+@import url('https://fonts.googleapis.com/css2?family=Imbue:opsz,wght@10..40,100..900&family=Manrope:wght@200..800&display=swap');
+` ` `
+
+Define Tailwind theme tokens:
+- `--font-sans`: "Manrope", ui-sans-serif, system-ui, sans-serif
+- `--font-display`: "Imbue", serif
+
+## Color Palette
+
+- Page background: pure black (`#000`)
+- Second section background: `#0F141B`
+- Text: white with various opacities (100%, 95%, 90%, 80%, 64%)
+- Borders: `white/20`, `white/25` with top highlights at `white/40` or `white/45`
+- Card backgrounds: transparent with `white/[0.05]` overlays
+- Marquee strip: solid white background with `#0F141B` text
+
+## Asset URLs
+
+**Hero Background Video:**
+` ` `
+https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260715_071354_779855cb-27e5-46f1-b462-d054ab8687fe.mp4
+` ` `
+
+**Second Section Background Video:**
+` ` `
+https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260715_073605_45372917-433f-45a0-b30b-f4efa8d1cd17.mp4
+` ` `
+
+**Helmet Card Image:**
+` ` `
+https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260715_081559_0fd94d82-1ce5-4690-b35e-13ae5cc1ca43.png&w=1280&q=85
+` ` `
+
+**Video Poster / Fallback Image:** `/helmet.jpg` (local file in public folder)
+
+## Page Structure
+
+### 1. Fixed Full-Screen Video Background
+
+- Fixed positioning covering the entire viewport, `z-0`, pointer-events-none
+- Layer 1: Static fallback `<img>` of `/helmet.jpg` covering full area with `object-cover`, always visible
+- Layer 2: `<video>` element on top, starts `opacity-0` and transitions to `opacity-100` over 1500ms once playing/loaded
+- Video attributes: `autoPlay`, `loop`, `muted`, `playsInline`, `poster="/helmet.jpg"`
+- Scale the video to `scale-[1.01]` to prevent edge gaps
+- UseEffect for autoplay recovery: try `.play()` immediately, and also on first click/touchstart interaction
+
+### 2. Header (motion animated, slides from y:-40 to y:0, duration 1.2s, cubic-bezier [0.16, 1, 0.3, 1])
+
+**Left: Logo**
+- Custom SVG logo (57x56 viewBox, white fill, 48x48px rendered) — here is the exact SVG path data:
+` ` `svg
+<svg viewBox="0 0 57 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M8.61805 6.56531C8.60358 6.57818 8.58911 6.58943 8.57624 6.60229C8.21287 6.92872 7.85913 7.26477 7.51505 7.6121C2.87 12.2866 0 18.7284 0 25.8407C0 31.0539 1.54194 35.907 4.19648 39.9689C4.19648 39.9689 4.19809 39.9705 4.19809 39.9721C4.26241 40.0718 4.32832 40.1699 4.39425 40.268C4.9184 41.0463 6.09535 40.9337 6.4539 40.0654L18.9565 9.81992C16.802 6.73733 13.6683 4.87367 8.61805 6.56531Z" fill="white"/>
+  <path d="M35.0869 12.4188L41.2852 29.9801C42.5377 33.5354 44.3256 37.7195 46.7116 41.1398C49.8598 36.8544 51.7201 31.5656 51.7201 25.841C51.7201 11.9074 40.7031 0.549946 26.9062 0C31.3841 2.08883 33.4534 7.7925 35.0869 12.4188Z" fill="white"/>
+  <path d="M56.2272 49.0769C51.5838 50.0722 47.8423 47.6779 44.9032 44.0165C42.2326 41.0802 39.8224 36.7643 37.8448 30.9271L31.3459 11.7353C30.7896 10.0919 30.1673 8.36164 29.3924 6.76004C29.3924 6.76004 28.8586 5.31119 27.7459 3.96366C26.241 1.91342 24.2714 0.459756 21.5413 0.335938C20.9399 0.437243 20.345 0.557849 19.7582 0.700963C18.0185 1.12227 16.3496 1.71728 14.7674 2.47144C13.0117 3.30601 11.3668 4.3335 9.85547 5.52505C20.3724 2.11764 23.7086 11.2304 26.1059 18.0195L32.3042 35.5807C33.7432 39.6667 35.8897 44.5841 38.84 48.2166C40.0668 47.5027 41.2309 46.6906 42.3194 45.7917C46.5577 50.2878 51.4294 51.3683 56.2706 49.585L56.2272 49.0769Z" fill="white"/>
+  <path d="M35.9593 49.6562C35.9593 49.6562 35.9609 49.6562 35.9625 49.6562C33.2774 46.7184 30.8543 42.3912 28.867 36.5267L22.3682 17.3349C22.1366 16.6482 21.8922 15.9471 21.6301 15.246C21.1767 14.0303 19.4612 14.0159 18.9917 15.2251L12.1423 32.8169L8.05836 43.1887C7.81558 43.8078 7.97153 44.5121 8.45228 44.9704C13.0475 49.1545 19.1557 51.7048 25.8588 51.7048C28.2561 51.7048 30.5762 51.3784 32.7805 50.769C37.1442 55.7844 42.2347 57.0452 47.2913 55.1831L47.2479 54.6749C42.6237 55.667 38.8903 53.2952 35.9576 49.6562H35.9593Z" fill="white"/>
+</svg>
+` ` `
+- Text next to logo: "Legion VPN" — `font-display`, uppercase, `tracking-[0.12em]`, font-medium, 24px
+
+**Center: Glass Pill Navigation**
+- Items: `['Features', 'Servers', 'Pricing', 'Download']`
+- Container: `border border-white/20 border-t-white/40 border-b-white/10`, `bg-gradient-to-tr from-white/[0.02] via-white/[0.12] to-white/[0.01]`, `backdrop-blur-3xl`, height 64px, `rounded-full`, padding 12px horizontal / 8px vertical
+- Active tab: animated background pill using Motion's `layoutId="activePill"` with `bg-white/[0.15] rounded-full`, spring animation (stiffness 380, damping 30)
+- Button text: `text-xs font-bold tracking-wider uppercase`
+- Hidden on mobile (`hidden md:flex`)
+
+**Right: Action Buttons**
+- Circle button: 64x64px, rounded-full, white gradient background (`from-white to-gray-100`), border `white/25` with `border-t-white/45`, contains `ArrowUpRight` icon 24px
+- "Contact Us" button: same style, 64px height, `px-6`, `text-xs font-bold uppercase tracking-wider`
+- Hidden on mobile
+
+**Mobile: Hamburger menu** button (md:hidden), opens an AnimatePresence drawer with nav items + action buttons
+
+### 3. Hero Content (12-column grid, `items-end`)
+
+**Left Column (col-span-6):**
+- Heading: `font-display`, responsive sizing `text-[10vw] sm:text-[7vw] lg:text-[5vw] xl:text-[5.4vw]`, `leading-[0.82]`, uppercase, normal weight
+- Text: "Conquer the web" / "— Unseen," (font-light, 95% opacity) / "Untouchable," (90% opacity) / "Imperial" (80% opacity)
+- Animation: slides from y:50, delay 0.2s, duration 1.4s
+- Vertical divider: 1px wide, 220px tall, gradient from `white/40` via `white/15` to transparent, animated scaleY from 0 to 1
+- Description paragraph: `font-sans text-sm md:text-base text-white/64 leading-relaxed font-light`, width 320px
+- Text: "Encrypt your traffic, hide your IP, and bypass any restrictions. Full online anonymity — no logs, no limits, no compromises."
+
+**Right Column (col-span-6):**
+
+*Glass Card (340x460px, rounded-[3rem]):*
+- Border: `border-white/20`, transparent background
+- Contains a DUPLICATED video element inside, positioned absolutely to align pixel-perfectly with the background video
+- The duplicate video has an SVG filter applied: `filter: url(#liquid-glass-refraction)`
+- A requestAnimationFrame loop syncs the duplicate video's position (offset by the card's getBoundingClientRect) and currentTime (within 30ms drift tolerance) with the main background video
+- Overlay: `bg-white/[0.05]` with inset box shadows for glass edge highlights
+- Shield icon in a circle (56px, `bg-white/5 border-white/10`, 80px backdrop-blur)
+- Typography: 40px/40px heading "Protect the web / — Unbreakable, / Invisible, Absolute" in font-display uppercase
+- Sub-text: 12px/19px description
+- Animation: slides from y:60, delay 0.4s, duration 1.5s
+
+*Helmet Card (220x320px, rounded-[2.5rem]):*
+- Border: `border-white/20`, transparent background, overflow hidden
+- Contains the helmet mask image scaled to `1.40` with `rotate(15deg)`, hover scales to 1.46 rotate 18deg
+- Uses `motion.img` with `initial`/`whileHover` props
+- Animation: slides from y:80 scale:0.95, delay 0.6s, duration 1.6s
+
+### 4. Second Section
+
+**Full-width, min-h-screen, bg-[#0F141B], z-20:**
+
+**Background Video:**
+- Same as section bg video URL (second CloudFront URL)
+- Scaled 1.20 from `transform-origin: right bottom`
+- z-10, pointer-events-none
+
+**Dark overlay:** `bg-[#0F141B]/10 mix-blend-multiply`, z-15
+
+**Marquee Strip:**
+- Full width, solid white background, height `h-10 md:h-[52px]`
+- Text color: `#0F141B`
+- Font: font-display, uppercase, font-light, `text-xl md:text-[28px] lg:text-[32px]`
+- Content repeated 4x twice (for seamless loop): "YOUR DATA. YOUR PRIVACY. YOUR CONTROL. • ENCRYPTED TRAFFIC • COMPLETE ANONYMITY • NO LOGS • NO TRACKING • UNBREAKABLE DIGITAL PROTECTION • "
+- CSS animation: `marquee 25s linear infinite`, translates -50% on x-axis
+- z-30
+
+**Large Background Logo SVG:**
+- Same Legion VPN logo paths, scaled to 598x594px (viewBox 480x477)
+- Positioned absolute, top 100px from marquee, left-aligned with content padding
+- White color at 8% opacity
+- z-10, pointer-events-none
+
+**Text Content (positioned 200px below marquee top):**
+- Heading: 72px/64px, font-display, uppercase, normal weight
+- Text: (4 non-breaking spaces indent) "Protect the web —" / "Unbreakable, Invisible," (font-light, 95% opacity) / "Absolute" (90% opacity)
+- Paragraph: 14px, `text-white/64`, font-light, width 480px, lorem about encryption
+- Button: "Secure Your Connection" with ArrowUpRight, same white gradient pill style as header buttons, 64px height
+
+**Three Info Cards (BorderGlowCard component):**
+- Grid: 3 columns on md+, gap-6, max-width 1100px
+- Each card has a traveling border glow animation
+
+**BorderGlowCard Component:**
+- Takes `startProgress` prop (0, 0.33, 0.66) to offset animation start
+- Uses an invisible SVG `<rect>` with `rx="32" ry="32"` as a path guide
+- `getPointAtLength()` to get x,y coordinates along the rect perimeter
+- Sets CSS variables `--glow-x` and `--glow-y` via requestAnimationFrame, 7-second loop duration
+- Three layered divs use CSS mask-composite (content-box XOR to show border only):
+  - **Tail layer**: 2px padding, opacity 0.15, blur 4px, radial-gradient circle 110px
+  - **Medium layer**: 1.2px padding, opacity 0.28, blur 2px, radial-gradient circle 75px
+  - **Core layer**: 0.9px padding, opacity 0.78, drop-shadow, radial-gradient circle 35px
+- Static border underneath: `0.8px solid rgba(255, 255, 255, 0.14)`
+
+**Card Content:**
+1. "NO LOGS" — 32px font-display, with 11px uppercase tracking-widest description
+2. "256-BIT" — same style, "MILITARY-GRADE ENCRYPTION..."
+3. "120+" — same style, "GLOBAL SERVER LOCATIONS..."
+
+Cards have `hover:-translate-y-1` transition.
+
+### 5. SVG Filters (placed at the bottom of the component, invisible)
+
+**Filter: `liquid-glass-refraction`** (applied to duplicate video in glass card)
+- `feTurbulence`: fractalNoise, baseFrequency="0.012 0.015", numOctaves=3
+- Boost SourceAlpha to heightmap (matrix with alpha * 100)
+- Gaussian blur stdDeviation=45
+- Invert to edge mask (feFuncA linear slope=-1.3 intercept=1)
+- Multiply turbulence by edge mask (zero distortion in center, active at edges)
+- Per-channel chromatic dispersion displacement:
+  - Red: scale=65
+  - Green: scale=56
+  - Blue: scale=47
+- Screen blend all channels together
+
+**Filter: `lens-refraction`** (defined but used conceptually)
+- Heightmap from boosted alpha + blur stdDeviation=40
+- X/Y gradient derivatives via offset +/-2px and arithmetic composite (k2=10, k3=-10, k4=0.5)
+- Color matrix to separate into R and G channels
+- Recombine into lens map
+- Per-channel displacement: R=10, G=9, B=8
+- Screen blend
+
+### 6. CSS Animations
+
+` ` `css
+@keyframes marquee {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+
+@keyframes liquid-blob-1 { /* morphing border-radius + translate + scale + rotate, 14s */ }
+@keyframes liquid-blob-2 { /* same pattern, 16s */ }
+@keyframes liquid-blob-3 { /* same pattern, 20s */ }
+@keyframes spin-slow { /* 360deg rotation with scale pulse, 28s */ }
+` ` `
+
+### 7. Motion Animation Easing
+
+All entrance animations use: `ease: [0.16, 1, 0.3, 1]` (custom cubic-bezier — aggressive ease-out)
+
+### 8. Responsive Behavior
+
+- Mobile: single column layout, hamburger menu, smaller font sizes
+- Tablet/Desktop: 12-column grid, glass pill nav, side-by-side cards
+- Breakpoint: `md:` for nav visibility, `lg:` for grid columns and spacing
+- Max container width: 1800px with auto margins
+```

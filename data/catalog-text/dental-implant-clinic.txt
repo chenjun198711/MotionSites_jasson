@@ -1,0 +1,461 @@
+```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmileLab - Phone Mockups</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      min-height: 100vh;
+      background: #f0f2f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 48px;
+      padding: 32px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes blurIn {
+      from { opacity: 0; filter: blur(12px); }
+      to { opacity: 1; filter: blur(0px); }
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    /* Phone Mockup */
+    .phone {
+      position: relative;
+      width: 375px;
+      height: 812px;
+      border-radius: 54px;
+      border: 12px solid #1a1a1a;
+      background: #1a1a1a;
+      box-shadow: 0 50px 100px -20px rgba(0,0,0,0.4), 0 30px 60px -30px rgba(0,0,0,0.5), inset 0 -2px 6px 0 rgba(255,255,255,0.05);
+      overflow: hidden;
+    }
+
+    .phone__frame-highlight {
+      position: absolute;
+      inset: 0;
+      border-radius: 42px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1);
+      pointer-events: none;
+      z-index: 50;
+    }
+
+    .phone__island {
+      position: absolute;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 126px;
+      height: 34px;
+      background: black;
+      border-radius: 9999px;
+      z-index: 40;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .phone__island-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      margin-right: 32px;
+    }
+
+    .phone__screen {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 42px;
+      overflow: hidden;
+      background: #5F9AD1;
+    }
+
+    .phone__bottom-bar {
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 134px;
+      height: 5px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 9999px;
+      z-index: 40;
+    }
+
+    /* Shared Header */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 56px 20px 0;
+      animation: slideDown 0.7s ease-out 0.1s both;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo-text {
+      color: white;
+      font-size: 18px;
+      font-weight: 500;
+      letter-spacing: -0.025em;
+    }
+
+    .menu-btn {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+    }
+
+    /* Screen 1: Dental Implants */
+    .screen1 {
+      position: relative;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      background: #5F9AD1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .screen1__content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .screen1__heading {
+      text-align: center;
+      padding: 0 20px;
+      margin-top: 96px;
+      animation: blurIn 0.9s ease-out 0.3s both;
+    }
+
+    .screen1__heading-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+
+    .screen1__heading-text {
+      display: block;
+      color: white;
+      font-size: 64px;
+      font-weight: 400;
+      line-height: 1.1;
+      letter-spacing: -0.025em;
+    }
+
+    .screen1__heading-text--back { position: relative; z-index: 0; }
+    .screen1__heading-text--front { position: relative; z-index: 20; }
+
+    .screen1__implant-img {
+      position: absolute;
+      z-index: 10;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: -12px;
+      height: 180%;
+      width: auto;
+      object-fit: contain;
+      pointer-events: none;
+    }
+
+    .screen1__subtext {
+      margin-top: 32px;
+      font-size: 14px;
+      line-height: 1.4;
+      max-width: 240px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .screen1__subtext--muted { color: rgba(255,255,255,0.7); }
+    .screen1__subtext--white { color: white; }
+
+    .screen1__bottom {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+    }
+
+    .screen1__stat {
+      position: absolute;
+      bottom: 180px;
+      left: 56px;
+      z-index: 20;
+      animation: slideUp 0.9s ease-out 0.6s both;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .screen1__stat-number {
+      color: #3D8CD5;
+      font-size: 30px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .screen1__stat-label {
+      color: #3D8CD5;
+      font-size: 12px;
+      font-weight: 500;
+      text-align: center;
+      line-height: 1.3;
+    }
+
+    .screen1__avatars {
+      position: absolute;
+      bottom: 50px;
+      right: 20px;
+      z-index: 30;
+      display: flex;
+      align-items: center;
+      animation: slideUp 0.9s ease-out 0.8s both;
+    }
+
+    .screen1__avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+      margin-left: -12px;
+    }
+
+    .screen1__avatar:first-child { margin-left: 0; }
+
+    .screen1__avatar-badge {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #EBFA73;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+      margin-left: -12px;
+    }
+
+    .screen1__avatar-badge span {
+      color: #3D8CD5;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .screen1__girl {
+      position: relative;
+      z-index: 10;
+      animation: slideUp 0.9s ease-out 0.7s both;
+      padding-left: 24px;
+    }
+
+    .screen1__girl img {
+      width: 150%;
+      height: auto;
+      object-fit: contain;
+      object-position: bottom;
+    }
+
+    /* Screen 2: Hero Video */
+    .screen2 {
+      position: relative;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      background: #5F9AD1;
+    }
+
+    .screen2__video {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      top: 30%;
+      height: 70%;
+      width: 100%;
+      object-fit: cover;
+      object-position: 80% center;
+      animation: fadeIn 1.2s ease-out 0.2s both;
+    }
+
+    .screen2__gradient {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 30%;
+      height: 128px;
+      z-index: 1;
+      background: linear-gradient(to bottom, #5F9AD1, transparent);
+    }
+
+    .screen2__content {
+      position: relative;
+      z-index: 10;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .screen2__heading {
+      padding: 0 20px;
+      margin-top: 24px;
+      text-align: center;
+      animation: blurIn 0.9s ease-out 0.3s both;
+    }
+
+    .screen2__heading h1 {
+      color: white;
+      font-size: 64px;
+      font-weight: 400;
+      line-height: 0.9;
+      letter-spacing: -0.025em;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Phone 1: Dental Implants Screen -->
+  <div class="phone">
+    <div class="phone__frame-highlight"></div>
+    <div class="phone__island"><div class="phone__island-dot"></div></div>
+    <div class="phone__screen">
+      <section class="screen1">
+        <header class="header">
+          <div class="logo">
+            <svg width="24" height="28" viewBox="0 0 32 36" fill="none">
+              <path d="M16 0C10.5 0 7 3 5.5 6C4 9 3.5 12.5 3.5 16C3.5 20 4.5 24 7 27.5C9 30.5 11 33 13.5 35C15 36.2 16 36 16 36C16 36 17 36.2 18.5 35C21 33 23 30.5 25 27.5C27.5 24 28.5 20 28.5 16C28.5 12.5 28 9 26.5 6C25 3 21.5 0 16 0Z" fill="white"/>
+              <path d="M16 5C12.5 5 10 6.5 9 8.5C8 10.5 7.5 12.5 7.5 15C7.5 18 8.5 21 10.5 23.5C12 25.5 13.5 27.5 15 29C15.5 29.5 16 29.5 16 29.5C16 29.5 16.5 29.5 17 29C18.5 27.5 20 25.5 21.5 23.5C23.5 21 24.5 18 24.5 15C24.5 12.5 24 10.5 23 8.5C22 6.5 19.5 5 16 5Z" fill="#5F9AD1"/>
+            </svg>
+            <span class="logo-text">SmileLab</span>
+          </div>
+          <button class="menu-btn" aria-label="Menu">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/>
+            </svg>
+          </button>
+        </header>
+
+        <div class="screen1__content">
+          <div class="screen1__heading">
+            <div class="screen1__heading-wrapper">
+              <span class="screen1__heading-text screen1__heading-text--back">Dental</span>
+              <img
+                src="https://soft-zoom-63098134.figma.site/_assets/v11/2d10b6434e9908d20016ce4631e30910b16512fb.png"
+                alt="Dental implant"
+                class="screen1__implant-img"
+              />
+              <span class="screen1__heading-text screen1__heading-text--front">Implants</span>
+            </div>
+
+            <p class="screen1__subtext">
+              <span class="screen1__subtext--muted">Dental implants are our core expertise, performed with </span>
+              <span class="screen1__subtext--white">precision</span>
+              <span class="screen1__subtext--muted"> and </span>
+              <span class="screen1__subtext--white">long-term care.</span>
+            </p>
+          </div>
+
+          <div class="screen1__bottom">
+            <div class="screen1__stat">
+              <p class="screen1__stat-number">98%</p>
+              <p class="screen1__stat-label">loyal dental<br/>patients</p>
+            </div>
+
+            <div class="screen1__avatars">
+              <img src="https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=100" alt="Patient" class="screen1__avatar" />
+              <img src="https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=100" alt="Patient" class="screen1__avatar" />
+              <div class="screen1__avatar-badge"><span>+2k</span></div>
+            </div>
+
+            <div class="screen1__girl">
+              <img
+                src="https://soft-zoom-63098134.figma.site/_assets/v11/ecccf0c10f5c64505f8cb104b04c72aba0b85b0c.png?w=512"
+                alt="Happy patient"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <div class="phone__bottom-bar"></div>
+  </div>
+
+  <!-- Phone 2: Hero Video Screen -->
+  <div class="phone">
+    <div class="phone__frame-highlight"></div>
+    <div class="phone__island"><div class="phone__island-dot"></div></div>
+    <div class="phone__screen">
+      <section class="screen2">
+        <video autoplay muted loop playsinline class="screen2__video">
+          <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260710_141802_1d85412a-1df8-4993-8fc4-7400520bb1d1.mp4" type="video/mp4" />
+        </video>
+        <div class="screen2__gradient"></div>
+
+        <div class="screen2__content">
+          <header class="header">
+            <div class="logo">
+              <svg width="24" height="28" viewBox="0 0 32 36" fill="none">
+                <path d="M16 0C10.5 0 7 3 5.5 6C4 9 3.5 12.5 3.5 16C3.5 20 4.5 24 7 27.5C9 30.5 11 33 13.5 35C15 36.2 16 36 16 36C16 36 17 36.2 18.5 35C21 33 23 30.5 25 27.5C27.5 24 28.5 20 28.5 16C28.5 12.5 28 9 26.5 6C25 3 21.5 0 16 0Z" fill="white"/>
+                <path d="M16 5C12.5 5 10 6.5 9 8.5C8 10.5 7.5 12.5 7.5 15C7.5 18 8.5 21 10.5 23.5C12 25.5 13.5 27.5 15 29C15.5 29.5 16 29.5 16 29.5C16 29.5 16.5 29.5 17 29C18.5 27.5 20 25.5 21.5 23.5C23.5 21 24.5 18 24.5 15C24.5 12.5 24 10.5 23 8.5C22 6.5 19.5 5 16 5Z" fill="#5F9AD1"/>
+              </svg>
+              <span class="logo-text">SmileLab</span>
+            </div>
+            <button class="menu-btn" aria-label="Menu">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/>
+              </svg>
+            </button>
+          </header>
+
+          <div class="screen2__heading">
+            <h1>Restore<br/>Your True<br/>Smile</h1>
+          </div>
+        </div>
+      </section>
+    </div>
+    <div class="phone__bottom-bar"></div>
+  </div>
+
+</body>
+</html>
+```

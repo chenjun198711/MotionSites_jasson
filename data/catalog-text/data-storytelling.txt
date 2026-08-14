@@ -1,0 +1,241 @@
+```
+Build a single-page React + TypeScript + Vite + Tailwind CSS application. No backend, no database, no auth, no routing. The entire experience is one full-viewport hero section with a mouse-tracked spotlight reveal effect layered over a background image, a fixed glassmorphic navigation bar, and a mobile slide-in menu overlay.
+
+---
+
+## 1. Fonts
+
+In `src/index.css`, import from Google Fonts:
+
+` ` `css
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@1,400;1,500;1,600&display=swap');
+` ` `
+
+No other fonts. No local font files.
+
+---
+
+## 2. Background Images (exact URLs, do not change)
+
+` ` `ts
+const BG_IMAGE_1 = 'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260721_142052_eb24fa6b-a69e-4ff2-8e74-8ff14fd0f864.png&w=1280&q=85';
+const BG_IMAGE_2 = 'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260721_142424_81e51558-a475-4497-86c1-510dc01e003a.png&w=1280&q=85';
+` ` `
+
+- `BG_IMAGE_1` — the base layer, always visible, z-10.
+- `BG_IMAGE_2` — the reveal layer, z-30, masked by a radial-gradient spotlight that follows the cursor.
+
+---
+
+## 3. Spotlight Reveal Effect (the core interaction)
+
+This is the signature feature. Two layers of the same scene are stacked; the top layer is only visible inside a soft circular spotlight that tracks the mouse.
+
+### Components
+
+1. **Base image div** — `absolute inset-0 bg-center bg-cover bg-no-repeat z-10`, `backgroundImage: url(BG_IMAGE_1)`, has the `hero-zoom` animation class.
+2. **Reveal layer** — a `<div>` at `absolute inset-0 z-30 pointer-events-none` with `backgroundImage: url(BG_IMAGE_2)`. Its visibility is controlled by a CSS mask.
+3. **Hidden canvas** — `<canvas>` at `display: none`, sized to `window.innerWidth × window.innerHeight`.
+
+### Mouse tracking with smoothing
+
+- Maintain two refs: `mouse` (raw cursor position) and `smooth` (lerped position).
+- On `mousemove`, update `mouse.current = { x: e.clientX, y: e.clientY }`.
+- A `requestAnimationFrame` loop runs continuously, lerping `smooth` toward `mouse` with factor **0.1**:
+  ` ` `ts
+  smooth.current.x += (mouse.current.x - smooth.current.x) * 0.1;
+  smooth.current.y += (mouse.current.y - smooth.current.y) * 0.1;
+  ` ` `
+- The smoothed position is stored in React state (`cursorPos`) so the effect re-renders each frame.
+
+### Radial gradient mask
+
+Every frame, on the hidden canvas:
+
+1. Clear the canvas.
+2. Create a radial gradient centered at `(cursorX, cursorY)` with radius **260px** (`SPOTLIGHT_R = 260`):
+   - 0.00 → `rgba(255,255,255,1)`
+   - 0.40 → `rgba(255,255,255,1)`
+   - 0.60 → `rgba(255,255,255,0.75)`
+   - 0.75 → `rgba(255,255,255,0.4)`
+   - 0.88 → `rgba(255,255,255,0.12)`
+   - 1.00 → `rgba(255,255,255,0)`
+3. Draw a filled circle with that gradient.
+4. Convert the canvas to a data URL via `canvas.toDataURL()`.
+5. Set that data URL as both `webkitMaskImage` and `maskImage` on the reveal-layer div, with `mask-size: 100% 100%`.
+
+This makes `BG_IMAGE_2` appear only within the spotlight circle, with a soft feathered edge, revealing it over `BG_IMAGE_1` as the cursor moves. The spotlight glides smoothly thanks to the lerp.
+
+### Resize handling
+
+On `resize`, update `canvas.width` and `canvas.height` to the new window dimensions. Clean up the listener on unmount. Also clean up the `mousemove` listener and cancel the `requestAnimationFrame` on unmount.
+
+---
+
+## 4. Hero Section Layout
+
+A `<section>` with `relative w-full overflow-hidden h-screen` and inline `style={{ height: '100dvh' }}`, `bg-black`.
+
+### 4a. Top row — heading + paragraph (`top-[12%]`, z-50, `pointer-events-none`)
+
+A flex container: `absolute top-[12%] left-0 right-0 z-50 flex items-start justify-between px-5 sm:px-10 md:px-14 pointer-events-none`.
+
+**Left — heading** (`text-white leading-[0.95] text-left`):
+
+- Line 1: `"Every layer"`
+  - `block font-playfair italic font-normal text-6xl sm:text-7xl md:text-9xl`
+  - `letterSpacing: '-0.05em'`
+  - `hero-anim hero-reveal` with `animationDelay: '0.25s'`
+- Line 2: `"tells a story."`
+  - `block font-normal text-6xl sm:text-7xl md:text-9xl -mt-1`
+  - `letterSpacing: '-0.08em'`
+  - `hero-anim hero-reveal` with `animationDelay: '0.42s'`
+
+**Right — paragraph** (`hidden sm:block max-w-[240px] pt-2`, `hero-anim hero-fade`, `animationDelay: '0.7s'`):
+
+- Text: `"Turn forgotten records, scattered logs, and silent activity into something readable."`
+- Styling: `text-base text-white leading-relaxed text-left` (fully opaque white).
+
+### 4b. Bottom right — paragraph + CTA (`bottom-10 sm:bottom-24`, z-50, `hero-anim hero-fade`, `animationDelay: '0.85s'`)
+
+Container: `absolute bottom-10 sm:bottom-24 left-5 right-5 sm:left-auto sm:right-10 md:right-14 max-w-full sm:max-w-[260px] z-50 flex flex-col items-start gap-4 sm:gap-5`.
+
+- Paragraph: `"EASYLOG transforms historical data into structured decisions — without losing the story behind it."` — `text-sm sm:text-base text-white leading-relaxed` (fully opaque white).
+- Button: `"Start uncovering"` — `bg-[#c8e630] hover:bg-[#b8d620] text-gray-900 text-base font-medium px-8 py-3.5 rounded-full transition-all hover:scale-[1.03] active:scale-95 hover:shadow-lg hover:shadow-[#c8e630]/30`.
+
+### 4c. Bottom left — scroll hint (`bottom-6 left-5 sm:left-10 md:left-14`, z-50, `hero-anim hero-fade`, `animationDelay: '1s'`)
+
+Container: `absolute bottom-6 left-5 sm:left-10 md:left-14 z-50 flex items-center gap-3`.
+
+- White circle: `w-7 h-7 rounded-full bg-white flex items-center justify-center` containing a `ChevronDown` icon from `lucide-react` at `size={14}` with `className="text-black"`.
+- Text: `"Scroll down for more"` — `text-xs text-white/60`.
+
+### 4d. Bottom right — year (`bottom-6 right-5 sm:right-10 md:right-14`, z-50, `hero-anim hero-fade`, `animationDelay: '1s'`)
+
+- Text: `"20-26"` — `text-xs text-white/60`.
+
+---
+
+## 5. Fixed Navigation (z-100)
+
+`<nav>` with `fixed top-0 left-0 right-0 z-[100] flex items-center justify-between p-4 sm:p-5`.
+
+**Left — wordmark**: `<span className="text-white text-2xl font-playfair italic">easylog</span>`
+
+**Center — desktop nav pill** (`hidden md:flex absolute left-1/2 -translate-x-1/2`):
+- Container: `bg-white/20 backdrop-blur-md border border-white/30 rounded-full px-2 py-2 items-center gap-1`
+- Buttons in order: Main, Platform, Use, Cases, Integrations, Journal, Contact
+- "Main" is `text-white`; all others are `text-white/80`
+- All buttons: `text-sm font-medium px-4 py-1.5 rounded-full hover:bg-white/20 hover:text-white transition-colors`
+
+**Right — desktop CTA** (`hidden md:block`):
+- `<button className="text-white text-sm font-medium px-5 py-2 rounded-full bg-white/20 backdrop-blur-md border border-white/30 hover:bg-white/30 transition-colors">menu</button>`
+
+**Right — mobile hamburger** (`md:hidden`, `w-11 h-11 rounded-full`, `active:scale-95 transition-all duration-300`):
+- When closed: `bg-white/20 border border-white/30 backdrop-blur-md`
+- When open: `bg-neutral-100 border border-neutral-200`
+- Three bars (`h-[1.5px] w-5 rounded-full transition-all duration-300 ease-out`):
+  - Top bar: closed = `-translate-y-[5px] bg-white`, open = `rotate-45 bg-neutral-800`
+  - Middle bar: closed = `opacity-100 bg-white`, open = `opacity-0 scale-x-0 bg-neutral-800`
+  - Bottom bar: closed = `translate-y-[5px] bg-white`, open = `-rotate-45 bg-neutral-800`
+- Toggles `menuOpen` state. `aria-label="Toggle menu"`, `aria-expanded={menuOpen}`.
+
+---
+
+## 6. Mobile Menu Overlay (z-90, `md:hidden`)
+
+Container: `fixed inset-0 z-[90] md:hidden transition-opacity duration-500` — `opacity-100 pointer-events-auto` when open, `opacity-0 pointer-events-none` when closed.
+
+  - `text-neutral-800 text-2xl font-medium group-hover:text-neutral-950 transition-colors`
+  - Staggered entrance: `transitionDelay: menuOpen ? 120 + i*60 ms : 0ms`
+  - `translate-y-4 opacity-0` → `translate-y-0 opacity-100` (duration 500ms, ease-out)
+  - `onClick` closes the menu.
+
+---
+
+## 7. Animations (in `src/index.css`)
+
+All three use `cubic-bezier(0.16, 1, 0.3, 1)` easing and `animation-fill-mode: forwards`.
+
+### Keyframes
+
+` ` `css
+@keyframes heroReveal {
+  0%   { opacity: 0; transform: translateY(28px); filter: blur(12px); }
+  100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+
+@keyframes heroFadeUp {
+  0%   { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes heroZoom {
+  0%   { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+` ` `
+
+### Utility classes
+
+` ` `css
+.hero-anim {
+  opacity: 0;
+  animation-fill-mode: forwards;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+.hero-reveal { animation-name: heroReveal;  animation-duration: 1.1s; }
+.hero-fade   { animation-name: heroFadeUp;  animation-duration: 1s; }
+.hero-zoom   { animation: heroZoom 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+` ` `
+
+### Reduced motion
+
+` ` `css
+@media (prefers-reduced-motion: reduce) {
+  .hero-anim, .hero-zoom { animation: none; opacity: 1; }
+}
+` ` `
+
+### Animation assignments and delays
+
+| Element | Class | Delay |
+|---|---|---|
+| Heading line 1 ("Every layer") | `hero-anim hero-reveal` | 0.25s |
+| Heading line 2 ("tells a story.") | `hero-anim hero-reveal` | 0.42s |
+| Top-right paragraph | `hero-anim hero-fade` | 0.70s |
+| Bottom-right paragraph + CTA | `hero-anim hero-fade` | 0.85s |
+| Bottom-left scroll hint | `hero-anim hero-fade` | 1.00s |
+| Bottom-right year | `hero-anim hero-fade` | 1.00s |
+| Base background image | `hero-zoom` | (none, runs immediately) |
+
+---
+
+## 8. Icons
+
+Use `lucide-react` (already a dependency). Only import `ChevronDown` (size 14, `text-black`, inside the white scroll-hint circle).
+
+---
+
+## 9. Global Styling
+
+- Root `<div>`: `min-h-screen bg-white tracking-[-0.02em]`, inline `style={{ fontFamily: "'Inter', sans-serif" }}`.
+- `tailwind.config.js`: default config, no custom theme extensions, content paths `['./index.html', './src/**/*{js,ts,jsx,tsx}']`.
+- `index.html` title: `"Augmenta — Human Evolution"`.
+
+---
+
+## 10. File Structure
+
+` ` `
+src/
+  App.tsx       # HeroSection, RevealLayer, App components
+  index.css     # Font imports, Tailwind directives, keyframes, utilities
+  main.tsx      # React entry point
+index.html      # Root div + module script
+` ` `
+
+`App.tsx` exports three components:
+
+---
+```

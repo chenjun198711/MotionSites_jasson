@@ -1,0 +1,72 @@
+```
+> Build a single-page landing page for a brand called **"Aethera"** (a fintech/AI company for lending). Use **React + TypeScript + Vite + Tailwind CSS + lucide-react**. The page has a white background (`#fff`), no scrolling animations -- just a clean, minimal, editorial design.
+>
+> ### Fonts
+> - **Heading/serif font:** "P22 Mackinac W01 Book" loaded from `https://db.onlinewebfonts.com/c/9d4d074c9335825a23cce178ee03b498?family=P22+Mackinac+W01+Book`
+> - **Body/sans font:** "Inter" (weights 300, 400, 500, 600) from Google Fonts
+> - Configure Tailwind: `fontFamily.sans = ['Inter', 'sans-serif']`, `fontFamily.serif = ['P22 Mackinac W01 Book', 'Georgia', 'serif']`
+>
+> ### Page Title
+> `<title>Build Lasting Relationships</title>`
+>
+> ### Background Video
+It has to be centered vertically on the page 
+> Use this **exact** CloudFront video URL:
+> ` ` `
+> https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260715_112512_f3b7a972-83dd-4401-9c4b-f08d3733f5ca.mp4
+> ` ` `
+> The video is positioned **absolutely** behind the hero using: top: '50%', transform: 'translateY(-50%)'
+ and CSS filter `brightness(1) contrast(1.2)`. It uses `object-contain`, is muted, playsInline, preload="auto". It plays once on load and pauses when ended (no looping, no boomerang reversal -- just plays forward once and stops).
+>
+> ### Navbar
+> - `relative z-20`, max-width `max-w-7xl`, centered, `px-8 py-6`, flex between.
+> - **Logo (left):** Text "Aethera" with a superscript registered mark -- `font-serif text-3xl tracking-tight text-[#000000]` with `<sup className="text-xs align-super">®</sup>`
+> - **Navigation links (center, hidden on mobile `hidden md:flex`):** "Home" (active, `text-[#000000]`), "Studio", "About", "Journal", "Reach Us" (inactive, `text-[#6F6F6F]`). Each is `text-sm` with hover to black.
+> - **CTA button (right):** "Begin Journey" -- `rounded-full px-6 py-2.5 text-sm bg-[#000000] text-white` with `hover:scale-[1.03] transition-transform duration-200`.
+>
+> ### Hero Section
+> - Wrapper: `relative flex flex-col items-center`
+> - Inner container: `relative w-full min-h-[60vh] sm:min-h-[65vh] md:min-h-[70vh] flex flex-col items-center`
+> - Content container: `relative z-10 flex flex-col items-center text-center pt-16 sm:pt-20 md:pt-28 px-4 sm:px-6` with inline style `marginTop: '-70px'`
+> - **Headline:** `font-serif text-4xl sm:text-5xl md:text-7xl lg:text-8xl leading-[1.1] tracking-tighter text-[#191919] font-normal` -- text is "Forge trust," on line 1, "drive results." on line 2 (using `<br />`)
+> - **Subtext:** `mt-5 sm:mt-6 md:mt-8 max-w-sm sm:max-w-md text-sm md:text-base text-[#191919]/70 leading-relaxed px-2` -- "Intelligent AI agents designed for today's lending companies -- software that manages every borrower touchpoint via phone, text, and email."
+> - **Button:** "Get Started" -- `mt-6 sm:mt-8 md:mt-10 px-6 sm:px-8 py-3 sm:py-3.5 bg-[#191919] text-white text-sm font-medium rounded-lg hover:bg-[#191919]/90 transition-colors duration-200`
+>
+> ### Info Box (overlapping below hero)
+> - Container: `relative z-10 w-full max-w-7xl px-4 sm:px-8 -mt-8 sm:-mt-12 md:-mt-16`
+> - Box: `bg-white/90 backdrop-blur-sm border border-gray-200 pt-8 sm:pt-12 md:pt-16 px-5 sm:px-8 md:px-12 pb-0 shadow-sm flex flex-col overflow-hidden`
+> - **Row 1 (two-column grid `grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 md:gap-16`):**
+>   - Left: Label `text-[11px] uppercase tracking-[0.2em] text-[#191919]/50 font-medium` -- "How do we help?". Heading `mt-3 text-2xl sm:text-3xl md:text-4xl font-normal leading-tight tracking-tight text-[#191919] font-serif` -- "Dialogues that\nspark progress" (line break hidden on mobile `hidden sm:block`)
+>   - Right: `flex items-end` with paragraph `text-sm md:text-[15px] text-[#191919]/70 leading-relaxed` -- "Conversational AI made for compliant financial organizations. Agents that carry a real dialogue, tie into the tools you use, and document their actions."
+> - **Divider:** `mt-6 sm:mt-8 md:mt-10 h-px bg-gray-200 w-full`
+> - **Row 2 (three feature pills, `grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3`, `mt-6 sm:mt-8 md:mt-10`):**
+>   - Each pill: `group flex items-center justify-between bg-[#F4F3F3] px-4 sm:px-6 py-3.5 sm:py-4 hover:bg-[#eaeaea] transition-all duration-200 cursor-pointer`
+>   - Content: Number (`text-[#191919]/40`) + separator (`/` in `text-[#191919]/30 mx-2`) + label (`font-medium`)
+>   - Items: "01 / Multichannel", "02 / Integrated", "03 / Auditable"
+>   - Right icon: `ArrowRight` from lucide-react, `w-4 h-4 text-gray-400` with `group-hover:text-gray-700 group-hover:translate-x-0.5 transition-all duration-200`
+>
+> ### Global CSS (index.css)
+> ` ` `css
+> @tailwind base;
+> @tailwind components;
+> @tailwind utilities;
+>
+> * {
+>   box-sizing: border-box;
+> }
+>
+> body {
+>   font-family: 'Inter', sans-serif;
+>   -webkit-font-smoothing: antialiased;
+>   -moz-osx-font-smoothing: grayscale;
+> }
+> ` ` `
+>
+> ### Key Behaviors
+> - The video plays forward exactly once, then pauses. No loop, no reverse.
+> - The page is fully responsive with breakpoints at sm, md, lg.
+> - Minimal hover animations: button scale, arrow translate, color transitions.
+> - No additional sections below the info box.
+
+---
+```

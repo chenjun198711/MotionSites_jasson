@@ -1,0 +1,899 @@
+```
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nixito — Courses Screen</title>
+  <style>
+    @font-face {
+      font-family: "Mont";
+      src: url("assets/courses/fonts/mont-regular.woff2") format("woff2");
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "Mont";
+      src: url("assets/courses/fonts/mont-semibold.woff2") format("woff2");
+      font-weight: 600;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "Mont";
+      src: url("assets/courses/fonts/mont-semibold.woff2") format("woff2");
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    :root {
+      --canvas-width: 390px;
+      --canvas-height: 844px;
+      --ink: #000;
+      --surface: #fff;
+      --line: rgba(0, 0, 0, 0.1);
+      --counter: #ebe9ff;
+      --pill-radius: 999px;
+      --card-radius: 40px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background: #eeeeee;
+      color: var(--ink);
+      font-family: "Mont", Arial, sans-serif;
+      font-synthesis: none;
+    }
+
+    body {
+      display: grid;
+      place-items: center;
+      min-height: 100vh;
+    }
+
+    button {
+      margin: 0;
+      border: 0;
+      color: inherit;
+      font: inherit;
+      cursor: default;
+    }
+
+    .app-screen {
+      position: relative;
+      width: var(--canvas-width);
+      height: var(--canvas-height);
+      overflow: hidden;
+      background: var(--surface) url("assets/courses/images/image.png") center / cover no-repeat;
+      isolation: isolate;
+    }
+
+    .app-header {
+      position: absolute;
+      z-index: 10;
+      top: 30px;
+      left: 24px;
+      width: 342px;
+    }
+
+    .header-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 4px;
+      height: 48px;
+    }
+
+    .round-button,
+    .brand-mark {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+    }
+
+    .round-button {
+      display: grid;
+      place-items: center;
+      position: relative;
+      background: var(--surface);
+      border: 1px solid var(--line);
+    }
+
+    .round-button svg {
+      width: 24px;
+      height: 24px;
+      fill: none;
+      stroke: var(--ink);
+      stroke-width: 1.7;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .notification-dot {
+      position: absolute;
+      z-index: 2;
+      width: 12px;
+      height: 12px;
+      top: 1px;
+      left: 1px;
+      border: 3px solid #ffd485;
+      border-radius: 50%;
+      background: #000;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      background: #000;
+    }
+
+    .brand-mark img {
+      width: 25.6px;
+      height: 22.88px;
+    }
+
+    .app-header h1 {
+      margin: 8px 0 0;
+      font-size: 32px;
+      font-weight: 700;
+      line-height: 36px;
+      letter-spacing: -0.45px;
+    }
+
+    .course-filters {
+      position: absolute;
+      z-index: 9;
+      top: 142px;
+      left: 24px;
+      display: flex;
+      width: max-content;
+      height: 48px;
+      gap: 8px;
+    }
+
+    .filter-icon,
+    .filter-pill {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 48px;
+      flex: 0 0 auto;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--pill-radius);
+    }
+
+    .filter-icon {
+      width: 48px;
+      padding: 0;
+    }
+
+    .filter-icon svg {
+      width: 20px;
+      height: 20px;
+      fill: none;
+      stroke: #000;
+      stroke-width: 1.6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .filter-pill {
+      gap: 10px;
+      padding: 0 16px;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 22px;
+    }
+
+    .filter-pill:nth-of-type(2) { width: 86px; }
+    .filter-pill:nth-of-type(3) { width: 129px; }
+    .filter-pill:nth-of-type(4) { width: 124px; }
+
+    .count {
+      display: grid;
+      place-items: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--counter);
+      font-size: 14px;
+      line-height: 14px;
+    }
+
+    .featured-course {
+      position: absolute;
+      z-index: 3;
+      top: 215px;
+      left: 24px;
+      width: 342px;
+      height: 493px;
+    }
+
+    .course-swipe-deck {
+      position: absolute;
+      inset: 0;
+      width: 342px;
+      height: 493px;
+      overflow: visible;
+      isolation: isolate;
+    }
+
+    .swipe-card {
+      left: 0;
+      transform-origin: 50% 50%;
+      transition:
+        transform 430ms cubic-bezier(.22, .78, .2, 1),
+        opacity 320ms ease;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .swipe-card.state-top {
+      z-index: 4;
+      transform: translate3d(0, 0, 0) rotate(0deg) scale(1, 1);
+      opacity: 1;
+      cursor: grab;
+      touch-action: pan-y;
+      box-shadow: 0 22px 48px rgba(0, 0, 0, var(--swipe-shadow-opacity, 0));
+    }
+
+    .swipe-card.state-pink {
+      z-index: 3;
+      transform: translate3d(-9.51px, 27.07px, 0) rotate(1.146deg) scale(.94152, .92391);
+    }
+
+    .swipe-card.state-green {
+      z-index: 2;
+      transform: translate3d(-8.09px, 43.7px, 0) rotate(-5.143deg) scale(.88304, .86767);
+    }
+
+    .swipe-card.state-yellow {
+      z-index: 1;
+      transform: translate3d(-12.71px, 64.35px, 0) rotate(8.615deg) scale(.82456, .81022);
+    }
+
+    .swipe-card.is-dragging {
+      z-index: 30;
+      cursor: grabbing;
+      transition: none;
+      will-change: transform;
+    }
+
+    .swipe-card.is-drag-preview {
+      transition: none;
+      will-change: transform;
+    }
+
+    .swipe-card.is-drag-preview .course-card-tint {
+      transition: none;
+    }
+
+    .swipe-card.is-leaving {
+      z-index: 30;
+      pointer-events: none;
+      will-change: transform, opacity;
+    }
+
+    .swipe-card.is-recycling {
+      z-index: 0;
+      transform: translate3d(-7px, 86px, 0) rotate(12deg) scale(.72, .7) !important;
+      opacity: 0 !important;
+      transition: none !important;
+    }
+
+    .swipe-card.is-recycling .course-card-tint {
+      background: #fffbde;
+      opacity: 1;
+      transition: none;
+    }
+
+    .course-swipe-deck.is-animating .swipe-card {
+      pointer-events: none;
+    }
+
+    .course-card-tint {
+      position: absolute;
+      z-index: 20;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      opacity: 1;
+      transition:
+        opacity 360ms cubic-bezier(.22, .78, .2, 1),
+        background-color 430ms cubic-bezier(.22, .78, .2, 1);
+    }
+
+    .state-top .course-card-tint {
+      background: #fff;
+      opacity: 0;
+    }
+
+    .state-pink .course-card-tint { background: #ffe8f9; }
+    .state-green .course-card-tint { background: #e1f1e6; }
+    .state-yellow .course-card-tint { background: #fffbde; }
+
+    .course-swipe-status {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .stack-card {
+      position: absolute;
+      border-radius: var(--card-radius);
+      transform-origin: 50% 50%;
+    }
+
+    .stack-card-yellow {
+      z-index: 0;
+      width: 282px;
+      height: 372.7px;
+      left: 158.29px;
+      top: 294.35px;
+      background: #fffbde;
+      transform: translate(-50%, -50%) rotate(8.615deg);
+    }
+
+    .stack-card-green {
+      z-index: 1;
+      width: 302px;
+      height: 399.13px;
+      left: 162.91px;
+      top: 273.7px;
+      background: #e1f1e6;
+      transform: translate(-50%, -50%) rotate(-5.143deg);
+    }
+
+    .stack-card-pink {
+      z-index: 2;
+      width: 322px;
+      height: 425px;
+      left: 161.49px;
+      top: 257.07px;
+      background: #ffe8f9;
+      transform: translate(-50%, -50%) rotate(1.146deg);
+    }
+
+    .course-card {
+      position: absolute;
+      z-index: 3;
+      top: 0;
+      width: 342px;
+      height: 460px;
+      border-radius: var(--card-radius);
+      overflow: hidden;
+      background: var(--surface);
+    }
+
+    .course-artwork {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 344px;
+      overflow: hidden;
+    }
+
+    .course-artwork img {
+      position: absolute;
+      top: -25px;
+      left: 50%;
+      width: 495px;
+      height: 371px;
+      max-width: none;
+      transform: translateX(calc(-50% - 7.5px));
+    }
+
+    .course-artwork img.artwork-flying,
+    .course-artwork img.artwork-robot,
+    .course-artwork img.artwork-bee {
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 344px;
+      max-width: none;
+      transform: none;
+    }
+
+    .course-artwork img.artwork-flying {
+      object-fit: cover;
+      object-position: center 35%;
+    }
+
+    .course-artwork img.artwork-robot {
+      object-fit: cover;
+      object-position: center 49%;
+    }
+
+    .course-artwork.scene-bee {
+      background: radial-gradient(circle at 52% 44%, #314979 0, #172958 58%, #101e44 100%);
+    }
+
+    .course-artwork img.artwork-bee {
+      padding: 22px 8px 14px;
+      object-fit: contain;
+    }
+
+    .duration {
+      position: absolute;
+      top: 20px;
+      left: 265px;
+      display: grid;
+      place-items: center;
+      width: 57px;
+      height: 28px;
+      border-radius: var(--pill-radius);
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(5px);
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 20px;
+    }
+
+    .course-copy {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .course-copy h2 {
+      position: absolute;
+      top: 372px;
+      left: 30px;
+      margin: 0;
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 30px;
+      letter-spacing: -0.15px;
+    }
+
+    .course-copy p {
+      position: absolute;
+      top: 410px;
+      left: 30px;
+      margin: 0;
+      white-space: nowrap;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 20px;
+      letter-spacing: -0.05px;
+    }
+
+    .play-course {
+      position: absolute;
+      top: 322px;
+      left: 263px;
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      padding: 0;
+      border-radius: 50%;
+      background: #000;
+    }
+
+    .play-course svg {
+      display: block;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 12px;
+      height: 15px;
+      fill: #fff;
+      stroke: none;
+      transform: translate(-50%, -50%);
+    }
+
+    .bottom-navigation {
+      position: absolute;
+      z-index: 10;
+      left: 24px;
+      bottom: 30px;
+      width: 342px;
+      height: 64px;
+    }
+
+    .nav-button {
+      position: absolute;
+      top: 0;
+      display: grid;
+      place-items: center;
+      width: 64px;
+      height: 64px;
+      padding: 0;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: var(--surface);
+    }
+
+    .nav-button:nth-child(1) { left: 0; }
+    .nav-button:nth-child(2) { left: 68px; }
+    .nav-button:nth-child(3) { left: 136px; }
+    .nav-button:nth-child(4) { right: 0; }
+
+    .nav-button svg {
+      width: 24px;
+      height: 24px;
+      fill: none;
+      stroke: #000;
+      stroke-width: 1.65;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .nav-button .home-icon { width: 20px; height: 22px; stroke-width: 1.5; }
+    .nav-button .star-icon { width: 22px; height: 22px; stroke-width: 1.5; }
+    .nav-button .bottom-play-icon { width: 16px; height: 17px; stroke-width: 1.5; }
+
+    .nav-button.active {
+      border-color: #000;
+      background: #000;
+    }
+
+    .nav-button.active svg {
+      fill: #fff;
+      stroke: #fff;
+    }
+
+    .nav-button.active .bookmark-back { fill: none; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .swipe-card, .course-card-tint { transition-duration: 1ms; }
+    }
+  </style>
+</head>
+<body>
+
+  <main class="app-screen" aria-label="Courses screen">
+    <header class="app-header">
+      <div class="header-actions">
+        <button class="round-button notification-button" aria-label="Notifications">
+          <span class="notification-dot" aria-hidden="true"></span>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M14 2.42385C13.2178 2.14933 12.3764 2 11.5 2C7.34413 2 3.97513 5.35786 3.97513 9.5C3.97503 10.5718 3.91272 11.5793 3.28561 12.5029C2.80684 13.1995 2.16061 13.9129 2.02992 14.7696C1.81727 16.1636 2.768 17.1312 3.93205 17.6134C8.39481 19.4622 14.6052 19.4622 19.0679 17.6134C20.232 17.1312 21.1827 16.1636 20.9701 14.7696C20.8702 14.1149 20.4692 13.5438 20.0719 13"/>
+            <path d="M9 2.42385C9.7822 2.14933 10.6236 2 11.5 2C15.6559 2 19.0249 5.35786 19.0249 9.5C19.025 10.5718 19.0873 11.5793 19.7144 12.5029C20.1932 13.1995 20.8394 13.9129 20.9701 14.7696C21.1827 16.1636 20.232 17.1312 19.0679 17.6134C14.6052 19.4622 8.3948 19.4622 3.9321 17.6134C2.768 17.1312 1.8173 16.1636 2.0299 14.7696C2.1298 14.1149 2.5308 13.5438 2.9281 13"/>
+            <path d="M7.5 19C7.95849 20.7252 9.57553 22 11.5 22C13.4245 22 15.0415 20.7252 15.5 19"/>
+          </svg>
+        </button>
+        <div class="brand-mark" aria-label="Nixito">
+          <img src="assets/courses/icons/logo.svg" alt="Nixito logo">
+        </div>
+      </div>
+      <h1>Courses</h1>
+    </header>
+
+    <nav class="course-filters" aria-label="Course filters">
+      <button class="filter-icon" aria-label="Filter courses">
+        <svg viewBox="0 0 20 20" aria-hidden="true">
+          <path d="M6.60743 10.2561C4.11898 8.3956 2.34561 6.34915 1.37731 5.19867C1.07757 4.84253 0.979351 4.5819 0.920301 4.1228C0.718081 2.5508 0.616981 1.7648 1.07792 1.2574C1.53887 0.75 2.35401 0.75 3.9843 0.75H15.5157C17.146 0.75 17.9611 0.75 18.422 1.2574C18.883 1.7648 18.7819 2.5508 18.5797 4.12281C18.5206 4.58191 18.4224 4.84254 18.1226 5.19867C17.153 6.35062 15.3761 8.4007 12.8826 10.2635C12.657 10.4321 12.5083 10.7067 12.4807 11.0114C12.2337 13.742 12.0059 15.2376 11.8641 15.9942C11.6353 17.2157 9.90317 17.9506 8.97597 18.6063C8.42407 18.9966 7.75427 18.532 7.68275 17.9278C7.5464 16.7761 7.28958 14.4364 7.00924 11.0114C6.98406 10.7039 6.83483 10.4261 6.60743 10.2561Z"/>
+        </svg>
+      </button>
+      <button class="filter-pill"><span>All</span><span class="count">34</span></button>
+      <button class="filter-pill"><span>Popular</span><span class="count">10</span></button>
+      <button class="filter-pill"><span>Writing</span><span class="count">12</span></button>
+    </nav>
+
+    <section class="featured-course" aria-label="Featured daily quiz">
+      <div class="stack-card stack-card-yellow" aria-hidden="true"></div>
+      <div class="stack-card stack-card-green" aria-hidden="true"></div>
+      <div class="stack-card stack-card-pink" aria-hidden="true"></div>
+      <article class="course-card">
+        <div class="course-artwork">
+          <img src="https://flick-award-65707097.figma.site/_assets/v11/3d4592287a68a77e1f39468956467f77b99e0be9.png?w=1024" alt="A cartoon giraffe sitting beside a skateboard">
+          <span class="duration">5 min</span>
+        </div>
+        <div class="course-copy">
+          <h2>Daily Quiz</h2>
+          <p>Your daily challenge is waiting!</p>
+        </div>
+        <button class="play-course" aria-label="Play daily quiz">
+          <svg viewBox="0 0 11 13" aria-hidden="true"><path d="M11 6.50031C11.0004 6.67008 10.9569 6.83706 10.8736 6.98502C10.7904 7.13299 10.6703 7.25689 10.525 7.34469L1.52 12.8534C1.36818 12.9464 1.19429 12.9972 1.0163 13.0005C0.838305 13.0037 0.662659 12.9595 0.5075 12.8722C0.353819 12.7863 0.225798 12.6609 0.136602 12.5091C0.0474072 12.3573 0.000256786 12.1845 0 12.0084V0.992187C0.000256786 0.816115 0.0474072 0.643289 0.136602 0.491481C0.225798 0.339674 0.353819 0.214363 0.5075 0.128437C0.662659 0.0411548 0.838305 -0.00312471 1.0163 0.000171466C1.19429 0.00346764 1.36818 0.05422 1.52 0.147187L10.525 5.65594C10.6703 5.74373 10.7904 5.86764 10.8736 6.0156C10.9569 6.16356 11.0004 6.33054 11 6.50031Z"/></svg>
+        </button>
+      </article>
+    </section>
+
+    <nav class="bottom-navigation" aria-label="Primary navigation">
+      <button class="nav-button" aria-label="Home">
+        <svg class="home-icon" viewBox="0 0 20 22" aria-hidden="true"><path d="M4.83857 3.51364L3.83856 4.29453C2.32191 5.47887 1.56357 6.07105 1.15683 6.90601C0.750092 7.74097 0.750092 8.70552 0.750092 10.6346V12.7267C0.750092 16.513 0.750091 18.4062 1.92166 19.5825C2.86475 20.5293 4.27052 20.714 6.75009 20.75V16.7557C6.75009 15.8238 6.75009 15.3578 6.90233 14.9903C7.10532 14.5002 7.49467 14.1109 7.98469 13.9079C8.35229 13.7557 8.81819 13.7557 9.75009 13.7557C10.682 13.7557 11.1479 13.7557 11.5155 13.9079C12.0055 14.1109 12.3949 14.5002 12.5979 14.9903C12.7501 15.3578 12.7501 15.8238 12.7501 16.7557V20.75C15.2297 20.714 16.6354 20.5293 17.5785 19.5825C18.7501 18.4062 18.7501 16.513 18.7501 12.7267V10.6346C18.7501 8.70552 18.7501 7.74097 18.3434 6.90601C17.9366 6.07105 17.1783 5.47887 15.6616 4.29453L14.6616 3.51364C12.3022 1.67121 11.1225 0.75 9.75009 0.75C8.37769 0.75 7.19796 1.67121 4.83857 3.51364Z"/></svg>
+      </button>
+      <button class="nav-button active" aria-label="Saved courses">
+        <svg class="bookmark-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M3 17.9808V12.7075C3 9.07416 3 7.25748 4.09835 6.12874C5.1967 5 6.96447 5 10.5 5C14.0355 5 15.8033 5 16.9017 6.12874C18 7.25748 18 9.07416 18 12.7075V17.9808C18 20.2867 18 21.4396 17.2755 21.8523C15.8724 22.6514 13.2405 19.9852 11.9906 19.1824C11.2657 18.7168 10.9033 18.484 10.5 18.484C10.0967 18.484 9.73425 18.7168 9.00938 19.1824C7.7595 19.9852 5.12763 22.6514 3.72454 21.8523C3 21.4396 3 20.2867 3 17.9808Z"/>
+          <path class="bookmark-back" d="M9 2H11C15.714 2 18.0711 2 19.5355 3.46447C21 4.92893 21 7.28595 21 12V18"/>
+        </svg>
+      </button>
+      <button class="nav-button" aria-label="Favorites">
+        <svg class="star-icon" viewBox="0 0 22 22" aria-hidden="true"><path d="M12.4791 2.19418L14.2389 5.74288C14.4789 6.23687 15.1188 6.7107 15.6588 6.80143L18.8484 7.33575C20.8882 7.67853 21.3682 9.1706 19.8983 10.6425L17.4186 13.1427C16.9986 13.5661 16.7687 14.3827 16.8986 14.9675L17.6086 18.0625C18.1685 20.5123 16.8786 21.46 14.7289 20.1796L11.7392 18.3952C11.1993 18.0726 10.3094 18.0726 9.75936 18.3952L6.76973 20.1796C4.62996 21.46 3.33011 20.5022 3.89005 18.0625L4.59997 14.9675C4.72995 14.3827 4.49998 13.5661 4.08002 13.1427L1.6003 10.6425C0.140464 9.1706 0.610414 7.67853 2.65018 7.33575L5.83983 6.80143C6.36977 6.7107 7.0097 6.23687 7.24967 5.74288L9.00946 2.19418C9.96936 0.268607 11.5292 0.268607 12.4791 2.19418Z"/></svg>
+      </button>
+      <button class="nav-button" aria-label="Play">
+        <svg class="bottom-play-icon" viewBox="0 0 16 17" aria-hidden="true"><path d="M14.6406 9.09606C14.2871 10.4391 12.6167 11.3881 9.2757 13.2862C6.046 15.121 4.4312 16.0385 3.12983 15.6697C2.5918 15.5172 2.10159 15.2277 1.70624 14.8288C0.75 13.864 0.75 11.9927 0.75 8.25006C0.75 4.50746 0.75 2.63616 1.70624 1.67138C2.10159 1.27251 2.5918 0.982941 3.12983 0.830481C4.4312 0.461711 6.046 1.37913 9.2757 3.21399C12.6167 5.11203 14.2871 6.06106 14.6406 7.40406C14.7865 7.95846 14.7865 8.54166 14.6406 9.09606Z"/></svg>
+      </button>
+    </nav>
+  </main>
+
+  <script>
+    (function() {
+      const STATE_CLASSES = ['state-top', 'state-pink', 'state-green', 'state-yellow'];
+
+      const featured = document.querySelector('.featured-course');
+      if (!featured) return;
+
+      const sourceCard = featured.querySelector('.course-card');
+      if (!sourceCard) return;
+
+      const courses = [
+        { url: 'https://flick-award-65707097.figma.site/_assets/v11/3d4592287a68a77e1f39468956467f77b99e0be9.png?w=1024', type: 'giraffe', duration: '5 min', alt: 'A giraffe skateboarder' },
+        { url: 'https://flick-award-65707097.figma.site/_assets/v11/d74df0660205f97a394bf111698bfbc3bf9a6d02.png?h=1536', type: 'flying', duration: '2 min', alt: 'A white flying robot' },
+        { url: 'https://flick-award-65707097.figma.site/_assets/v11/692faeeb8862706819c2a2488880f6f2766f051f.png?w=1024', type: 'robot', duration: '6 min', alt: 'A white desert robot' },
+        { url: 'https://flick-award-65707097.figma.site/_assets/v11/a042994ae16f2819fe2e45d88c2afafd1fa9c526.png?w=1024', type: 'bee', duration: '4 min', alt: 'A mechanical bee' }
+      ];
+
+      const deck = document.createElement('div');
+      deck.className = 'course-swipe-deck';
+      deck.setAttribute('aria-label', 'Swipeable featured courses');
+
+      const status = document.createElement('p');
+      status.className = 'course-swipe-status';
+      status.setAttribute('aria-live', 'polite');
+
+      const cards = courses.map((course, index) => {
+        const card = sourceCard.cloneNode(true);
+        const image = card.querySelector('.course-artwork img');
+        image.src = course.url;
+        image.alt = course.alt;
+        image.className = 'artwork-' + course.type;
+        card.querySelector('.course-artwork').classList.add('scene-' + course.type);
+        card.querySelector('.duration').textContent = course.duration;
+
+        const tint = document.createElement('span');
+        tint.className = 'course-card-tint';
+        tint.setAttribute('aria-hidden', 'true');
+        card.append(tint);
+
+        card.classList.add('swipe-card', STATE_CLASSES[index]);
+        card.dataset.courseIndex = String(index);
+        card.addEventListener('pointerdown', handlePointerDown);
+        card.addEventListener('keydown', handleKeyDown);
+        deck.append(card);
+        return card;
+      });
+
+      featured.replaceChildren(deck, status);
+      featured.dataset.swipeReady = 'true';
+      featured.classList.add('is-swipe-ready');
+
+      let order = [...cards];
+      let drag = null;
+      let locked = false;
+      const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+      refreshAccessibility();
+
+      function assignState(card, stateIndex) {
+        card.classList.remove(...STATE_CLASSES);
+        card.classList.add(STATE_CLASSES[stateIndex]);
+      }
+
+      function refreshAccessibility() {
+        cards.forEach((card) => {
+          const isTop = card === order[0];
+          card.tabIndex = isTop ? 0 : -1;
+          card.setAttribute('aria-hidden', String(!isTop));
+          card.setAttribute('aria-label', isTop ? 'Featured course. Drag left or right to dismiss.' : '');
+          const playButton = card.querySelector('.play-course');
+          if (playButton) playButton.tabIndex = isTop ? 0 : -1;
+        });
+      }
+
+      function handlePointerDown(event) {
+        const card = event.currentTarget;
+        if (locked || card !== order[0] || event.target.closest('button')) return;
+        if (event.pointerType === 'mouse' && event.button !== 0) return;
+
+        drag = {
+          card,
+          pointerId: event.pointerId,
+          startX: event.clientX,
+          startY: event.clientY,
+          x: 0,
+          y: 0,
+          velocityX: 0,
+          lastX: event.clientX,
+          lastTime: performance.now(),
+          scaleX: card.getBoundingClientRect().width / card.offsetWidth || 1,
+          scaleY: card.getBoundingClientRect().height / card.offsetHeight || 1
+        };
+        card.classList.add('is-dragging');
+        deck.classList.add('is-dragging');
+        card.setPointerCapture(event.pointerId);
+        deck.addEventListener('pointermove', handlePointerMove);
+        deck.addEventListener('pointerup', handlePointerEnd);
+        deck.addEventListener('pointercancel', handlePointerCancel);
+      }
+
+      function handlePointerMove(event) {
+        if (!drag || event.pointerId !== drag.pointerId) return;
+        event.preventDefault();
+
+        const now = performance.now();
+        const elapsed = Math.max(1, now - drag.lastTime);
+        const instantaneousVelocity = ((event.clientX - drag.lastX) / drag.scaleX) / elapsed;
+        drag.velocityX = drag.velocityX * 0.65 + instantaneousVelocity * 0.35;
+        drag.lastX = event.clientX;
+        drag.lastTime = now;
+        drag.x = (event.clientX - drag.startX) / drag.scaleX;
+        drag.y = Math.max(-48, Math.min(48, ((event.clientY - drag.startY) / drag.scaleY) * 0.3));
+
+        const rotation = Math.max(-12, Math.min(12, drag.x * 0.035));
+        drag.card.style.transform = 'translate3d(' + drag.x + 'px, ' + drag.y + 'px, 0) rotate(' + rotation + 'deg)';
+        drag.card.style.setProperty('--swipe-shadow-opacity', String(Math.min(0.24, Math.abs(drag.x) / 650)));
+        previewNextCard(Math.abs(drag.x));
+      }
+
+      function handlePointerEnd(event) {
+        if (!drag || event.pointerId !== drag.pointerId) return;
+        const completedDrag = drag;
+        clearPointerGesture();
+
+        const projectedX = completedDrag.x + completedDrag.velocityX * 150;
+        const shouldThrow = Math.abs(completedDrag.x) >= 76
+          || (Math.abs(projectedX) >= 112 && Math.abs(completedDrag.x) >= 18);
+
+        if (shouldThrow) {
+          const direction = Math.sign(completedDrag.x || completedDrag.velocityX) || 1;
+          throwTopCard(completedDrag.card, direction, completedDrag.x, completedDrag.y);
+        } else {
+          releaseNextCardPreview(order[1]);
+          returnTopCard(completedDrag.card, completedDrag.x, completedDrag.y);
+        }
+      }
+
+      function handlePointerCancel(event) {
+        if (!drag || event.pointerId !== drag.pointerId) return;
+        const cancelledDrag = drag;
+        clearPointerGesture();
+        releaseNextCardPreview(order[1]);
+        returnTopCard(cancelledDrag.card, cancelledDrag.x, cancelledDrag.y);
+      }
+
+      function previewNextCard(distance) {
+        const nextCard = order[1];
+        if (!nextCard) return;
+
+        const rawRevealProgress = Math.min(1, distance / 12);
+        const revealProgress = 1 - ((1 - rawRevealProgress) ** 3);
+        const rawLiftProgress = Math.min(1, distance / 96);
+        const liftProgress = 1 - ((1 - rawLiftProgress) ** 2);
+        const translateX = -9.51 * (1 - liftProgress);
+        const translateY = 27.07 * (1 - liftProgress);
+        const rotation = 1.146 * (1 - liftProgress);
+        const scaleX = .94152 + ((1 - .94152) * liftProgress);
+        const scaleY = .92391 + ((1 - .92391) * liftProgress);
+
+        nextCard.classList.add('is-drag-preview');
+        nextCard.style.transform = 'translate3d(' + translateX + 'px, ' + translateY + 'px, 0) rotate(' + rotation + 'deg) scale(' + scaleX + ', ' + scaleY + ')';
+        const tint = nextCard.querySelector('.course-card-tint');
+        if (tint) tint.style.opacity = String(Math.max(0, 1 - revealProgress));
+      }
+
+      function releaseNextCardPreview(card) {
+        if (!card || !card.classList.contains('is-drag-preview')) return;
+        const tint = card.querySelector('.course-card-tint');
+        card.classList.remove('is-drag-preview');
+        card.getBoundingClientRect();
+        card.style.transform = '';
+        if (tint) tint.style.opacity = '';
+      }
+
+      function clearPointerGesture() {
+        if (!drag) return;
+        const { card, pointerId } = drag;
+        if (card.hasPointerCapture(pointerId)) card.releasePointerCapture(pointerId);
+        card.classList.remove('is-dragging');
+        deck.classList.remove('is-dragging');
+        deck.removeEventListener('pointermove', handlePointerMove);
+        deck.removeEventListener('pointerup', handlePointerEnd);
+        deck.removeEventListener('pointercancel', handlePointerCancel);
+        drag = null;
+      }
+
+      function returnTopCard(card, x, y) {
+        locked = true;
+        const duration = reducedMotion.matches ? 1 : 320;
+        const rotation = Math.max(-12, Math.min(12, x * 0.035));
+        const animation = card.animate([
+          { transform: 'translate3d(' + x + 'px, ' + y + 'px, 0) rotate(' + rotation + 'deg)' },
+          { transform: 'translate3d(0, 0, 0) rotate(0deg)' }
+        ], { duration, easing: 'cubic-bezier(.2, .9, .3, 1)', fill: 'forwards' });
+
+        animation.finished.finally(() => {
+          animation.cancel();
+          card.style.transform = '';
+          card.style.removeProperty('--swipe-shadow-opacity');
+          locked = false;
+        });
+      }
+
+      function throwTopCard(card, direction, x, y, shouldRestoreFocus) {
+        if (locked || card !== order[0]) return;
+        locked = true;
+        deck.classList.add('is-animating');
+        card.classList.add('is-leaving');
+
+        const duration = reducedMotion.matches ? 1 : 430;
+        const rotation = Math.max(-12, Math.min(12, x * 0.035));
+        const destinationX = direction * 540;
+        const destinationY = y + Math.min(72, Math.abs(x) * 0.16);
+        const animation = card.animate([
+          { transform: 'translate3d(' + x + 'px, ' + y + 'px, 0) rotate(' + rotation + 'deg)', opacity: 1 },
+          { transform: 'translate3d(' + destinationX + 'px, ' + destinationY + 'px, 0) rotate(' + (direction * 20) + 'deg)', opacity: 0.18 }
+        ], { duration, easing: 'cubic-bezier(.2, .72, .18, 1)', fill: 'forwards' });
+
+        const oldTop = order[0];
+        const nextOrder = [order[1], order[2], order[3], oldTop];
+        assignState(nextOrder[0], 0);
+        assignState(nextOrder[1], 1);
+        assignState(nextOrder[2], 2);
+        releaseNextCardPreview(nextOrder[0]);
+        refreshAccessibilityFor(nextOrder);
+
+        animation.finished.finally(() => {
+          oldTop.classList.add('is-recycling');
+          animation.cancel();
+          oldTop.style.transform = '';
+          oldTop.style.removeProperty('--swipe-shadow-opacity');
+          assignState(oldTop, 3);
+          oldTop.classList.remove('is-leaving');
+          order = nextOrder;
+          refreshAccessibility();
+
+          oldTop.getBoundingClientRect();
+          requestAnimationFrame(() => {
+            oldTop.classList.remove('is-recycling');
+            const unlockDelay = reducedMotion.matches ? 1 : 330;
+            setTimeout(() => {
+              deck.classList.remove('is-animating');
+              locked = false;
+              if (shouldRestoreFocus) order[0].focus({ preventScroll: true });
+            }, unlockDelay);
+          });
+        });
+
+        const directionName = direction > 0 ? 'right' : 'left';
+        status.textContent = 'Card dismissed to the ' + directionName + '. Next course ready.';
+      }
+
+      function refreshAccessibilityFor(nextOrder) {
+        cards.forEach((candidate) => {
+          const isNextTop = candidate === nextOrder[0];
+          candidate.tabIndex = isNextTop ? 0 : -1;
+          candidate.setAttribute('aria-hidden', String(!isNextTop));
+          const playButton = candidate.querySelector('.play-course');
+          if (playButton) playButton.tabIndex = isNextTop ? 0 : -1;
+        });
+      }
+
+      function handleKeyDown(event) {
+        if (locked || event.currentTarget !== order[0]) return;
+        if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+        event.preventDefault();
+        const direction = event.key === 'ArrowRight' ? 1 : -1;
+        throwTopCard(order[0], direction, 0, 0, true);
+      }
+    })();
+  </script>
+</body>
+</html>
+```

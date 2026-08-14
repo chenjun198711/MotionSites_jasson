@@ -1,0 +1,138 @@
+```
+Build a single-page vanilla HTML/CSS/JS site (no frameworks, served via Vite) for a luxury performance eyewear brand called "Orven". The entire page is a scroll-driven hero experience with two video scrub phases and animated text reveals. Black background, white text, all elements use `mix-blend-mode: difference` to remain visible over any video frame.
+
+---
+
+### GLOBAL SETUP
+
+---
+
+### SECTION 1: FIXED HEADER
+
+- Position: fixed, top 24px, full width, height 58px, padding-inline 32px, z-index 100, `mix-blend-mode: difference`.
+- Layout: 4 flex columns (equal width `flex: 1 1 0`).
+  - **Column 1 (logo):** Text "Orven(R)" at 24px, letter-spacing -0.04em, vertically centered.
+  - **Column 2:** Three stacked lines (14px, letter-spacing -0.03em): "Precision engineered", "Essential", "Proven". Left-aligned, 8px gap, left border `1px solid rgba(255,255,255,0.1)`, padding 0 24px.
+  - **Column 3:** Two stacked lines (same style): "Innovation Redefined", "Our Story". Same border/padding.
+  - **Column 4:** Right-aligned, single line "+ Cart". Same border styling, padding `0 0 0 24px`.
+
+---
+
+### SECTION 2: HERO (scroll height 1200vh)
+
+The hero section is `position: relative; height: 1200vh`. Inside is a sticky container (`position: sticky; top: 0; height: 100vh; overflow: hidden`) containing:
+
+  - URL: `https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260712_221651_c3c6edb9-c684-4a9f-b193-fee556ca5622.mp4`
+  - Attributes: muted, playsinline, preload="auto". Absolute positioned, object-fit: cover.
+  - URL: `https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260712_221520_90005dc3-c311-4138-a49f-e22a719f7d8a.mp4`
+  - Same attributes/styling.
+
+#### Hero UI Overlay (fixed, mix-blend-mode: difference)
+
+- Position: fixed, inset 0, height 100vh, uses the 12-column grid, content aligned to bottom (`align-content: end`), padding-bottom 33px, pointer-events none (children get pointer-events auto).
+
+  - `<h1>` title "Orven(R)" at 160px, font-weight 500, line-height 100%, letter-spacing -0.04em.
+  - Paragraph below: "Performance optics engineered for crystal vision. Precision-crafted lenses tested for durability. Superior technology. Built for excellence" -- 18px, line-height 120%, letter-spacing -0.04em, text-indent 120px.
+
+  - Min-height 176px, flex column with space-between.
+  - Row with label "Info" (width 120px, 18px) and text paragraph (flex 1, 18px, text-indent 120px): "Advanced lens engineering meets optical excellence. Every frame tested for impact resistance. Precision optics drive performance vision forward"
+  - Meta row: two spans "(Drop)" and "(2026)" with 25px gap, 18px.
+
+---
+
+### SECTION 3: FEATURE PANELS (fixed overlay, z-index 60)
+
+- Container: fixed, inset 0, padding-top 82px, pointer-events none, `mix-blend-mode: difference`, uses the same 12-column grid.
+- Two panels sharing grid-row 1:
+
+**Right Panel (grid-column 9/12):**
+- 95px x 2px gradient bar: `linear-gradient(90deg, #888DCC 0%, #02B5B8 25.96%, #868D0A 55.77%, #B2A2B6 95.19%)`, aligned flex-end.
+- Body with 80px gap between text and specs list.
+- Text (32px, weight 400, line-height 120%, letter-spacing -0.04em, text-indent 120px): "Precision-ground lenses hold razor clarity from edge to edge. Tuned to kill glare, lift contrast, and stay flawless through speed, sweat, and grit."
+- Specs list (below a 1px white divider, 12px gap rows):
+  - Row: white bar (6x14px) | "Clarity" | "98%"
+  - Row: white bar | "Contrast" | "94%"
+  - Row: white bar | "UV Filter" | "400nm" | "100%"
+  - Labels/values: 14px, uppercase, letter-spacing -0.03em, nowrap. Values right-aligned.
+
+**Left Panel (grid-column 2/5):**
+- Same structure as right panel.
+- Text: "Aerospace-grade polymer flexes under load and springs back unbroken. Built to swallow impact, shed heat, and stay locked through every hard mile."
+- Specs:
+  - "Frame Weight" | "22g"
+  - "Impact Rating" | "Z87+"
+  - "Field" | "180 degrees" | "Wide"
+
+---
+
+### SECTION 4: NEXT (placeholder)
+
+- Simple `<section>` with min-height 100vh, background #000.
+
+---
+
+### ANIMATIONS & SCROLL BEHAVIOR
+
+**Scroll timeline constants:**
+- SCRUB1_VH = 3 (video 1 scrub duration in viewport heights)
+- FADE_VH = 3 (crossfade duration)
+- SCRUB2_VH = 5 (video 2 scrub duration)
+- Total hero height = (3 + 3 + 5 + 1) * 100vh = 1200vh
+
+**Phase 1 (0 to 3vh scroll): Video 1 Scrub**
+- Video 1 currentTime is scrubbed from 0 to its full duration based on scroll progress 0-1.
+- Hero UI text stays visible through first 80% of this phase.
+- At 80-100% of phase 1, hero UI fades out (opacity 1 to 0) and drifts up 120px via translateY. Per-word dissolve triggers at 85% (uiFade > 0.15).
+
+**Phase 2 (3vh to 6vh scroll): Crossfade**
+- Video 1 opacity goes 1 to 0 AND gets a blur filter from 0 to 80px.
+- Video 2 opacity goes 0 to 1.
+
+**Phase 3 (6vh to 11vh scroll): Video 2 Scrub + Feature Panels**
+- Video 2 scrubs from 0 to full duration, reaching its last frame at 80% of this phase (then holds).
+- Right panel scrolls through viewport over [0%, 40%] of phase 3.
+- Left panel scrolls through viewport over [45%, 85%] of phase 3.
+- Each panel enters from below the fold (+60px past viewport bottom) and exits fully above the fold.
+- Panel movement uses `position: relative; top: Npx` (not transform) to avoid GPU layer issues with mix-blend-mode.
+
+**Video Scrub Engine (RAF-lerp):**
+- `onScroll` only updates a `target` time. A persistent requestAnimationFrame loop smoothly interpolates `current` toward `target` with LERP factor 0.09.
+- Actual `video.currentTime` seeks are throttled: only when drift > 0.02s AND at least 30ms since last seek.
+- Videos are primed on `loadedmetadata` with a play()/pause() trick for iOS Safari compatibility.
+- RAF loop auto-stops when both scrubbers settle.
+
+**Word/Char Stagger Reveal System:**
+- A `splitReveal(el, mode, stagger)` function splits text into `<span class="reveal-word">` elements, each with `--i` (index) and `--stagger` CSS variables.
+- Hidden state: opacity 0, blur 10px, translateY 20px.
+- `.reveal-active .reveal-word`: opacity 1, blur 0, translateY 0. Transition 0.4s expo-out, staggered by `calc(var(--i) * var(--stagger))`.
+- `.reveal-exit .reveal-word`: opacity 0, blur 9px, translateY -28px. Duration 0.3s.
+- Title uses char-level split with 0.025s stagger. All other text uses word-level with 0.05s stagger.
+- Hero title cluster reveals immediately on page load.
+- Right panel text reveals when its scroll sub-progress is between 0.12 and 0.88.
+- Left panel text reveals when its scroll sub-progress is between 0.12 and 0.88.
+
+---
+
+### RESPONSIVE (mobile only, do not change desktop)
+
+**At max-width 768px:**
+- Grid: --gap 12px, --margin 16px.
+- Title: 56px.
+- Title caption: grid-column 1/-1, font-size 14px, text-indent 0.
+- Side caption: grid-column 1/-1, min-height auto, margin-top 24px, column direction for row, label width auto at 14px, text 14px with no indent, meta spans 14px.
+- Hero UI: padding-bottom 24px.
+- Header: padding-inline 16px, top 16px. Nav columns hidden, only logo col shows.
+- Feature panels: both go full-width (grid-column 1/-1), text 20px with no indent.
+
+**At max-width 480px:**
+- Title: 40px.
+
+---
+
+### TECHNICAL REQUIREMENTS
+
+- Single `index.html` file with all CSS in a `<style>` block and all JS in a `<script>` block at the end of body.
+- No external dependencies beyond Google Fonts.
+- Served via Vite (plain HTML mode, no bundler plugins needed).
+- Videos are hosted externally on CloudFront (URLs above) -- do not download them, reference directly in `<source>` tags.
+```

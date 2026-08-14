@@ -1,0 +1,183 @@
+```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vektis Lab</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            inter: ['DM Sans', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    .line-mask {
+      position: relative;
+      background: repeating-linear-gradient(
+        to bottom,
+        white 0px,
+        white 4px,
+        transparent 4px,
+        transparent 9px
+      );
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      -webkit-text-fill-color: transparent;
+    }
+  </style>
+</head>
+<body class="m-0 p-0">
+  <div class="relative min-h-screen w-full bg-[#0a0a0a] overflow-hidden">
+    <!-- Background Video -->
+    <video
+      autoplay
+      muted
+      loop
+      playsinline
+      class="absolute inset-0 w-full h-full object-cover"
+      src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260714_194106_81effbba-c8e8-4089-80d1-7e72e12d0a52.mp4"
+    ></video>
+
+    <!-- Navbar -->
+    <nav class="relative z-30 flex items-center justify-between px-6 sm:px-8 md:px-16 py-5 md:py-6">
+      <div class="font-mono font-bold text-white text-lg tracking-tight">
+        VEKTIS LAB
+      </div>
+      <div class="hidden md:flex items-center gap-10 font-mono text-sm text-white/80">
+        <a href="#" class="hover:text-white transition-colors">Platform</a>
+        <a href="#" class="hover:text-white transition-colors">Outcomes</a>
+        <a href="#" class="hover:text-white transition-colors">Research</a>
+        <a href="#" class="hover:text-white transition-colors">Deploy</a>
+      </div>
+      <button class="hidden md:block font-mono text-sm text-white/80 hover:text-white transition-colors bg-transparent border-none cursor-pointer">
+        Request demo
+      </button>
+
+      <!-- Mobile hamburger -->
+      <button
+        id="menu-toggle"
+        class="md:hidden relative z-50 text-white p-1 bg-transparent border-none cursor-pointer"
+        aria-label="Toggle menu"
+      >
+        <svg id="icon-menu" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transition-all duration-300"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+        <svg id="icon-x" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute inset-0 m-1 transition-all duration-300 opacity-0 -rotate-90 scale-75"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </nav>
+
+    <!-- Mobile menu overlay -->
+    <div id="mobile-menu" class="fixed inset-0 z-20 bg-[#0a0a0a]/95 backdrop-blur-md transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] md:hidden opacity-0 pointer-events-none">
+      <div id="mobile-menu-content" class="flex flex-col items-center justify-center h-full gap-8 transition-all duration-500 delay-100 ease-[cubic-bezier(0.16,1,0.3,1)] -translate-y-8 opacity-0">
+        <a href="#" class="font-mono text-2xl text-white/90 hover:text-white transition-colors no-underline">Platform</a>
+        <a href="#" class="font-mono text-2xl text-white/90 hover:text-white transition-colors no-underline">Outcomes</a>
+        <a href="#" class="font-mono text-2xl text-white/90 hover:text-white transition-colors no-underline">Research</a>
+        <a href="#" class="font-mono text-2xl text-white/90 hover:text-white transition-colors no-underline">Deploy</a>
+        <div class="w-12 border-t border-white/20 my-2"></div>
+        <a href="#" class="font-mono text-lg text-white/70 hover:text-white transition-colors no-underline">Request demo</a>
+      </div>
+    </div>
+
+    <!-- Hero Content -->
+    <div class="relative z-10 flex flex-col lg:flex-row items-start justify-between px-6 sm:px-8 md:px-16 pt-8 md:pt-14 pb-16 md:pb-20 min-h-[calc(100vh-88px)]">
+      <!-- Left Column -->
+      <div class="flex flex-col justify-center max-w-2xl">
+        <h1 style="line-height: 0.72" class="font-inter font-semibold text-white text-6xl sm:text-7xl md:text-[9.2rem] lg:text-[11rem] tracking-[-0.029em] m-0">
+          Tracing
+          <span class="inline-block text-white/60 align-top text-xl sm:text-2xl md:text-3xl font-normal mt-1 md:mt-2">&reg;</span>
+          <br />
+          the&nbsp;<span class="line-mask">unseen</span>
+        </h1>
+
+        <p class="font-mono text-white/60 text-sm md:text-base leading-relaxed mt-8 md:mt-10 max-w-[38rem]">
+          We distill fragmented data into sharp awareness, arming operators with live context to detect and neutralize with accuracy.
+        </p>
+
+        <button class="mt-8 md:mt-10 w-fit px-6 sm:px-8 py-3 sm:py-4 bg-[#A6439E] text-white font-mono text-sm uppercase tracking-wider hover:bg-[#b854b0] transition-colors border-none cursor-pointer">
+          REQUEST DEMO
+        </button>
+      </div>
+
+      <!-- Right Column -->
+      <div class="relative mt-12 sm:mt-16 lg:mt-0 lg:ml-16 flex-shrink-0 w-full sm:w-auto">
+        <!-- Small card -->
+        <div class="absolute -top-8 sm:-top-10 right-0 sm:-right-4 z-20 border-2 border-white bg-[#000000] backdrop-blur-sm px-4 sm:px-5 py-2.5 sm:py-3 rounded-lg">
+          <div class="flex items-center gap-2 font-mono text-xs text-white uppercase tracking-wider">
+            <div class="flex flex-col items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white"><path d="m18 15-6-6-6 6"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white -mt-1.5"><path d="m18 15-6-6-6 6"/></svg>
+            </div>
+            <div class="leading-tight">
+              <div>RISK SURFACE</div>
+              <div>CRITICAL</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Large card -->
+        <div class="relative z-10 border-2 border-white bg-[#000000] backdrop-blur-sm px-6 sm:px-8 py-5 sm:py-6 rounded-lg min-w-0 sm:min-w-[280px]">
+          <div class="font-mono text-xs text-white/70 uppercase tracking-wider mb-2">
+            CAPTURED EVENTS:
+          </div>
+          <div class="font-mono text-white text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight">
+            187,941
+          </div>
+          <div class="border-t border-dashed border-white/30 my-4"></div>
+          <div class="font-mono text-xs text-white uppercase tracking-wider flex items-center gap-2">
+            VERIFIED ANOMALY FLAGGED . <span class="text-white">/</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const toggle = document.getElementById('menu-toggle');
+    const menu = document.getElementById('mobile-menu');
+    const menuContent = document.getElementById('mobile-menu-content');
+    const iconMenu = document.getElementById('icon-menu');
+    const iconX = document.getElementById('icon-x');
+    let open = false;
+
+    toggle.addEventListener('click', () => {
+      open = !open;
+      if (open) {
+        menu.classList.remove('opacity-0', 'pointer-events-none');
+        menu.classList.add('opacity-100', 'pointer-events-auto');
+        menuContent.classList.remove('-translate-y-8', 'opacity-0');
+        menuContent.classList.add('translate-y-0', 'opacity-100');
+        iconMenu.classList.add('opacity-0', 'rotate-90', 'scale-75');
+        iconMenu.classList.remove('opacity-100', 'rotate-0', 'scale-100');
+        iconX.classList.remove('opacity-0', '-rotate-90', 'scale-75');
+        iconX.classList.add('opacity-100', 'rotate-0', 'scale-100');
+      } else {
+        menu.classList.add('opacity-0', 'pointer-events-none');
+        menu.classList.remove('opacity-100', 'pointer-events-auto');
+        menuContent.classList.add('-translate-y-8', 'opacity-0');
+        menuContent.classList.remove('translate-y-0', 'opacity-100');
+        iconMenu.classList.remove('opacity-0', 'rotate-90', 'scale-75');
+        iconMenu.classList.add('opacity-100', 'rotate-0', 'scale-100');
+        iconX.classList.add('opacity-0', '-rotate-90', 'scale-75');
+        iconX.classList.remove('opacity-100', 'rotate-0', 'scale-100');
+      }
+    });
+
+    menu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        toggle.click();
+      });
+    });
+  </script>
+</body>
+</html>
+```

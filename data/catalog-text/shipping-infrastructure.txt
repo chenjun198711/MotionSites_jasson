@@ -1,0 +1,110 @@
+```
+Build a Vite + React + TypeScript + Tailwind CSS single-page hero section for a developer-tools brand called **Vectis**. The aesthetic is a premium, minimal "liquid glass" design with a muted video background, light glassmorphic floating navbar, and staggered fade-in animations.
+
+### Tech stack
+- Vite + React 18 + TypeScript
+- Tailwind CSS v3 (configured with default theme, `content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}']`)
+- `lucide-react` for icons (only `Menu`, `X`, `ChevronsDown`)
+- No other UI libraries
+
+### Fonts (loaded in `index.html` `<head>`)
+` ` `html
+<link href="https://db.onlinewebfonts.com/c/0e6de1ec911a2e267ff136bbdd384a44?family=Helvetica+Neue+Light" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;1,8..60,400&display=swap" rel="stylesheet">
+<title>Vectis</title>
+` ` `
+Global CSS (`src/index.css`):
+- `body { font-family: 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }`
+- Custom utility class `.font-serif-italic { font-family: 'Source Serif 4', Georgia, serif; font-style: italic; }`
+
+### Color system
+- Primary dark: `#252525` (text, buttons, logo)
+- Liquid glass surface: `#E3E3E3` at 70-85% opacity with `backdrop-blur`
+- Accent italic: `#A95DA1` (mauve, used only on the italic word "Shipping")
+- Text gray scale: `text-gray-900`, `text-gray-700`, `text-gray-500`, `text-gray-400`
+- Button hover: `bg-[#333]`
+
+### Layout structure (`App.tsx`)
+` ` `tsx
+<div className="relative">
+  <Navbar />
+  <Hero />
+</div>
+` ` `
+
+### Navbar (`src/components/Navbar.tsx`)
+A floating, rounded, liquid-glass navbar fixed at the top.
+
+- Container: `fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 lg:px-10 pt-4 sm:pt-6`
+- Inner bar: `mx-auto flex items-center justify-between pl-5 sm:pl-8 pr-3 py-3 rounded-2xl transition-all duration-300`
+  - When `scrolled` (window.scrollY > 20): `bg-[#E3E3E3]/85 backdrop-blur-xl shadow-[0_2px_20px_rgba(0,0,0,0.06)]`
+  - When not scrolled: `bg-[#E3E3E3]/70 backdrop-blur-lg`
+- Scroll detection via `useEffect` + `window.addEventListener('scroll')`, setting `scrolled` state when `window.scrollY > 20`.
+
+**Logo** (left): an inline SVG 24x24, viewBox `0 0 256 256`, with this exact path fill `#252525`:
+` ` `
+M 128 192 L 128 256 L 64.5 256 L 32 223 L 0 192 L 0 128 L 64 128 Z M 256 192 L 256 256 L 192.5 256 L 160 223 L 128 192 L 128 128 L 192 128 Z M 128 64 L 128 128 L 64.5 128 L 32 95 L 0 64 L 0 0 L 64 0 Z M 256 64 L 256 128 L 192.5 128 L 160 95 L 128 64 L 128 0 L 192 0 Z
+` ` `
+Next to it: `<span className="text-[17px] font-semibold tracking-tight text-gray-900">Vectis</span>` with `gap-2.5`.
+
+**Desktop nav links** (center, hidden on mobile `hidden md:flex items-center gap-0.5 lg:gap-1`):
+- Links array: `['Products', 'Solutions', 'Developers', 'About us', 'Pricing']`
+- Each: `<a href="#" className="px-4 lg:px-5 py-2 text-[13px] sm:text-sm text-gray-500 hover:text-gray-900 transition-colors duration-200">`
+
+**Sign in button** (right, `hidden md:inline-flex`): `px-6 py-2 text-[13px] font-medium text-white bg-[#252525] rounded-lg hover:bg-[#333] transition-colors duration-200`
+
+**Mobile hamburger** (`md:hidden p-2`): toggles `isOpen` state. Uses a 24x24 container with stacked `Menu` and `X` icons absolutely positioned, cross-fading with `transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]`:
+- Menu: `isOpen ? 'opacity-0 rotate-90 scale-75' : 'opacity-100 rotate-0 scale-100'`
+- X: `isOpen ? 'opacity-100 rotate-0 scale-100' : 'opacity-0 -rotate-90 scale-75'`
+
+When `isOpen`, lock body scroll: `document.body.style.overflow = 'hidden'`.
+
+**Mobile menu panel** — a clean floating dropdown (NOT a side drawer):
+- Full-screen invisible overlay `fixed inset-0 z-40` that fades opacity and closes on click.
+- Panel: `fixed left-4 right-4 z-[45] md:hidden transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]`, positioned with `style={{ top: 'calc(4rem + 1.5rem + 12px)' }}` (just below navbar).
+- Open state: `opacity-100 translate-y-0`; closed: `opacity-0 -translate-y-3 pointer-events-none`.
+- Inner card: `bg-[#E3E3E3] backdrop-blur-xl rounded-2xl shadow-[0_8px_40px_rgba(0,0,0,0.1)] border border-gray-200/50 overflow-hidden`
+- Links column: `flex flex-col px-2 py-2`, each link `px-4 py-3.5 text-[15px] text-gray-700 hover:text-gray-900 hover:bg-white/50 rounded-xl transition-colors duration-200`
+- Sign in button at bottom: container `px-4 pb-4 pt-2`, button `flex items-center justify-center w-full px-6 py-3 text-sm font-medium text-white bg-[#252525] rounded-xl hover:bg-[#333] transition-colors duration-200`
+
+### Hero (`src/components/Hero.tsx`)
+Full-screen video background with overlaid text and staggered entrance animations.
+
+- Section: `relative h-screen w-full overflow-hidden`
+  - URL (exact): `https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260717_092804_7272230b-0ecb-48f3-93a5-c6c33bf649b5.mp4`
+  - Attributes: `autoPlay loop muted playsInline`
+- Animation: `useState(false)` `visible`, set to `true` via `setTimeout(..., 200)` in `useEffect`. All elements conditionally apply `visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-N'` with `transition-all duration-700 ease-out` and per-element `style={{ transitionDelay: '...' }}`.
+
+**1. Subtitle** (top-right, `z-10 max-w-[360px] text-right`):
+- Position: `absolute top-[22%] sm:top-[24%] right-8 sm:right-12 lg:right-20`
+- Delay: `300ms`, translate y: `5` (closed) / `0` (open)
+- Text: `<p className="font-serif-italic text-lg sm:text-xl lg:text-2xl text-gray-500 leading-relaxed">`
+  - "Raise the standard and speed" `<br />` "of building modern tools"
+
+**2. Main heading** (bottom-left, `z-10`):
+- Position: `absolute bottom-[18%] sm:bottom-[16%] left-6 sm:left-10 lg:left-16`
+- `<h1 className="text-[clamp(3rem,9vw,7.5rem)] leading-[1.0] tracking-[-0.04em] text-[#252525]">`
+- Line 1 (delay `600ms`, translate y `8`): plain (Helvetica) `block` span: "Redefine the flow"
+- Line 2 (delay `850ms`, translate y `8`): `block font-serif-italic` span containing:
+  - `<span className="text-[#252525]">of </span>`
+  - `<span className="text-[#A95DA1]">Shipping</span>` (mauve accent, italic serif)
+
+**3. Scroll indicator** (bottom-center, `z-10`, delay `1100ms`, translate y `4`):
+- `absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2`
+- `<span className="text-[10px] sm:text-xs uppercase tracking-[0.35em] text-gray-400 font-medium">Explore now</span>`
+- `<ChevronsDown size={20} className="text-gray-400 animate-bounce" strokeWidth={1.5} />`
+
+### Animation summary (staggered entrance)
+All elements fade in + slide up with `duration-700 ease-out`, triggered 200ms after mount:
+| Element | Delay | Translate Y (hidden) |
+|---|---|---|
+| Subtitle | 300ms | 5 |
+| Heading line 1 | 600ms | 8 |
+| Heading line 2 | 850ms | 8 |
+| Scroll indicator | 1100ms | 4 |
+
+### Build verification
+Run `npm run build` — expect a clean Vite production build with no type errors.
+
+---
+```

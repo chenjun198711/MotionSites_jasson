@@ -1,0 +1,241 @@
+```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>F1 Hero Mobile - Photo & Blur Preview</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #111;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      overflow-x: hidden;
+    }
+
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 100svh;
+      overflow: hidden;
+      background-image: url('https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260709_152331_bd312d1a-1f20-46b9-9b68-12bcdcf6d53e.png&w=1280&q=85');
+      background-size: cover;
+      background-position: center;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 15, 15, 0.6);
+      z-index: 1;
+    }
+
+    /* Photo container */
+    .photo-container {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      top: 100px;
+      overflow: hidden;
+      z-index: 2;
+    }
+
+    /* Photo */
+    .photo-container img {
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 140%;
+      max-width: none;
+      height: auto;
+    }
+
+    /* Blur overlay */
+    .blur-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 50%;
+      pointer-events: none;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 50%);
+      mask-image: linear-gradient(to bottom, transparent 0%, black 50%);
+      z-index: 3;
+    }
+
+    /* Name overlay at bottom */
+    .name-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 0 20px 20px;
+      z-index: 10;
+      color: white;
+    }
+
+    .name-overlay h1 {
+      font-size: min(19vw, 12svh);
+      font-weight: 600;
+      line-height: 0.82;
+      letter-spacing: -0.05em;
+    }
+
+    /* Controls panel */
+    .controls {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      z-index: 100;
+      background: rgba(0,0,0,0.85);
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 16px;
+      color: white;
+      font-size: 12px;
+      max-width: 280px;
+    }
+
+    .controls h3 {
+      margin-bottom: 12px;
+      font-size: 14px;
+      color: #EDB40B;
+    }
+
+    .control-group {
+      margin-bottom: 10px;
+    }
+
+    .control-group label {
+      display: block;
+      margin-bottom: 4px;
+      color: #aaa;
+    }
+
+    .control-group input[type="range"] {
+      width: 100%;
+    }
+
+    .control-group .value {
+      color: #EDB40B;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <div class="photo-container" id="photoContainer">
+      <img
+        src="https://framerusercontent.com/images/m5IyHuJeOQ5P0GOvWx1xv0IR9Y.png"
+        alt="Lewis Hamilton"
+        id="photo"
+      />
+      <div class="blur-overlay" id="blurOverlay"></div>
+    </div>
+    <div class="name-overlay">
+      <h1>Lewis<br>Hamilton</h1>
+    </div>
+  </div>
+
+  <div class="controls">
+    <h3>Photo & Blur Controls</h3>
+
+    <div class="control-group">
+      <label>Photo Width: <span class="value" id="widthVal">140%</span></label>
+      <input type="range" min="80" max="200" value="140" id="widthRange" />
+    </div>
+
+    <div class="control-group">
+      <label>Photo Bottom: <span class="value" id="bottomVal">-20px</span></label>
+      <input type="range" min="-100" max="50" value="-20" id="bottomRange" />
+    </div>
+
+    <div class="control-group">
+      <label>Container Top: <span class="value" id="topVal">100px</span></label>
+      <input type="range" min="0" max="300" value="100" id="topRange" />
+    </div>
+
+    <div class="control-group">
+      <label>Blur Height: <span class="value" id="blurHeightVal">50%</span></label>
+      <input type="range" min="10" max="100" value="50" id="blurHeightRange" />
+    </div>
+
+    <div class="control-group">
+      <label>Blur Amount: <span class="value" id="blurAmountVal">6px</span></label>
+      <input type="range" min="0" max="20" value="6" id="blurAmountRange" />
+    </div>
+
+    <div class="control-group">
+      <label>Mask Start: <span class="value" id="maskStartVal">0%</span></label>
+      <input type="range" min="0" max="80" value="0" id="maskStartRange" />
+    </div>
+
+    <div class="control-group">
+      <label>Mask End: <span class="value" id="maskEndVal">50%</span></label>
+      <input type="range" min="10" max="100" value="50" id="maskEndRange" />
+    </div>
+  </div>
+
+  <script>
+    const photo = document.getElementById('photo');
+    const photoContainer = document.getElementById('photoContainer');
+    const blurOverlay = document.getElementById('blurOverlay');
+
+    document.getElementById('widthRange').addEventListener('input', (e) => {
+      const v = e.target.value + '%';
+      photo.style.width = v;
+      document.getElementById('widthVal').textContent = v;
+    });
+
+    document.getElementById('bottomRange').addEventListener('input', (e) => {
+      const v = e.target.value + 'px';
+      photo.style.bottom = v;
+      document.getElementById('bottomVal').textContent = v;
+    });
+
+    document.getElementById('topRange').addEventListener('input', (e) => {
+      const v = e.target.value + 'px';
+      photoContainer.style.top = v;
+      document.getElementById('topVal').textContent = v;
+    });
+
+    document.getElementById('blurHeightRange').addEventListener('input', (e) => {
+      const v = e.target.value + '%';
+      blurOverlay.style.height = v;
+      document.getElementById('blurHeightVal').textContent = v;
+    });
+
+    document.getElementById('blurAmountRange').addEventListener('input', (e) => {
+      const v = e.target.value + 'px';
+      blurOverlay.style.backdropFilter = `blur(${v})`;
+      blurOverlay.style.webkitBackdropFilter = `blur(${v})`;
+      document.getElementById('blurAmountVal').textContent = v;
+    });
+
+    document.getElementById('maskStartRange').addEventListener('input', (e) => {
+      updateMask();
+      document.getElementById('maskStartVal').textContent = e.target.value + '%';
+    });
+
+    document.getElementById('maskEndRange').addEventListener('input', (e) => {
+      updateMask();
+      document.getElementById('maskEndVal').textContent = e.target.value + '%';
+    });
+
+    function updateMask() {
+      const start = document.getElementById('maskStartRange').value;
+      const end = document.getElementById('maskEndRange').value;
+      const mask = `linear-gradient(to bottom, transparent ${start}%, black ${end}%)`;
+      blurOverlay.style.maskImage = mask;
+      blurOverlay.style.webkitMaskImage = mask;
+    }
+  </script>
+</body>
+</html>
+```

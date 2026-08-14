@@ -1,0 +1,119 @@
+```
+# Exact Recreation Prompt: Voral.co Landing Page
+
+## Tech Stack
+
+## Global CSS (src/index.css)
+` ` `css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'Helvetica Neue ME', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+` ` `
+
+## index.html `<head>`
+- Title: `Axial.ai`
+- Font stylesheet link: `<link href="https://db.onlinewebfonts.com/c/95cecf452d3208880088a5b4c19c7ecf?family=Helvetica+Neue+ME" rel="stylesheet">`
+
+## Page Structure (single full-screen `<section>`)
+
+### 1. Background Video (z-0, absolute inset-0)
+- Attributes: `autoPlay`, `muted`, `playsInline`
+- Class: `h-full w-full object-cover object-center`
+- Uses `useRef<HTMLVideoElement>` for the ref
+
+### 2. Navigation Bar (z-10, relative, max-w-5xl, mx-auto, flex justify-between, px-6 py-5 / md:px-8 md:py-6)
+
+**Left — Logo + Brand Name**
+- Custom SVG logo (28x28, viewBox 0 0 256 256, black fill) — four quarter-circle shapes forming a pinwheel/clover pattern:
+` ` `svg
+<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 256 256">
+  <path d="M 4.688 136 C 68.373 136 120 187.627 120 251.312 C 120 252.883 119.967 254.445 119.905 256 L 0 256 L 0 136.096 C 1.555 136.034 3.117 136 4.688 136 Z M 251.312 136 C 252.883 136 254.445 136.034 256 136.096 L 256 256 L 136.095 256 C 136.032 254.438 136.001 252.875 136 251.312 C 136 187.627 187.627 136 251.312 136 Z M 119.905 0 C 119.967 1.555 120 3.117 120 4.688 C 120 68.373 68.373 120 4.687 120 C 3.117 120 1.555 119.967 0 119.905 L 0 0 Z M 256 119.905 C 254.445 119.967 252.883 120 251.312 120 C 187.627 120 136 68.373 136 4.687 C 136 3.117 136.033 1.555 136.095 0 L 256 0 Z" fill="black" />
+</svg>
+` ` `
+- Brand text: **"Voral.co"** — `text-lg font-medium tracking-tight text-black`
+- Logo + brand in a `flex items-center gap-2` container
+
+**Center — Desktop Nav Links** (hidden on mobile, `hidden md:flex gap-10`)
+- Links: Home, Process, Explore, Modules, Help
+- Each: `text-sm text-black transition-opacity hover:opacity-70`
+
+**Right — Desktop CTA Button** (hidden on mobile, `hidden md:inline-flex`)
+- Text: "Begin Your Quest"
+- Style: `rounded-xl px-6 py-2.5 text-sm font-medium text-white transition-transform hover:scale-105`
+- Inline styles: `backgroundColor: '#2F302F'`, `boxShadow: '0px 4px 12px rgba(47, 48, 47, 0.4)'`
+
+**Mobile Hamburger** (visible on mobile only, `md:hidden`)
+- Button: `relative z-50 flex h-10 w-10 items-center justify-center rounded-lg`
+- Inner container: `relative h-5 w-5`
+- Menu icon: `absolute inset-0 h-5 w-5 text-black transition-all duration-300` — when open: `rotate-90 scale-0 opacity-0`, when closed: `rotate-0 scale-100 opacity-100`
+- X icon: `absolute inset-0 h-5 w-5 text-black transition-all duration-300` — when open: `rotate-0 scale-100 opacity-100`, when closed: `-rotate-90 scale-0 opacity-0`
+- Toggles `menuOpen` state
+
+### 3. Mobile Menu Overlay (z-40, fixed inset-0, `md:hidden`)
+- `bg-black/20 backdrop-blur-sm transition-opacity duration-300`
+- When open: `opacity-100`, when closed: `pointer-events-none opacity-0`
+- Click closes menu
+
+### 4. Mobile Menu Panel (z-40, fixed right-0 top-0, `md:hidden`)
+- `flex h-full w-72 flex-col bg-white/95 backdrop-blur-xl` — **this is the liquid glass effect**
+- Transition: `transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]`
+- When open: `translate-x-0`, when closed: `translate-x-full`
+
+**Panel Header**: Logo + "Voral.co" on left, X close button (h-10 w-10) on right, `px-6 py-5`
+
+**Panel Nav Links**: `flex flex-1 flex-col gap-1 px-6 pt-4`
+- Same 5 links: Home, Process, Explore, Modules, Help
+- Each: `rounded-lg px-4 py-3 text-base font-medium text-black transition-colors hover:bg-black/5`
+- When open: `opacity: 1, transform: translateX(0)`, when closed: `opacity: 0, transform: translateX(20px)`
+- Transition: `opacity 400ms ease, transform 400ms ease, background-color 200ms ease`
+
+**Panel CTA Button** (bottom, `px-6 pb-8`)
+- Text: "Begin Your Quest"
+- `w-full rounded-xl px-6 py-3 text-sm font-medium text-white transition-transform hover:scale-[1.02]`
+- Inline: `backgroundColor: '#2F302F'`, `boxShadow: '0px 4px 12px rgba(47, 48, 47, 0.4)'`
+- When open: `opacity: 1, transform: translateY(0)`, when closed: `opacity: 0, transform: translateY(10px)`
+- Transition: `opacity 400ms ease 300ms, transform 400ms ease 300ms`
+
+### 5. Hero Content (z-10, relative, flex flex-col items-center, text-center)
+- Container: `px-6 pt-12 sm:pt-16 md:px-4 md:pt-24`
+
+**Headline** (`<h1>`, max-w-3xl, `letterSpacing: '-0.03em'`)
+- Line 1: "Explore Vast Realms" — `block text-3xl font-light sm:text-4xl md:text-5xl lg:text-[56px]`, color `#848382`
+- Line 2: "and Shape Tomorrow" — `mt-1 block text-3xl font-medium text-black sm:text-4xl md:text-5xl lg:text-[56px]`
+
+**Subheadline** (`<p>`)
+- `mt-5 max-w-sm px-4 text-sm leading-relaxed sm:max-w-md sm:px-0 md:mt-6 md:text-base`, color `#848382`
+- Text: "From thought to reality, we bring you the craft, focus, and ingenuity to turn every spark into momentum."
+
+**CTA Button**
+- Text: "Enter the space"
+- `mt-6 rounded-xl px-8 py-3 text-sm font-medium text-white transition-transform hover:scale-105 md:mt-8`
+- Inline: `backgroundColor: '#2F302F'`, `boxShadow: '0px 4px 12px rgba(47, 48, 47, 0.4)'`
+
+### 6. Bottom Bar — Desktop (z-10, absolute bottom-6, hidden on mobile, `md:flex`)
+- `items-end justify-between px-8 md:px-16 lg:px-24`
+
+**Left**: "All motion starts from within." — `text-sm text-black`
+**Center**: "A mindful place for inner expansion, clarity, and purposeful presence. No clutter. Just depth." — `max-w-xs text-center text-sm`, color `#848382`
+**Right**: "[Scroll to Discover]" — `text-sm text-black`
+
+### 7. Bottom Bar — Mobile (z-10, absolute bottom-6, `md:hidden`)
+- `flex flex-col items-center gap-2 px-6`
+- Line 1: "A mindful place for inner expansion, clarity, and purposeful presence." — `text-center text-xs`, color `#848382`
+- Line 2: "[Scroll to Discover]" — `text-xs text-black`
+
+## Color Palette
+
+## Key Design Details
+
+## Dependencies
+` ` `
+react@^18.3.1, react-dom@^18.3.1, lucide-react@^0.344.0
+` ` `
+```

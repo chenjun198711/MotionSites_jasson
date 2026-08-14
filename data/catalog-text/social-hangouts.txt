@@ -1,0 +1,743 @@
+```
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Voice chat</title>
+  <style>
+:root {
+  --frame-width: 393px;
+  --frame-height: 852px;
+  --surface: #e2eae8;
+  --call-background: #232021;
+  --icon-dark: #000;
+  --icon-light: #f6fefc;
+  --tile-radius: 32px;
+  --control-radius: 999px;
+  --accent: linear-gradient(119.24deg, #f29b58 47.1%, #db90bd 76.69%);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-width: 100%;
+  min-height: 100%;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background: #161415;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+}
+
+button {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  cursor: default;
+}
+
+.voice-chat {
+  position: relative;
+  flex: 0 0 var(--frame-width);
+  width: var(--frame-width);
+  height: var(--frame-height);
+  overflow: hidden;
+  background: var(--call-background);
+}
+
+.upper-surface {
+  position: absolute;
+  inset: 0 0 auto;
+  width: 393px;
+  height: 737px;
+  overflow: hidden;
+  border-radius: 0 0 35px 35px;
+  background: var(--surface);
+}
+
+.status-bar {
+  position: absolute;
+  z-index: 5;
+  inset: 0 0 auto;
+  height: 64px;
+  color: var(--icon-dark);
+}
+
+.status-time {
+  position: absolute;
+  top: 20px;
+  left: 36px;
+  width: 55px;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 22px;
+  letter-spacing: -0.02em;
+  text-align: center;
+}
+
+.status-levels {
+  position: absolute;
+  top: 22px;
+  right: 31px;
+  display: flex;
+  height: 14px;
+  align-items: center;
+  gap: 7px;
+}
+
+.status-levels svg {
+  display: block;
+  overflow: visible;
+}
+
+.cellular-icon {
+  width: 19.2px;
+  height: 13px;
+  fill: #000;
+}
+
+.wifi-icon {
+  width: 18px;
+  height: 14px;
+  fill: none;
+  stroke: #000;
+  stroke-width: 2.8;
+  stroke-linecap: round;
+}
+
+.battery-icon {
+  width: 28px;
+  height: 14px;
+}
+
+.battery-outline {
+  fill: none;
+  stroke: #000;
+  stroke-width: 1;
+  opacity: .35;
+}
+
+.app-header {
+  position: absolute;
+  z-index: 4;
+  top: 64px;
+  left: 0;
+  width: 393px;
+  height: 55px;
+}
+
+.header-button {
+  position: absolute;
+  top: 0;
+  display: grid;
+  width: 55px;
+  height: 55px;
+  place-items: center;
+  isolation: isolate;
+  border: 0;
+  border-radius: var(--control-radius);
+  background: transparent;
+}
+
+.header-button > svg {
+  position: relative;
+  z-index: 1;
+  width: 35px;
+  height: 35px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.15;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.back-button {
+  left: 15px;
+}
+
+.chat-button {
+  left: 323px;
+}
+
+.chat-button > svg path {
+  stroke: none;
+}
+
+.screen-title {
+  position: absolute;
+  top: 17.5px;
+  left: 143px;
+  width: 108px;
+  height: 20px;
+  margin: 0;
+  overflow: hidden;
+  color: var(--surface);
+  font-family: "Inter Tight", Arial, sans-serif;
+  font-size: 25px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: -.02em;
+  text-transform: lowercase;
+}
+
+.message-count {
+  position: absolute;
+  z-index: 2;
+  top: 17px;
+  left: -11px;
+  display: grid;
+  width: 21px;
+  height: 21px;
+  place-items: center;
+  border-radius: var(--control-radius);
+  background: var(--accent);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 510;
+  line-height: 18px;
+}
+
+.video-grid {
+  position: absolute;
+  top: 144px;
+  left: 5px;
+  display: grid;
+  width: 383px;
+  height: 588px;
+  grid-template-columns: repeat(2, 189px);
+  grid-template-rows: repeat(3, 192.6667px);
+  gap: 5px;
+}
+
+.video-tile {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: var(--tile-radius);
+  background: #4f4f4f;
+}
+
+.video-tile > img {
+  position: absolute;
+  display: block;
+  max-width: none;
+  object-fit: fill;
+  user-select: none;
+}
+
+.tile-one > img {
+  top: -31.01px;
+  left: -74.96px;
+  width: 583.06px;
+  height: 327px;
+}
+
+.tile-two > img {
+  top: -18.03px;
+  left: -163.96px;
+  width: 480px;
+  height: 240px;
+}
+
+.tile-three > img {
+  top: -37.14px;
+  left: -177.46px;
+  width: 656.12px;
+  height: 367.97px;
+  transform: scaleX(-1);
+}
+
+.tile-four > img {
+  top: -27.15px;
+  left: -253.06px;
+  width: 587.26px;
+  height: 391.51px;
+}
+
+.tile-five > img {
+  top: -86.17px;
+  left: -127.16px;
+  width: 740.34px;
+  height: 493.56px;
+}
+
+.tile-six > img {
+  top: -108.72px;
+  left: -61.91px;
+  width: 344.99px;
+  height: 515.94px;
+  transform: scaleX(-1);
+}
+
+.participant-status {
+  position: absolute;
+  z-index: 2;
+  top: 15px;
+  left: 15px;
+  display: grid;
+  width: 35px;
+  height: 35px;
+  place-items: center;
+  isolation: isolate;
+  border: 0;
+  border-radius: var(--control-radius);
+  background: transparent;
+  color: #fff;
+}
+
+.participant-status svg {
+  position: relative;
+  z-index: 1;
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.35;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.participant-status .muted-icon {
+  stroke-width: 1.25;
+}
+
+.call-actions {
+  position: absolute;
+  z-index: 5;
+  top: 762px;
+  left: 77px;
+  display: flex;
+  width: 239px;
+  height: 59px;
+  align-items: center;
+  gap: 5px;
+  padding: 2px;
+  border-radius: 60px;
+  background: var(--call-background);
+}
+
+.call-action {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: grid;
+  flex: 0 0 55px;
+  width: 55px;
+  height: 55px;
+  place-items: center;
+  border-radius: 50%;
+  background: none;
+  color: var(--icon-light);
+}
+
+.call-action svg {
+  position: relative;
+  z-index: 1;
+  width: 35px;
+  height: 35px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.35;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.call-action:first-child svg {
+  width: 36px;
+  height: 36px;
+}
+
+.call-action .video-icon {
+  fill: var(--icon-light);
+  stroke: none;
+}
+
+.end-call {
+  border: 0;
+  background: var(--accent);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+  filter: none;
+  isolation: auto;
+  opacity: 1;
+  mix-blend-mode: normal;
+}
+
+.end-call .nav-glass-avatar {
+  display: none;
+}
+
+.end-call::before,
+.end-call::after {
+  content: none;
+}
+
+.end-call svg {
+  stroke-width: 1.15;
+  filter: none;
+  opacity: 1;
+  mix-blend-mode: normal;
+}
+
+.home-indicator {
+  position: absolute;
+  z-index: 5;
+  bottom: 8px;
+  left: 127px;
+  width: 139px;
+  height: 5px;
+  border-radius: var(--control-radius);
+  background: #000;
+}
+
+.header-button {
+  --n: 55;
+  --size: calc(var(--n) * 1px);
+  --floorB: 1.7px;
+  --floorBs: 0.8px;
+  --floorA: 1.4px;
+  --floorAs: 0.6px;
+  --aa: 0.6px;
+  --rimB-total: max(calc(var(--size) * 0.0235), var(--floorB));
+  --rimB-solid: max(calc(var(--size) * 0.0095), var(--floorBs));
+  --rimA-total: max(calc(var(--size) * 0.014), var(--floorA));
+  --rimA-solid: max(calc(var(--size) * 0.004), var(--floorAs));
+  --keep: clamp(0, calc((var(--n) - 24) / 72), 1);
+  isolation: isolate;
+  background:
+    radial-gradient(
+      95% 95% at 76% 76%,
+      rgba(255, 255, 255, 0.24),
+      rgba(255, 255, 255, 0) 66%
+    ),
+    linear-gradient(
+      135deg,
+      rgba(20, 20, 20, 0.025) 0%,
+      rgba(20, 20, 20, 0) 58%
+    ),
+    rgba(255, 255, 255, 0.08);
+  -webkit-backdrop-filter: blur(calc(var(--size) * 0.095)) saturate(105%);
+  backdrop-filter: blur(calc(var(--size) * 0.095)) saturate(105%);
+}
+
+@media (min-resolution: 1.5dppx) {
+  .header-button {
+    --floorB: 0.9px;
+    --floorBs: 0.45px;
+    --floorA: 0.75px;
+    --floorAs: 0.35px;
+    --aa: 0.4px;
+    --keep: clamp(0, calc((var(--n) - 14) / 42), 1);
+  }
+}
+
+.header-button::before {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  content: "";
+  pointer-events: none;
+  opacity: var(--keep);
+  background: conic-gradient(
+    from 0deg,
+    rgba(255, 255, 255, 0) 0deg,
+    rgba(255, 255, 255, 0) 66deg,
+    #fff 78deg,
+    #fff 188deg,
+    rgba(255, 255, 255, 0) 200deg,
+    rgba(255, 255, 255, 0) 360deg
+  );
+  -webkit-mask: radial-gradient(
+    closest-side,
+    transparent calc(100% - var(--rimB-total)),
+    #000 calc(100% - var(--rimB-solid) - var(--aa)),
+    #000 calc(100% - var(--aa)),
+    transparent 100%
+  );
+  mask: radial-gradient(
+    closest-side,
+    transparent calc(100% - var(--rimB-total)),
+    #000 calc(100% - var(--rimB-solid) - var(--aa)),
+    #000 calc(100% - var(--aa)),
+    transparent 100%
+  );
+}
+
+.header-button::after {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  content: "";
+  pointer-events: none;
+  opacity: var(--keep);
+  background: conic-gradient(
+    from 0deg,
+    #fff 0deg,
+    #fff 10deg,
+    rgba(255, 255, 255, 0) 24deg,
+    rgba(255, 255, 255, 0) 258deg,
+    #fff 274deg,
+    #fff 360deg
+  );
+  -webkit-mask: radial-gradient(
+    closest-side,
+    transparent calc(100% - var(--rimA-total)),
+    #000 calc(100% - var(--rimA-solid) - var(--aa)),
+    #000 calc(100% - var(--aa)),
+    transparent 100%
+  );
+  mask: radial-gradient(
+    closest-side,
+    transparent calc(100% - var(--rimA-total)),
+    #000 calc(100% - var(--rimA-solid) - var(--aa)),
+    #000 calc(100% - var(--aa)),
+    transparent 100%
+  );
+}
+
+.participant-status {
+  --n: 55;
+  --size: calc(var(--n) * 1px);
+  width: var(--size);
+  height: var(--size);
+  overflow: hidden;
+  isolation: isolate;
+  border: 0;
+  border-radius: 50%;
+  background: linear-gradient(
+    80deg,
+    rgba(255, 255, 255, .07),
+    rgba(255, 255, 255, .13)
+  );
+  box-shadow: inset 0 0 calc(var(--size) * .05) rgba(255, 255, 255, .22);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.participant-status {
+  --n: 35;
+  -webkit-backdrop-filter: blur(calc(var(--size) * .331));
+  backdrop-filter: blur(calc(var(--size) * .331));
+}
+
+.nav-glass-avatar {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  display: block;
+  pointer-events: none;
+}
+
+.participant-status::before {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  content: "";
+  pointer-events: none;
+  z-index: 2;
+  background: conic-gradient(
+    from 0deg,
+    rgba(255, 255, 255, 0.468) 0deg,
+    rgba(255, 255, 255, 0.207) 15deg,
+    rgba(255, 255, 255, 0) 30deg,
+    rgba(255, 255, 255, 0) 45deg,
+    rgba(255, 255, 255, 0.018) 60deg,
+    rgba(255, 255, 255, 0.162) 75deg,
+    rgba(255, 255, 255, 0.315) 90deg,
+    rgba(255, 255, 255, 0.396) 105deg,
+    rgba(255, 255, 255, 0.405) 120deg,
+    rgba(255, 255, 255, 0.45) 135deg,
+    rgba(255, 255, 255, 0.387) 150deg,
+    rgba(255, 255, 255, 0.351) 165deg,
+    rgba(255, 255, 255, 0.27) 180deg,
+    rgba(255, 255, 255, 0.117) 195deg,
+    rgba(255, 255, 255, 0) 210deg,
+    rgba(255, 255, 255, 0) 240deg,
+    rgba(255, 255, 255, 0.18) 255deg,
+    rgba(255, 255, 255, 0.441) 270deg,
+    rgba(255, 255, 255, 0.576) 285deg,
+    rgba(255, 255, 255, 0.612) 300deg,
+    rgba(255, 255, 255, 0.639) 315deg,
+    rgba(255, 255, 255, 0.621) 330deg,
+    rgba(255, 255, 255, 0.585) 345deg,
+    rgba(255, 255, 255, 0.468) 360deg
+  );
+  -webkit-mask: radial-gradient(
+    closest-side,
+    transparent 93.8%,
+    #fff 96.6%,
+    #fff 98.8%,
+    transparent 100%
+  );
+  mask: radial-gradient(
+    closest-side,
+    transparent 93.8%,
+    #fff 96.6%,
+    #fff 98.8%,
+    transparent 100%
+  );
+  mix-blend-mode: screen;
+  mix-blend-mode: plus-lighter;
+}
+
+@media (max-width: 392px) {
+  body {
+    justify-content: flex-start;
+    overflow-x: auto;
+  }
+}
+  </style>
+</head>
+<body>
+  <main class="voice-chat" aria-label="Voice chat screen">
+    <section class="upper-surface">
+      <div class="status-bar" aria-label="9:41, cellular, Wi-Fi, full battery">
+        <time class="status-time">9:41</time>
+        <div class="status-levels" aria-hidden="true">
+          <svg class="cellular-icon" viewBox="0 0 20 13">
+            <rect x="0" y="8" width="3.2" height="5" rx="1.2"/>
+            <rect x="5.3" y="5.5" width="3.2" height="7.5" rx="1.2"/>
+            <rect x="10.6" y="3" width="3.2" height="10" rx="1.2"/>
+            <rect x="15.9" width="3.2" height="13" rx="1.2"/>
+          </svg>
+          <svg class="wifi-icon" viewBox="0 0 18 14">
+            <path d="M1 4.7A12 12 0 0 1 17 4.7"/>
+            <path d="M4 8a7.6 7.6 0 0 1 10 0"/>
+            <path d="M7.2 11.2a2.7 2.7 0 0 1 3.6 0L9 13z" fill="#000" stroke="none"/>
+          </svg>
+          <svg class="battery-icon" viewBox="0 0 28 14">
+            <rect class="battery-outline" x=".5" y=".5" width="24" height="13" rx="4"/>
+            <rect x="2.5" y="2.5" width="20" height="9" rx="2.3" fill="#000"/>
+            <path d="M26 4.5c1 0 1.5.7 1.5 1.7v1.6c0 1-.5 1.7-1.5 1.7z" fill="#000" opacity=".4"/>
+          </svg>
+        </div>
+      </div>
+
+      <header class="app-header">
+        <button class="header-button back-button" type="button" aria-label="Back">
+          <svg viewBox="0 0 35 35" aria-hidden="true">
+            <path d="M22.2394 17.5001H12.7603M16.4061 21.1459L12.7603 17.5001L16.4061 13.8542"/>
+            <path d="M24.7917 6.58518C22.7061 5.18915 20.1981 4.375 17.5 4.375C10.2513 4.375 4.375 10.2513 4.375 17.5C4.375 24.7487 10.2513 30.625 17.5 30.625C24.7487 30.625 30.625 24.7487 30.625 17.5C30.625 15.1094 29.9859 12.868 28.8691 10.9375"/>
+          </svg>
+        </button>
+        <h1 class="screen-title">moodboard</h1>
+        <button class="header-button chat-button" type="button" aria-label="Chat, 2 unread messages">
+          <span class="message-count">2</span>
+          <svg viewBox="0 0 35 35" aria-hidden="true">
+            <path d="M15.8509 31.3691L16.3458 31.662V31.662L15.8509 31.3691ZM16.2293 30.7299L15.7345 30.437V30.437L16.2293 30.7299ZM12.937 30.7299L13.4318 30.437H13.4318L12.937 30.7299ZM13.3154 31.3691L12.8205 31.662V31.662L13.3154 31.3691ZM3.36054 24.9824L3.89177 24.7623H3.89177L3.36054 24.9824ZM9.17174 28.5615L9.19012 27.9867V27.9867L9.17174 28.5615ZM6.51752 28.1394L6.29747 28.6706H6.29747L6.51752 28.1394ZM25.8058 24.9824L26.337 25.2024V25.2024L25.8058 24.9824ZM19.9946 28.5615L19.9762 27.9867V27.9867L19.9946 28.5615ZM22.6488 28.1394L22.8689 28.6706V28.6706L22.6488 28.1394ZM23.4644 9.6096L23.7649 9.11934V9.11934L23.4644 9.6096ZM25.3902 11.5354L25.8805 11.235V11.235L25.3902 11.5354ZM5.70193 9.6096L5.40149 9.11934V9.11934L5.70193 9.6096ZM3.7761 11.5354L3.28583 11.235L3.28583 11.235L3.7761 11.5354ZM11.5446 28.9076L11.2518 29.4025V29.4025L11.5446 28.9076ZM15.8509 31.3691L16.3458 31.662L16.7241 31.0228L16.2293 30.7299L15.7345 30.437L15.3561 31.0762L15.8509 31.3691ZM12.937 30.7299L12.4422 31.0228L12.8205 31.662L13.3154 31.3691L13.8102 31.0762L13.4318 30.437L12.937 30.7299ZM15.8509 31.3691L15.3561 31.0762C15.0151 31.6524 14.1512 31.6524 13.8102 31.0762L13.3154 31.3691L12.8205 31.662C13.6069 32.9905 15.5594 32.9905 16.3458 31.662L15.8509 31.3691ZM12.8332 8.75V9.325H16.3332V8.75V8.175H12.8332V8.75ZM26.2498 18.6667H25.6748V19.8334H26.2498H26.8248V18.6667H26.2498ZM2.9165 19.8334H3.4915V18.6667H2.9165H2.3415V19.8334H2.9165ZM2.9165 19.8334H2.3415C2.3415 21.1845 2.34119 22.2267 2.39834 23.0643C2.45584 23.9071 2.57343 24.5847 2.82931 25.2024L3.36054 24.9824L3.89177 24.7623C3.70361 24.3081 3.59918 23.7702 3.54567 22.986C3.49182 22.1966 3.4915 21.2002 3.4915 19.8334H2.9165ZM9.17174 28.5615L9.19012 27.9867C8.02242 27.9494 7.31575 27.8476 6.73756 27.6081L6.51752 28.1394L6.29747 28.6706C7.07705 28.9935 7.95835 29.0979 9.15336 29.1362L9.17174 28.5615ZM3.36054 24.9824L2.82931 25.2024C3.47972 26.7727 4.72725 28.0202 6.29747 28.6706L6.51752 28.1394L6.73756 27.6081C5.44912 27.0745 4.42546 26.0508 3.89177 24.7623L3.36054 24.9824ZM26.2498 19.8334H25.6748C25.6748 21.2002 25.6745 22.1966 25.6207 22.986C25.5672 23.7702 25.4627 24.3081 25.2746 24.7623L25.8058 24.9824L26.337 25.2024C26.5929 24.5847 26.7105 23.9071 26.768 23.0643C26.8251 22.2267 26.8248 21.1845 26.8248 19.8334H26.2498ZM19.9946 28.5615L20.0129 29.1362C21.208 29.0979 22.0893 28.9935 22.8689 28.6706L22.6488 28.1394L22.4288 27.6081C21.8506 27.8476 21.1439 27.9494 19.9762 27.9867L19.9946 28.5615ZM25.8058 24.9824L25.2746 24.7623C24.7409 26.0508 23.7172 27.0745 22.4288 27.6081L22.6488 28.1394L22.8689 28.6706C24.4391 28.0202 25.6866 26.7727 26.337 25.2024L25.8058 24.9824ZM16.3332 8.75V9.325C18.2538 9.325 19.6539 9.32561 20.7505 9.42987C21.8385 9.53332 22.5681 9.73474 23.164 10.0999L23.4644 9.6096L23.7649 9.11934C22.958 8.62486 22.0315 8.39648 20.8593 8.28503C19.6957 8.17439 18.2315 8.175 16.3332 8.175V8.75ZM26.2498 18.6667H26.8248C26.8248 16.7683 26.8254 15.3042 26.7148 14.1405C26.6034 12.9684 26.375 12.0419 25.8805 11.235L25.3902 11.5354L24.9 11.8359C25.2651 12.4317 25.4665 13.1614 25.57 14.2494C25.6742 15.346 25.6748 16.7461 25.6748 18.6667H26.2498ZM23.4644 9.6096L23.164 10.0999C23.8715 10.5335 24.4664 11.1283 24.9 11.8359L25.3902 11.5354L25.8805 11.235C25.3521 10.3727 24.6271 9.64774 23.7649 9.11934L23.4644 9.6096ZM12.8332 8.75V8.175C10.9348 8.175 9.47065 8.17439 8.30702 8.28503C7.13484 8.39648 6.20839 8.62486 5.40149 9.11934L5.70193 9.6096L6.00237 10.0999C6.59821 9.73474 7.32787 9.53332 8.41588 9.42987C9.51244 9.32561 10.9125 9.325 12.8332 9.325V8.75ZM2.9165 18.6667H3.4915C3.4915 16.7461 3.49211 15.346 3.59637 14.2494C3.69982 13.1614 3.90124 12.4317 4.26637 11.8359L3.7761 11.5354L3.28583 11.235C2.79137 12.0419 2.56299 12.9684 2.45154 14.1405C2.3409 15.3042 2.3415 16.7683 2.3415 18.6667H2.9165ZM5.70193 9.6096L5.40149 9.11934C4.53921 9.64774 3.81424 10.3727 3.28583 11.235L3.7761 11.5354L4.26637 11.8359C4.69995 11.1283 5.29483 10.5335 6.00237 10.0999L5.70193 9.6096ZM12.937 30.7299L13.4318 30.437C13.1341 29.934 12.8912 29.5225 12.6597 29.2038C12.4214 28.8757 12.1704 28.6097 11.8373 28.4127L11.5446 28.9076L11.2518 29.4025C11.4017 29.4911 11.5437 29.6241 11.7293 29.8796C11.9217 30.1445 12.1336 30.5014 12.4422 31.0228L12.937 30.7299ZM9.17174 28.5615L9.15336 29.1362C9.79365 29.1566 10.236 29.1713 10.5799 29.2133C10.9147 29.2541 11.1055 29.3159 11.2518 29.4025L11.5446 28.9076L11.8373 28.4127C11.5007 28.2136 11.135 28.1225 10.7191 28.0717C10.3123 28.0221 9.80974 28.0066 9.19012 27.9867L9.17174 28.5615ZM16.2293 30.7299L16.7241 31.0228C17.0327 30.5014 17.2446 30.1445 17.437 29.8796C17.6226 29.6241 17.7646 29.4911 17.9145 29.4025L17.6217 28.9076L17.329 28.4127C16.9959 28.6097 16.7449 28.8757 16.5066 29.2038C16.2751 29.5225 16.0322 29.934 15.7345 30.437L16.2293 30.7299ZM19.9946 28.5615L19.9762 27.9867C19.3566 28.0066 18.854 28.0221 18.4472 28.0717C18.0313 28.1225 17.6656 28.2136 17.329 28.4127L17.6217 28.9076L17.9145 29.4025C18.0608 29.3159 18.2516 29.2541 18.5864 29.2133C18.9303 29.1713 19.3726 29.1566 20.0129 29.1362L19.9946 28.5615Z" fill="currentColor"/>
+            <path d="M31.6671 18.1344L32.1983 18.3544V18.3544L31.6671 18.1344ZM28.7074 21.094L28.9274 21.6253H28.9274L28.7074 21.094ZM29.472 3.72238L29.1716 4.21265V4.21265L29.472 3.72238ZM31.2775 5.52785L31.7677 5.22741V5.22741L31.2775 5.52785ZM12.8197 3.72238L12.5192 3.23211V3.23211L12.8197 3.72238ZM11.0142 5.52785L10.5239 5.22741V5.22741L11.0142 5.52785ZM19.5052 2.9165V3.4915H22.7865V2.9165V2.3415H19.5052V2.9165ZM32.0833 12.2134H31.5083V13.3072H32.0833H32.6583V12.2134H32.0833ZM32.0833 13.3072H31.5083C31.5083 14.5891 31.508 15.5218 31.4576 16.2603C31.4076 16.9937 31.3101 17.4936 31.1358 17.9143L31.6671 18.1344L32.1983 18.3544C32.4403 17.7702 32.5509 17.1305 32.605 16.3386C32.6586 15.5518 32.6583 14.5734 32.6583 13.3072H32.0833ZM31.6671 18.1344L31.1358 17.9143C30.6391 19.1134 29.6864 20.0661 28.4873 20.5628L28.7074 21.094L28.9274 21.6253C30.4083 21.0119 31.5849 19.8353 32.1983 18.3544L31.6671 18.1344ZM22.7865 2.9165V3.4915C24.5878 3.4915 25.8983 3.49211 26.9243 3.58966C27.9416 3.68639 28.6196 3.87438 29.1716 4.21265L29.472 3.72238L29.7724 3.23211C29.0094 2.76451 28.1347 2.54956 27.0331 2.44482C25.9401 2.3409 24.5655 2.3415 22.7865 2.3415V2.9165ZM32.0833 12.2134H32.6583C32.6583 10.4344 32.6589 9.05974 32.555 7.96674C32.4503 6.86518 32.2353 5.99048 31.7677 5.22741L31.2775 5.52785L30.7872 5.82829C31.1255 6.38029 31.3135 7.05821 31.4102 8.07559C31.5077 9.10152 31.5083 10.4121 31.5083 12.2134H32.0833ZM29.472 3.72238L29.1716 4.21265C29.83 4.61617 30.3837 5.1698 30.7872 5.82829L31.2775 5.52785L31.7677 5.22741C31.2694 4.41419 30.5857 3.73046 29.7724 3.23211L29.472 3.72238ZM19.5052 2.9165V2.3415C17.7262 2.3415 16.3515 2.3409 15.2585 2.44482C14.157 2.54956 13.2823 2.76451 12.5192 3.23211L12.8197 3.72238L13.1201 4.21265C13.6721 3.87438 14.35 3.68639 15.3674 3.58966C16.3933 3.49211 17.7039 3.4915 19.5052 3.4915V2.9165ZM12.8197 3.72238L12.5192 3.23211C11.706 3.73046 11.0223 4.41419 10.5239 5.22741L11.0142 5.52785L11.5045 5.82829C11.908 5.1698 12.4616 4.61617 13.1201 4.21265L12.8197 3.72238ZM10.2568 8.74984L10.8311 8.77971C10.9051 7.35719 11.0919 6.50155 11.5045 5.82829L11.0142 5.52785L10.5239 5.22741C9.95638 6.1536 9.75914 7.24878 9.68261 8.71997L10.2568 8.74984ZM26.2501 21.4887L26.2692 22.0634C27.3741 22.0267 28.197 21.9278 28.9274 21.6253L28.7074 21.094L28.4873 20.5628C27.9568 20.7826 27.3069 20.8783 26.231 20.914L26.2501 21.4887Z" fill="currentColor"/>
+            <path d="M10.9377 18.9583C10.9377 19.7637 10.2847 20.4167 9.47933 20.4167C8.67391 20.4167 8.021 19.7637 8.021 18.9583C8.021 18.1529 8.67391 17.5 9.47933 17.5C10.2847 17.5 10.9377 18.1529 10.9377 18.9583Z" fill="currentColor"/>
+            <path d="M16.0418 18.9583C16.0418 19.7637 15.3889 20.4167 14.5835 20.4167C13.7781 20.4167 13.1252 19.7637 13.1252 18.9583C13.1252 18.1529 13.7781 17.5 14.5835 17.5C15.3889 17.5 16.0418 18.1529 16.0418 18.9583Z" fill="currentColor"/>
+            <path d="M21.146 18.9583C21.146 19.7637 20.4931 20.4167 19.6877 20.4167C18.8822 20.4167 18.2293 19.7637 18.2293 18.9583C18.2293 18.1529 18.8822 17.5 19.6877 17.5C20.4931 17.5 21.146 18.1529 21.146 18.9583Z" fill="currentColor"/>
+          </svg>
+        </button>
+      </header>
+
+      <section class="video-grid" aria-label="Call participants">
+        <article class="video-tile tile-one">
+          <img src="https://flick-award-65707097.figma.site/_assets/v11/c8ea721b213626ebe9a3b48e0081053dc913aa5e.png" alt="Smiling participant in an orange hoodie">
+          <span class="participant-status" aria-label="Speaking">
+            <svg class="wave-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 10v4M7.5 6.5v11M12 3v18M16.5 7v10M21 10v4"/>
+            </svg>
+          </span>
+        </article>
+
+        <article class="video-tile tile-two">
+          <img src="https://social-glass-phi.vercel.app/screen%203/assets/images/curly-woman-friends.png" alt="Smiling participant with curly hair">
+          <span class="participant-status" aria-label="Microphone on">
+            <svg class="mic-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="7.5" y="2.5" width="9" height="13" rx="4.5"/>
+              <path d="M4.5 11.5a7.5 7.5 0 0 0 15 0M12 19v3"/>
+            </svg>
+          </span>
+        </article>
+
+        <article class="video-tile tile-three">
+          <img src="https://social-glass-phi.vercel.app/screen%203/assets/images/curly-woman-friends.png" alt="Smiling participant with blonde hair">
+          <span class="participant-status" aria-label="Microphone muted">
+            <svg class="mic-icon muted-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M8 7v4.5a4 4 0 0 0 6.8 2.9M16 11.5v-5a4 4 0 0 0-7.4-2.1M4.5 11.5a7.5 7.5 0 0 0 12.8 5.3M19.5 11.5a7.5 7.5 0 0 1-.5 2.7M12 19v3M8.5 22h7M3 3l18 18"/>
+            </svg>
+          </span>
+        </article>
+
+        <article class="video-tile tile-four">
+          <img src="https://flick-award-65707097.figma.site/_assets/v11/c8ea721b213626ebe9a3b48e0081053dc913aa5e.png" alt="Smiling participant wearing sunglasses">
+          <span class="participant-status" aria-label="Speaking">
+            <svg class="wave-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 10v4M7.5 6.5v11M12 3v18M16.5 7v10M21 10v4"/>
+            </svg>
+          </span>
+        </article>
+
+        <article class="video-tile tile-five">
+          <img src="https://social-glass-phi.vercel.app/screen%203/assets/images/curly-woman-friends.png" alt="Participant with blonde hair and sunglasses">
+          <span class="participant-status" aria-label="Microphone on">
+            <svg class="mic-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="7.5" y="2.5" width="9" height="13" rx="4.5"/>
+              <path d="M4.5 11.5a7.5 7.5 0 0 0 15 0M12 19v3"/>
+            </svg>
+          </span>
+        </article>
+
+        <article class="video-tile tile-six">
+          <img src="https://flick-award-65707097.figma.site/_assets/v11/c8ea721b213626ebe9a3b48e0081053dc913aa5e.png" alt="Smiling participant with curly hair and sunglasses">
+          <span class="participant-status" aria-label="Microphone muted">
+            <svg class="mic-icon muted-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M8 7v4.5a4 4 0 0 0 6.8 2.9M16 11.5v-5a4 4 0 0 0-7.4-2.1M4.5 11.5a7.5 7.5 0 0 0 12.8 5.3M19.5 11.5a7.5 7.5 0 0 1-.5 2.7M12 19v3M8.5 22h7M3 3l18 18"/>
+            </svg>
+          </span>
+        </article>
+      </section>
+    </section>
+
+    <nav class="call-actions" aria-label="Call controls">
+      <button class="call-action call-action--glass" type="button" aria-label="Camera">
+        <glass-avatar class="nav-glass-avatar" image="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNQVlD8DwACMgFkYzMcyAAAAABJRU5ErkJggg==" count="" size="55" overlap="55" edge-scale="1" aria-hidden="true"></glass-avatar>
+        <svg class="video-icon" viewBox="0 0 36 36" aria-hidden="true">
+          <path d="M20.5 3.92481C21.8906 3.92481 22.9685 3.92464 23.8311 3.99512C24.7003 4.06615 25.402 4.2116 26.0313 4.53223C27.0802 5.06672 27.9333 5.91978 28.4678 6.96875C28.7884 7.59804 28.9339 8.29975 29.0049 9.16895C29.0728 10.0006 29.0741 11.0323 29.0742 12.3516C29.0879 12.3414 29.1014 12.3307 29.1152 12.3203L30.3154 11.4199C30.924 10.9635 31.4123 10.597 31.8135 10.3496C32.2073 10.1068 32.6108 9.91685 33.043 9.92579C33.6657 9.93873 34.2498 10.2304 34.6338 10.7207C34.9003 11.0611 34.9912 11.4982 35.0332 11.959C35.076 12.4284 35.0752 13.039 35.0752 13.7998L35.0752 22.2002C35.0752 22.961 35.076 23.5716 35.0332 24.041C34.9912 24.5018 34.9003 24.9389 34.6338 25.2793C34.2498 25.7697 33.6657 26.0613 33.043 26.0742C32.6109 26.0832 32.2072 25.8941 31.8135 25.6514C31.4122 25.404 30.9241 25.0366 30.3154 24.5801L29.1152 23.6797C29.1012 23.6692 29.088 23.6578 29.0742 23.6475C29.0741 24.9672 29.0729 25.9992 29.0049 26.8311C28.9339 27.7003 28.7884 28.402 28.4678 29.0313C27.9333 30.0802 27.0802 30.9333 26.0313 31.4678C25.402 31.7884 24.7003 31.9339 23.8311 32.0049C22.9685 32.0754 21.8906 32.0752 20.5 32.0752L9.5 32.0752C8.10937 32.0752 7.03155 32.0754 6.16895 32.0049C5.29975 31.9339 4.59804 31.7884 3.96875 31.4678C2.91978 30.9333 2.06672 30.0802 1.53223 29.0313C1.2116 28.402 1.06615 27.7002 0.995119 26.8311C0.924643 25.9685 0.924808 24.8906 0.924808 23.5L0.924809 12.5C0.924809 11.1094 0.924645 10.0315 0.995123 9.16895C1.06616 8.29975 1.21159 7.59804 1.53223 6.96875C2.06672 5.91978 2.91978 5.06672 3.96876 4.53223C4.59804 4.21159 5.29975 4.06615 6.16895 3.99512C7.03156 3.92464 8.10937 3.92481 9.50001 3.92481L20.5 3.92481ZM9.50001 5.0752C8.09039 5.0752 7.06761 5.07584 6.2627 5.1416C5.4646 5.20682 4.93139 5.33334 4.49122 5.55762C3.65863 5.98185 2.98186 6.65863 2.55762 7.49121C2.33334 7.93139 2.20683 8.46459 2.14161 9.2627C2.07584 10.0676 2.0752 11.0904 2.0752 12.5L2.0752 23.5C2.0752 24.9096 2.07584 25.9324 2.1416 26.7373C2.20682 27.5354 2.33334 28.0686 2.55762 28.5088C2.98185 29.3414 3.65863 30.0182 4.49121 30.4424C4.93139 30.6667 5.4646 30.7932 6.2627 30.8584C7.06761 30.9242 8.09039 30.9248 9.5 30.9248L20.5 30.9248C21.9096 30.9248 22.9324 30.9242 23.7373 30.8584C24.5354 30.7932 25.0686 30.6667 25.5088 30.4424C26.3414 30.0182 27.0182 29.3414 27.4424 28.5088C27.6667 28.0686 27.7932 27.5354 27.8584 26.7373C27.9242 25.9324 27.9248 24.9096 27.9248 23.5L27.9248 12.5C27.9248 11.0904 27.9242 10.0676 27.8584 9.2627C27.7932 8.4646 27.6667 7.93139 27.4424 7.49122C27.0182 6.65863 26.3414 5.98185 25.5088 5.55762C25.0686 5.33334 24.5354 5.20682 23.7373 5.14161C22.9324 5.07584 21.9096 5.0752 20.5 5.0752L9.50001 5.0752ZM33.0195 11.0752C32.9345 11.0734 32.7704 11.1102 32.417 11.3281C32.071 11.5415 31.632 11.8695 31.0049 12.3398L29.8047 13.2402C29.4262 13.5241 29.3295 13.6033 29.2627 13.6914C29.1936 13.7827 29.1418 13.886 29.1104 13.9961C29.08 14.1024 29.0752 14.2272 29.0752 14.7002L29.0752 21.3027C29.0752 21.7737 29.0801 21.8976 29.1104 22.0039C29.1418 22.1142 29.1934 22.2182 29.2627 22.3096C29.3295 22.3976 29.4264 22.476 29.8047 22.7598L31.0049 23.6602C31.632 24.1305 32.071 24.4585 32.417 24.6719C32.7704 24.8898 32.9345 24.9266 33.0195 24.9248C33.297 24.9189 33.5574 24.7888 33.7285 24.5703C33.7809 24.5033 33.85 24.3497 33.8877 23.9365C33.9246 23.5318 33.9248 22.9839 33.9248 22.2002L33.9248 13.7998C33.9248 13.0161 33.9246 12.4682 33.8877 12.0635C33.85 11.6501 33.7809 11.4967 33.7285 11.4297C33.5574 11.2112 33.297 11.0811 33.0195 11.0752Z"/>
+        </svg>
+      </button>
+      <button class="call-action call-action--glass" type="button" aria-label="Headphones">
+        <glass-avatar class="nav-glass-avatar" image="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNQVlD8DwACMgFkYzMcyAAAAABJRU5ErkJggg==" count="" size="55" overlap="55" edge-scale="1" aria-hidden="true"></glass-avatar>
+        <svg viewBox="0 0 35 35" aria-hidden="true">
+          <path d="M2.9165 24.822L2.9165 19.019L2.95205 18.4887C3.40948 11.6645 8.27146 5.99662 14.8251 4.64756C16.5906 4.28415 18.4091 4.28415 20.1746 4.64756C26.7282 5.99662 31.5902 11.6645 32.0476 18.4887L32.0832 19.019V24.822M22.7346 25.96C22.4878 24.6608 22.4878 23.3252 22.7346 22.026C23.1314 19.9378 24.6429 18.2558 26.6433 17.6764L27.0676 17.5535C27.5086 17.4258 27.9648 17.361 28.4232 17.361C30.4445 17.361 32.0832 19.0377 32.0831 21.106V26.88C32.0832 28.9483 30.4445 30.625 28.4232 30.625C27.9648 30.625 27.5086 30.5602 27.0676 30.4325L26.6433 30.3096C24.6429 29.7302 23.1314 28.0482 22.7346 25.96ZM12.265 25.96C12.5118 24.6608 12.5118 23.3252 12.265 22.026C11.8683 19.9378 10.3568 18.2558 8.35638 17.6764L7.93207 17.5535C7.49102 17.4258 7.03484 17.361 6.57646 17.361C4.55512 17.361 2.9165 19.0377 2.91651 21.106L2.91651 26.88C2.9165 28.9483 4.55512 30.625 6.57646 30.625C7.03484 30.625 7.49102 30.5602 7.93207 30.4325L8.35638 30.3096C10.3568 29.7302 11.8683 28.0482 12.265 25.96Z" stroke-width="1.15"/>
+        </svg>
+      </button>
+      <button class="call-action call-action--glass" type="button" aria-label="Microphone">
+        <glass-avatar class="nav-glass-avatar" image="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNQVlD8DwACMgFkYzMcyAAAAABJRU5ErkJggg==" count="" size="55" overlap="55" edge-scale="1" aria-hidden="true"></glass-avatar>
+        <svg viewBox="0 0 35 35" aria-hidden="true">
+          <rect x="11.5" y="3" width="12" height="20" rx="6"/>
+          <path d="M6.5 17a11 11 0 0 0 22 0M17.5 28v5"/>
+        </svg>
+      </button>
+      <button class="call-action end-call" type="button" aria-label="End call">
+        <svg viewBox="0 0 35 35" aria-hidden="true">
+          <path d="M15.0498 27.6642C15.254 27.8246 15.4581 27.9704 15.6769 28.1309C17.3394 29.3413 19.0165 30.3038 20.6936 31.0184C22.3706 31.7329 23.9602 32.0829 25.4477 32.0829C26.4686 32.0829 27.4165 31.8934 28.2915 31.5288C29.1811 31.1642 29.9686 30.5954 30.6831 29.8079C31.1061 29.3413 31.4269 28.8454 31.6748 28.3204C31.9227 27.7954 32.0394 27.2559 32.0394 26.7309C32.0394 26.3225 31.9519 25.9579 31.8061 25.5934C31.6456 25.2288 31.3831 24.9225 31.004 24.66L26.1769 21.2329C25.8123 20.985 25.4769 20.7954 25.1561 20.6642C24.8352 20.5329 24.5436 20.4746 24.2665 20.4746C23.9019 20.4746 23.5665 20.5767 23.2311 20.7809C22.8956 20.9559 22.5456 21.2329 22.1811 21.5975L21.0727 22.6913C20.9123 22.8517 20.7227 22.9392 20.4748 22.9392C20.3436 22.9392 20.2269 22.9246 20.1102 22.8809C20.0081 22.8371 19.9206 22.7934 19.8477 22.7642C19.5706 22.6184 19.2498 22.4142 18.8998 22.1517"/>
+          <path d="M15.6478 19.279C14.8894 18.5061 14.1894 17.7332 13.5332 16.9748C12.8915 16.2165 12.4394 15.5894 12.1769 15.1082C12.1478 15.0207 12.104 14.9332 12.0603 14.8165C12.0311 14.6998 12.0165 14.5978 12.0165 14.4811C12.0165 14.2478 12.0894 14.0582 12.2498 13.8978L13.3582 12.7457C13.7082 12.3957 13.9853 12.0457 14.1748 11.7103C14.379 11.3748 14.4811 11.0248 14.4811 10.6748C14.4811 10.3978 14.4082 10.0915 14.2769 9.78525C14.1457 9.46442 13.9561 9.129 13.6936 8.76442L10.3103 3.99567C10.0478 3.6165 9.71234 3.354 9.33317 3.179C8.96859 3.004 8.56025 2.9165 8.15192 2.9165C7.07275 2.9165 6.05192 3.36859 5.11859 4.28734C4.34567 5.0165 3.7915 5.83317 3.4415 6.72275C3.0915 7.59775 2.9165 8.54567 2.9165 9.53734C2.9165 11.054 3.2665 12.6436 3.9665 14.3061C4.6665 15.954 5.629 17.6165 6.82484 19.279C8.03525 20.9415 9.3915 22.5311 10.8936 24.0478"/>
+          <path d="M32.0832 2.9165L2.9165 32.0832"/>
+        </svg>
+      </button>
+    </nav>
+
+    <div class="home-indicator" aria-hidden="true"></div>
+  </main>
+  <script src="screen 3/glass-avatar.js"></script>
+</body>
+</html>
+```

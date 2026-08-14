@@ -1,0 +1,1088 @@
+```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cortex — Mind Amplified.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700;900&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.25/dist/lenis.min.js"></script>
+  <style>
+    :root {
+      --brand-bg: #122e58;
+      --font-sans: 'Inter Tight', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      overscroll-behavior: none;
+    }
+
+    body {
+      background: #000;
+      color: #fff;
+      font-family: var(--font-sans);
+      font-weight: 400;
+      min-height: 100vh;
+      line-height: 1.4;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    ::selection {
+      background: #fff;
+      color: var(--brand-bg);
+    }
+
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #000; }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.25); }
+
+    a { color: inherit; text-decoration: none; }
+
+    .page { position: relative; width: 100%; min-height: 100vh; }
+
+    /* Header */
+    .header {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 50;
+      width: calc(100% - 32px);
+      max-width: 100%;
+      background: rgba(2, 6, 23, 0.55);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-radius: 12px;
+      padding: 4px 20px 4px 4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    @media (min-width: 768px) {
+      .header { width: auto; }
+    }
+
+    @media (min-width: 1024px) {
+      .header { top: 20px; }
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 20px;
+      line-height: 1;
+      cursor: pointer;
+      user-select: none;
+      flex-shrink: 0;
+      transition: all 0.3s;
+    }
+
+    .logo:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: rotate(45deg);
+    }
+
+    .logo:active { transform: rotate(45deg) scale(0.95); }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    @media (min-width: 1024px) {
+      .nav { gap: 20px; }
+    }
+
+    .nav a {
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: -0.025em;
+      white-space: nowrap;
+      transition: color 0.2s;
+    }
+
+    .nav a:hover { color: #fff; }
+
+    @media (min-width: 1024px) {
+      .nav a { font-size: 13.5px; }
+    }
+
+    /* Hero video */
+    .hero-video-wrap {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      user-select: none;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .hero-video-wrap video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      will-change: filter, transform;
+    }
+
+    /* Scroll content */
+    .scroll-track {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      background: transparent;
+    }
+
+    .section-pad {
+      width: 100%;
+      max-width: none;
+      margin: 0 auto;
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+
+    @media (min-width: 1024px) {
+      .section-pad {
+        padding-left: 56px;
+        padding-right: 56px;
+      }
+    }
+
+    /* Hero */
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      background: transparent;
+    }
+
+    .hero-main {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      height: 100vh;
+      padding-top: 112px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 48px;
+      align-items: center;
+    }
+
+    @media (min-width: 1024px) {
+      .hero-main {
+        padding-top: 0;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 32px;
+      }
+    }
+
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      height: 100%;
+    }
+
+    @media (min-width: 1024px) {
+      .hero-left {
+        grid-column: span 7;
+        transform: translateY(-112px);
+      }
+    }
+
+    .hero-title {
+      font-size: clamp(40px, 6.5vw, 105px);
+      font-weight: 400;
+      line-height: 0.95;
+      letter-spacing: -0.025em;
+      margin-bottom: 40px;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .hero-title .line { display: block; }
+
+    .char, .word {
+      display: inline-block;
+      will-change: transform, opacity, filter;
+    }
+
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      color: var(--brand-bg);
+      border-radius: 9999px;
+      padding: 14px 28px;
+      font-size: 14px;
+      font-weight: 400;
+      width: fit-content;
+      gap: 12px;
+      transition: background 0.2s;
+    }
+
+    .cta:hover { background: rgba(255, 255, 255, 0.9); }
+
+    .cta-icon,
+    .cap-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 9999px;
+      background: var(--brand-bg);
+      color: #fff;
+      flex-shrink: 0;
+      transition: transform 0.2s;
+    }
+
+    .cta:hover .cta-icon { transform: scale(1.05); }
+
+    .cap-icon {
+      background: #fff;
+      color: var(--brand-bg);
+      margin-left: 12px;
+    }
+
+    .cap-link:hover .cap-icon { transform: scale(1.1); }
+
+    .hero-right {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      width: 100%;
+      max-width: 328px;
+    }
+
+    @media (min-width: 1024px) {
+      .hero-right {
+        grid-column: 9 / span 4;
+        justify-self: end;
+        align-self: end;
+        margin-bottom: 56px;
+      }
+    }
+
+    .eyebrow {
+      font-size: 11.5px;
+      font-weight: 400;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.5);
+      letter-spacing: 0.15em;
+      margin-bottom: 12px;
+    }
+
+    .eyebrow.medium { font-weight: 500; margin-bottom: 0; }
+
+    .body-copy {
+      font-size: 14.5px;
+      font-weight: 400;
+      line-height: 1.625;
+      color: #fff;
+      letter-spacing: -0.025em;
+    }
+
+    /* About */
+    .about {
+      width: 100%;
+      height: 100vh;
+      min-height: 600px;
+      padding-top: 56px;
+      padding-bottom: 56px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: flex-start;
+      background: transparent;
+    }
+
+    .about-top {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .about-copy {
+      font-size: clamp(24px, 3.2vw, 40px);
+      font-weight: 500;
+      line-height: 1.25;
+      letter-spacing: -0.025em;
+      color: #fff;
+      max-width: 1200px;
+    }
+
+    .about-bottom {
+      display: grid;
+      grid-template-columns: 1fr;
+      width: 100%;
+      gap: 32px;
+    }
+
+    @media (min-width: 1024px) {
+      .about-bottom { grid-template-columns: repeat(12, 1fr); }
+    }
+
+    .caps {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      max-width: 328px;
+    }
+
+    @media (min-width: 1024px) {
+      .caps {
+        grid-column: 9 / span 4;
+        justify-self: end;
+      }
+    }
+
+    .caps-label {
+      font-size: 11.5px;
+      font-weight: 500;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.5);
+      letter-spacing: 0.15em;
+      margin-bottom: 20px;
+    }
+
+    .caps-list {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .cap-link {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+    }
+
+    .cap-link span:first-child {
+      font-size: 14.5px;
+      font-weight: 500;
+      letter-spacing: -0.025em;
+    }
+
+    /* Solutions spacer + overlay */
+    .solutions-spacer {
+      width: 100%;
+      min-height: 400vh;
+      background: transparent;
+      position: relative;
+    }
+
+    .solutions-overlay {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 30;
+      overflow: hidden;
+      clip-path: inset(50% 50% round 3px);
+      will-change: clip-path;
+    }
+
+    .solutions-inner {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .solutions-video-wrap {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      user-select: none;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .solutions-video-wrap video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .solutions-content {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .solutions-stage {
+      width: 100%;
+      max-width: 1000px;
+      height: 320px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    @media (min-width: 1024px) {
+      .solutions-stage { height: 400px; }
+    }
+
+    .sol-set {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+      justify-content: center;
+      pointer-events: none;
+      opacity: 0;
+      filter: blur(15px);
+      will-change: opacity, filter, transform;
+    }
+
+    .sol-set h1 {
+      font-size: clamp(40px, 6.5vw, 105px);
+      font-weight: 400;
+      line-height: 0.95;
+      letter-spacing: -0.025em;
+      color: #fff;
+      width: 100%;
+    }
+
+    .sol-top {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      will-change: transform;
+    }
+
+    .sol-bottom {
+      width: 100%;
+      will-change: transform;
+    }
+
+    .fade-block {
+      will-change: opacity, transform, filter;
+    }
+
+    svg {
+      width: 14px;
+      height: 14px;
+      stroke-width: 2.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="header">
+      <div class="logo" aria-hidden="true">✳</div>
+      <nav class="nav">
+        <a href="#cortex">Cortex</a>
+        <a href="#solutions">Interface</a>
+        <a href="#developer">Developer</a>
+        <a href="#support">Support</a>
+      </nav>
+    </header>
+
+    <div class="hero-video-wrap">
+      <video
+        id="hero-video"
+        src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260722_053031_0c49a4eb-94f1-46c7-b407-8c1fee2298c3.mp4"
+        muted
+        playsinline
+        preload="auto"
+      ></video>
+    </div>
+
+    <div id="scroll-track" class="scroll-track">
+      <section id="hero" class="hero">
+        <main class="hero-main section-pad">
+          <div class="hero-left">
+            <div id="hero-title-wrap" class="fade-block">
+              <h1 class="hero-title">
+                <span class="line" data-text-effect="char" data-delay="0">Mind</span>
+                <span class="line" data-text-effect="char" data-delay="0.15">Amplified.</span>
+              </h1>
+            </div>
+            <div id="hero-cta-wrap" class="fade-block">
+              <a href="#discover" class="cta">
+                <span class="cta-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+                </span>
+                <span>Discover Cortex</span>
+              </a>
+            </div>
+          </div>
+
+          <div id="hero-concept" class="hero-right fade-block">
+            <div class="eyebrow">001 — Concept</div>
+            <p class="body-copy">
+              A screen is a bottleneck. Cortex is a premium neural interface that streams your intention directly to AI, amplifying your natural mind.
+            </p>
+          </div>
+        </main>
+      </section>
+
+      <section id="about" class="about section-pad">
+        <div class="about-top">
+          <div id="about-eyebrow" class="fade-block">
+            <span class="eyebrow medium">002 — Neural Extension</span>
+          </div>
+          <div id="about-title-wrap" class="fade-block">
+            <p class="about-copy" data-text-effect="word">
+              ① Cortex is a premium, circular neural interface that rests seamlessly on your temple, establishing a real-time thought connection that augments your cognition with advanced AI models.
+            </p>
+          </div>
+        </div>
+
+        <div class="about-bottom">
+          <div id="about-caps" class="caps fade-block">
+            <div class="caps-label">Capabilities:</div>
+            <div class="caps-list">
+              <a href="#retrieval" class="cap-link">
+                <span>Instant Knowledge Retrieval</span>
+                <span class="cap-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></span>
+              </a>
+              <a href="#translation" class="cap-link">
+                <span>Seamless Thought Translation</span>
+                <span class="cap-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></span>
+              </a>
+              <a href="#problem-solving" class="cap-link">
+                <span>Generative Reasoning Flow</span>
+                <span class="cap-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section id="solutions" class="solutions-spacer"></section>
+
+    <div id="solutions-overlay" class="solutions-overlay">
+      <div class="solutions-inner">
+        <div class="solutions-video-wrap">
+          <video
+            id="solutions-video"
+            src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260722_053057_15a922e1-f64e-40ae-94a5-8abd5fd7f784.mp4"
+            muted
+            playsinline
+            preload="auto"
+          ></video>
+        </div>
+
+        <div class="solutions-content section-pad">
+          <div class="solutions-stage">
+            <div class="sol-set" data-set="1">
+              <div class="sol-top">
+                <span class="eyebrow medium">003 — Interface</span>
+                <h1>Silent thought.</h1>
+              </div>
+              <div class="sol-bottom"><h1>Cortex.</h1></div>
+            </div>
+            <div class="sol-set" data-set="2">
+              <div class="sol-top">
+                <span class="eyebrow medium">004 — Performance</span>
+                <h1>Cognitive flow.</h1>
+              </div>
+              <div class="sol-bottom"><h1>Intuition.</h1></div>
+            </div>
+            <div class="sol-set" data-set="3">
+              <div class="sol-top">
+                <span class="eyebrow medium">005 — Symbiosis</span>
+                <h1>Instant recall.</h1>
+              </div>
+              <div class="sol-bottom"><h1>Insight.</h1></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      // ─── helpers ───────────────────────────────────────────────────────────
+      function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+
+      function lerp(a, b, t) { return a + (b - a) * t; }
+
+      function mapRange(value, inMin, inMax, outMin, outMax) {
+        if (inMax === inMin) return outMin;
+        const t = clamp((value - inMin) / (inMax - inMin), 0, 1);
+        return lerp(outMin, outMax, t);
+      }
+
+      // Piecewise interpolate across multi-stop ranges (like Framer useTransform)
+      function mapStops(value, stopsIn, stopsOut) {
+        if (value <= stopsIn[0]) return stopsOut[0];
+        if (value >= stopsIn[stopsIn.length - 1]) return stopsOut[stopsOut.length - 1];
+        for (let i = 0; i < stopsIn.length - 1; i++) {
+          if (value >= stopsIn[i] && value <= stopsIn[i + 1]) {
+            const t = (value - stopsIn[i]) / (stopsIn[i + 1] - stopsIn[i]);
+            const a = stopsOut[i];
+            const b = stopsOut[i + 1];
+            if (typeof a === 'number' && typeof b === 'number') return lerp(a, b, t);
+            // blur("Npx") strings
+            if (typeof a === 'string' && a.startsWith('blur(')) {
+              const av = parseFloat(a);
+              const bv = parseFloat(b);
+              return 'blur(' + lerp(av, bv, t) + 'px)';
+            }
+            return a;
+          }
+        }
+        return stopsOut[stopsOut.length - 1];
+      }
+
+      // cubic-bezier(0.65, 0, 0.35, 1) — used for the reveal inset
+      function cubicBezierEase(t, p1x, p1y, p2x, p2y) {
+        // Newton-Raphson solve for x, then evaluate y
+        function sampleCurveX(t) {
+          return ((1 - 3 * p2x + 3 * p1x) * t + (3 * p2x - 6 * p1x)) * t * t + 3 * p1x * t;
+        }
+        function sampleCurveY(t) {
+          return ((1 - 3 * p2y + 3 * p1y) * t + (3 * p2y - 6 * p1y)) * t * t + 3 * p1y * t;
+        }
+        function sampleCurveDerivativeX(t) {
+          return (3 * (1 - 3 * p2x + 3 * p1x) * t + 2 * (3 * p2x - 6 * p1x)) * t + 3 * p1x;
+        }
+        let guess = t;
+        for (let i = 0; i < 8; i++) {
+          const x = sampleCurveX(guess) - t;
+          const d = sampleCurveDerivativeX(guess);
+          if (Math.abs(x) < 1e-6 || Math.abs(d) < 1e-6) break;
+          guess -= x / d;
+        }
+        return sampleCurveY(guess);
+      }
+
+      const easeOutExpo = [0.16, 1, 0.3, 1];
+      function easeOut(t) {
+        return cubicBezierEase(t, easeOutExpo[0], easeOutExpo[1], easeOutExpo[2], easeOutExpo[3]);
+      }
+
+      // Framer-style scroll progress using offsetTop (stable under Lenis)
+      function sectionProgress(elTop, elHeight, offsetStart, offsetEnd, scrollY, vh) {
+        function resolve(edge, bound, top, height) {
+          const elY = edge === 'start' ? top : top + height;
+          const vpY = bound === 'start' ? scrollY : scrollY + vh;
+          return elY - vpY;
+        }
+        const [aEl, aVp] = offsetStart.split(' ');
+        const [bEl, bVp] = offsetEnd.split(' ');
+        const start = resolve(aEl, aVp, elTop, elHeight);
+        const end = resolve(bEl, bVp, elTop, elHeight);
+        const total = start - end;
+        if (Math.abs(total) < 1e-6) return 0;
+        return clamp(start / total, 0, 1);
+      }
+
+      // ─── text effect (char / word stagger) ─────────────────────────────────
+      function splitText(el, per) {
+        const text = el.textContent.trim();
+        el.textContent = '';
+        el.setAttribute('aria-label', text);
+        const parts = per === 'char' ? [...text] : text.split(/(\s+)/);
+        const nodes = [];
+        parts.forEach((part) => {
+          if (per === 'word' && /^\s+$/.test(part)) {
+            el.appendChild(document.createTextNode(part));
+            return;
+          }
+          const span = document.createElement('span');
+          span.className = per;
+          span.textContent = part === ' ' ? '\u00A0' : part;
+          span.style.opacity = '0';
+          span.style.filter = 'blur(10px) brightness(0%)';
+          span.style.transform = 'translateY(20px)';
+          el.appendChild(span);
+          nodes.push(span);
+        });
+        return nodes;
+      }
+
+      function animateSegments(nodes, show, stagger, delay) {
+        nodes.forEach((node, i) => {
+          const t = (delay + i * stagger) * 1000;
+          node.style.transition = show
+            ? 'opacity 0.4s cubic-bezier(0.16,1,0.3,1), filter 0.4s cubic-bezier(0.16,1,0.3,1), transform 0.4s cubic-bezier(0.16,1,0.3,1)'
+            : 'opacity 0.3s cubic-bezier(0.16,1,0.3,1), filter 0.3s cubic-bezier(0.16,1,0.3,1), transform 0.3s cubic-bezier(0.16,1,0.3,1)';
+          node.style.transitionDelay = t + 'ms';
+          if (show) {
+            node.style.opacity = '1';
+            node.style.filter = 'blur(0px) brightness(100%)';
+            node.style.transform = 'translateY(0)';
+          } else {
+            node.style.opacity = '0';
+            node.style.filter = 'blur(10px) brightness(0%)';
+            node.style.transform = 'translateY(-20px)';
+          }
+        });
+      }
+
+      function animateBlock(el, show) {
+        el.style.transition = show
+          ? 'opacity 0.9s cubic-bezier(0.16,1,0.3,1), transform 0.9s cubic-bezier(0.16,1,0.3,1)'
+          : 'opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1)';
+        if (show) {
+          el.style.opacity = '1';
+          el.style.transform = 'translateY(0)';
+        } else {
+          el.style.opacity = '0';
+          el.style.transform = 'translateY(-25px)';
+        }
+      }
+
+      // ─── Lenis ─────────────────────────────────────────────────────────────
+      const lenis = new Lenis({ duration: 1.2 });
+      function lenisRaf(time) {
+        lenis.raf(time);
+        requestAnimationFrame(lenisRaf);
+      }
+      requestAnimationFrame(lenisRaf);
+
+      // ─── DOM refs ─────────────────────────────────────────────────────────
+      const heroVideo = document.getElementById('hero-video');
+      const solutionsVideo = document.getElementById('solutions-video');
+      const scrollTrack = document.getElementById('scroll-track');
+      const heroEl = document.getElementById('hero');
+      const aboutEl = document.getElementById('about');
+      const solutionsEl = document.getElementById('solutions');
+      const solutionsOverlay = document.getElementById('solutions-overlay');
+
+      const heroTitleWrap = document.getElementById('hero-title-wrap');
+      const heroCtaWrap = document.getElementById('hero-cta-wrap');
+      const heroConcept = document.getElementById('hero-concept');
+      const aboutEyebrow = document.getElementById('about-eyebrow');
+      const aboutTitleWrap = document.getElementById('about-title-wrap');
+      const aboutCaps = document.getElementById('about-caps');
+
+      const solSets = [
+        solutionsOverlay.querySelector('[data-set="1"]'),
+        solutionsOverlay.querySelector('[data-set="2"]'),
+        solutionsOverlay.querySelector('[data-set="3"]'),
+      ];
+
+      // Split text effects
+      const textTargets = [];
+      document.querySelectorAll('[data-text-effect]').forEach((el) => {
+        const per = el.getAttribute('data-text-effect');
+        const delay = parseFloat(el.getAttribute('data-delay') || '0');
+        const nodes = splitText(el, per);
+        textTargets.push({ el, nodes, per, delay, shown: false });
+      });
+
+      // Initial hidden state for fade blocks
+      [heroCtaWrap, heroConcept, aboutEyebrow, aboutCaps].forEach((el) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(35px)';
+      });
+
+      // ─── IntersectionObserver for enter/exit text ──────────────────────────
+      function observeInView(el, amount, onChange) {
+        const io = new IntersectionObserver(
+          ([entry]) => onChange(entry.intersectionRatio >= amount),
+          { threshold: [0, amount, 1] }
+        );
+        io.observe(el);
+      }
+
+      let inViewHero = false;
+      let inViewAbout = false;
+
+      observeInView(heroEl, 0.15, (v) => {
+        if (v === inViewHero) return;
+        inViewHero = v;
+        textTargets
+          .filter((t) => heroEl.contains(t.el))
+          .forEach((t) => {
+            animateSegments(t.nodes, v, 0.015, t.delay);
+          });
+        animateBlock(heroCtaWrap, v);
+        animateBlock(heroConcept, v);
+      });
+
+      observeInView(aboutEl, 0.15, (v) => {
+        if (v === inViewAbout) return;
+        inViewAbout = v;
+        textTargets
+          .filter((t) => aboutEl.contains(t.el))
+          .forEach((t) => {
+            animateSegments(t.nodes, v, 0.015, t.delay);
+          });
+        animateBlock(aboutEyebrow, v);
+        animateBlock(aboutCaps, v);
+      });
+
+      // ─── Video Scrub Engine (RAF-lerp) ─────────────────────────────────────
+      const LERP = 0.09;
+      const SEEK_DRIFT = 0.02;
+      const SEEK_MIN_MS = 30;
+      const SETTLE_EPS = 0.0001;
+      const PLAY_FROM = 0.85;
+
+      let heroTarget = 0, heroCurrent = 0, heroLastSeek = 0, heroPlaying = false;
+      let solTarget = 0, solCurrent = 0, solLastSeek = 0;
+
+      let heroSectionTop = 0, heroSectionRange = 1;
+      let viewportH = window.innerHeight;
+      let solSectionTop = 0, solSectionHeight = 0, solSectionRange = 1;
+
+      let scrubRaf = 0, scrubRunning = false;
+
+      function measure() {
+        heroSectionTop = scrollTrack.offsetTop;
+        heroSectionRange = scrollTrack.offsetHeight || 1;
+        viewportH = window.innerHeight;
+        solSectionTop = solutionsEl.offsetTop;
+        solSectionHeight = solutionsEl.offsetHeight;
+        solSectionRange = Math.max(1, solSectionHeight - viewportH);
+      }
+
+      function startScrub() {
+        if (scrubRunning) return;
+        scrubRunning = true;
+        scrubRaf = requestAnimationFrame(scrubTick);
+      }
+
+      function handleScrollTargets() {
+        const scrollY = window.scrollY;
+        heroTarget = clamp((scrollY - heroSectionTop) / heroSectionRange, 0, 1);
+        solTarget = clamp((scrollY - solSectionTop) / solSectionRange, 0, 1);
+        startScrub();
+      }
+
+      function scrubToward(video, current, lastSeek, now) {
+        const duration = video.duration;
+        if (!duration || isNaN(duration)) return { lastSeek, busy: false };
+        const targetTime = current * duration;
+        const drift = Math.abs(video.currentTime - targetTime);
+        if (!video.seeking && now - lastSeek >= SEEK_MIN_MS && drift > SEEK_DRIFT) {
+          video.currentTime = targetTime;
+          return { lastSeek: now, busy: true };
+        }
+        return { lastSeek, busy: video.seeking || drift > SEEK_DRIFT };
+      }
+
+      function scrubTick() {
+        const now = performance.now();
+        let busy = false;
+
+        heroCurrent += (heroTarget - heroCurrent) * LERP;
+        if (Math.abs(heroTarget - heroCurrent) < SETTLE_EPS) heroCurrent = heroTarget;
+        else busy = true;
+
+        const heroDuration = heroVideo.duration;
+        if (heroDuration && !isNaN(heroDuration)) {
+          if (heroCurrent >= PLAY_FROM && heroTarget >= PLAY_FROM) {
+            if (!heroPlaying) {
+              heroVideo.play().catch(() => {});
+              heroPlaying = true;
+            }
+          } else {
+            if (heroPlaying) {
+              heroVideo.pause();
+              heroPlaying = false;
+              heroCurrent = heroVideo.currentTime / heroDuration;
+            }
+            const r = scrubToward(heroVideo, heroCurrent, heroLastSeek, now);
+            heroLastSeek = r.lastSeek;
+            if (r.busy) busy = true;
+          }
+        }
+
+        solCurrent += (solTarget - solCurrent) * LERP;
+        if (Math.abs(solTarget - solCurrent) < SETTLE_EPS) solCurrent = solTarget;
+        else busy = true;
+
+        const scrollY = window.scrollY;
+        const solOnScreen =
+          scrollY + viewportH > solSectionTop && scrollY < solSectionTop + solSectionHeight;
+        if (solOnScreen) {
+          const r = scrubToward(solutionsVideo, solCurrent, solLastSeek, now);
+          solLastSeek = r.lastSeek;
+          if (r.busy) busy = true;
+        }
+
+        if (busy) scrubRaf = requestAnimationFrame(scrubTick);
+        else scrubRunning = false;
+      }
+
+      function primeVideo(video) {
+        const p = video.play();
+        if (p !== undefined) p.then(() => video.pause()).catch(() => {});
+      }
+
+      function onHeroMeta() {
+        measure();
+        handleScrollTargets();
+        heroCurrent = heroTarget;
+        primeVideo(heroVideo);
+      }
+
+      function onSolMeta() {
+        measure();
+        handleScrollTargets();
+        solCurrent = solTarget;
+        primeVideo(solutionsVideo);
+      }
+
+      // ─── Scroll-driven visual effects ──────────────────────────────────────
+      const REVEAL_END = 0.18;
+      function at(p) { return REVEAL_END + p * (1 - REVEAL_END); }
+
+      function updateVisuals() {
+        const scrollY = window.scrollY;
+        const vh = window.innerHeight;
+
+        // Cached geometry (offsetTop is layout-stable under Lenis)
+        const trackTop = scrollTrack.offsetTop;
+        const trackH = scrollTrack.offsetHeight;
+        const heroTop = heroEl.offsetTop + trackTop;
+        const heroH = heroEl.offsetHeight;
+        const aboutTop = aboutEl.offsetTop + trackTop;
+        const aboutH = aboutEl.offsetHeight;
+        const solTop = solutionsEl.offsetTop;
+        const solH = solutionsEl.offsetHeight;
+
+        // Hero video blur/scale — progress of scroll-track ["start start","end start"]
+        const heroVideoProgress = sectionProgress(trackTop, trackH, 'start start', 'end start', scrollY, vh);
+        const blurRaw = mapRange(heroVideoProgress, 0.85, 1, 0, 24);
+        const blurPx = Math.round(blurRaw / 2) * 2;
+        const scale = mapRange(heroVideoProgress, 0.85, 1, 1, 1.22);
+        heroVideo.style.filter = 'blur(' + blurPx + 'px)';
+        heroVideo.style.transform = 'scale(' + scale + ')';
+
+        // Hero title / other fade — hero ["start start","end start"]
+        const heroScroll = sectionProgress(heroTop, heroH, 'start start', 'end start', scrollY, vh);
+        const hTitleOp = mapRange(heroScroll, 0, 0.45, 1, 0);
+        const hTitleBlur = mapRange(heroScroll, 0, 0.45, 0, 20);
+        const hTitleY = mapRange(heroScroll, 0, 0.45, 0, -60);
+        heroTitleWrap.style.opacity = hTitleOp;
+        heroTitleWrap.style.filter = 'blur(' + hTitleBlur + 'px)';
+        heroTitleWrap.style.transform = 'translateY(' + hTitleY + 'px)';
+
+        const hOtherOp = mapRange(heroScroll, 0, 0.45, 1, 0);
+        const hOtherY = mapRange(heroScroll, 0, 0.45, 0, -40);
+        // Don't override enter animation opacity entirely when in view at top —
+        // multiply scroll fade on top of base. Simpler: apply to wrappers that
+        // already finished enter, using a nested approach via filter/transform only
+        // when scroll moves. For standalone, apply scroll fade directly:
+        if (inViewHero) {
+          heroCtaWrap.style.opacity = String(hOtherOp);
+          heroCtaWrap.style.transform = 'translateY(' + hOtherY + 'px)';
+          heroConcept.style.opacity = String(hOtherOp);
+          heroConcept.style.transform = 'translateY(' + hOtherY + 'px)';
+        }
+
+        // About — ["start end","end start"]
+        const aboutScroll = sectionProgress(aboutTop, aboutH, 'start end', 'end start', scrollY, vh);
+        const aTitleOp = mapStops(aboutScroll, [0.1, 0.35, 0.65, 0.9], [0, 1, 1, 0]);
+        const aTitleBlur = mapStops(aboutScroll, [0.1, 0.35, 0.65, 0.9], [20, 0, 0, 20]);
+        const aTitleY = mapStops(aboutScroll, [0.1, 0.35, 0.65, 0.9], [60, 0, 0, -60]);
+        aboutTitleWrap.style.opacity = aTitleOp;
+        aboutTitleWrap.style.filter = 'blur(' + aTitleBlur + 'px)';
+        aboutTitleWrap.style.transform = 'translateY(' + aTitleY + 'px)';
+
+        const aOtherOp = mapStops(aboutScroll, [0.15, 0.35, 0.65, 0.85], [0, 1, 1, 0]);
+        const aOtherY = mapStops(aboutScroll, [0.15, 0.35, 0.65, 0.85], [50, 0, 0, -50]);
+        if (inViewAbout) {
+          aboutEyebrow.style.opacity = String(aOtherOp);
+          aboutEyebrow.style.transform = 'translateY(' + aOtherY + 'px)';
+          aboutCaps.style.opacity = String(aOtherOp);
+          aboutCaps.style.transform = 'translateY(' + aOtherY + 'px)';
+        }
+
+        // Solutions reveal + text sets — ["start start","end end"]
+        const solProgress = sectionProgress(solTop, solH, 'start start', 'end end', scrollY, vh);
+        const revealT = clamp(solProgress / REVEAL_END, 0, 1);
+        const eased = cubicBezierEase(revealT, 0.65, 0, 0.35, 1);
+        const inset = lerp(50, 0, eased);
+        solutionsOverlay.style.clipPath = 'inset(' + inset + '% ' + inset + '% round 3px)';
+
+        function applySet(el, opIn, blurIn, yRange) {
+          const op = mapStops(solProgress, opIn, [0, 1, 1, 0]);
+          const bl = mapStops(solProgress, blurIn, [15, 0, 0, 15]);
+          const yT = mapRange(solProgress, yRange[0], yRange[1], 0, -120);
+          const yB = mapRange(solProgress, yRange[0], yRange[1], 0, 120);
+          el.style.opacity = op;
+          el.style.filter = 'blur(' + bl + 'px)';
+          el.querySelector('.sol-top').style.transform = 'translateY(' + yT + 'px)';
+          el.querySelector('.sol-bottom').style.transform = 'translateY(' + yB + 'px)';
+        }
+
+        applySet(solSets[0], [at(0), at(0.05), at(0.22), at(0.29)], [at(0), at(0.05), at(0.22), at(0.29)], [at(0), at(0.29)]);
+        applySet(solSets[1], [at(0.33), at(0.40), at(0.58), at(0.65)], [at(0.33), at(0.40), at(0.58), at(0.65)], [at(0.33), at(0.65)]);
+        applySet(solSets[2], [at(0.69), at(0.76), at(0.92), at(0.99)], [at(0.69), at(0.76), at(0.92), at(0.99)], [at(0.69), at(0.99)]);
+      }
+
+      // ─── wire up ──────────────────────────────────────────────────────────
+      function onScroll() {
+        handleScrollTargets();
+        updateVisuals();
+      }
+
+      function onResize() {
+        measure();
+        handleScrollTargets();
+        updateVisuals();
+      }
+
+      measure();
+      handleScrollTargets();
+      heroCurrent = heroTarget;
+      solCurrent = solTarget;
+      updateVisuals();
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onResize, { passive: true });
+      heroVideo.addEventListener('loadedmetadata', onHeroMeta);
+      solutionsVideo.addEventListener('loadedmetadata', onSolMeta);
+      if (heroVideo.readyState >= 1) onHeroMeta();
+      if (solutionsVideo.readyState >= 1) onSolMeta();
+    })();
+  </script>
+</body>
+</html>
+```

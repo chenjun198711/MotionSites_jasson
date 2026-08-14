@@ -1,0 +1,188 @@
+```
+Build a single-page React + TypeScript + Vite + Tailwind CSS app that reproduces the **first section** of an English-learning dashboard. Use Lucide-React for icons. The page is the hero/landing section titled **"Let's Talk from the Start"** — a video-call classroom with a live chat panel. No routing, no other sections, no Supabase, no auth. Just this one screen, full-viewport on desktop.
+
+## Global setup
+
+### Fonts (index.html)
+- Preconnect to `https://fonts.googleapis.com` and `https://fonts.gstatic.com` (crossorigin).
+- Load Google Font **Urbanist** weights 400, 500, 600, 700:
+  `https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700&display=swap`
+- Page title: "English Learning Dashboard".
+
+### Global CSS (index.css)
+- Tailwind base/components/utilities.
+- `:root` CSS variables:
+  - `--color-black: rgb(0,0,0)`
+  - `--color-white: rgb(255,255,255)`
+  - `--color-glass-white: rgba(255,255,255,0.6)`
+  - `--color-accent-red: rgba(249,85,85,1)`
+  - `--color-success-green: rgb(41,192,18)`
+  - `--color-muted-gray: rgb(160,160,160)`
+  - `--color-light-gray-icon: rgb(187,187,187)`
+  - `--color-dark-overlay: rgba(0,0,0,0.2)`
+- `* { box-sizing: border-box; }`
+- `body`: `font-family: 'Urbanist','Plus Jakarta Sans','Manrope','Inter',sans-serif; `-webkit-font-smoothing: antialiased`, `-moz-osx-font-smoothing: grayscale`, `background: #f2f0f8`, `min-height: 100vh`, `overflow-x: auto`.
+
+### Keyframe animations (index.css)
+Define and expose these utility classes (all use `cubic-bezier(0.16,1,0.3,1)` unless noted, all `both` fill-mode):
+- `fadeInUp`: opacity 0→1, translateY(24px)→0, 0.7s. → `.animate-fade-in-up`
+- `fadeInDown`: translateY(-16px)→0, 0.5s. → `.animate-fade-in-down`
+- `fadeInScale`: opacity 0→1, scale(0.92)→1, 0.8s. → `.animate-fade-in-scale`
+- `slideInLeft`: translateX(-30px)→0, 0.7s. → `.animate-slide-in-left`
+- `slideInRight`: translateX(30px)→0, 0.7s. → `.animate-slide-in-right`
+- `chatBubbleIn`: 0% opacity0 translateY(16px) scale(0.9); 60% translateY(-2px) scale(1.01); 100% opacity1 translateY(0) scale(1); 0.5s. → `.animate-chat-bubble`
+- `chatBubbleInRight`: same but start translateX(30px) scale(0.9), 60% translateX(-2px). → `.animate-chat-bubble-right`
+- `typingDot`: 0%,60%,100% opacity0.3 translateY0; 30% opacity1 translateY(-4px); 1.4s infinite. → `.typing-dot` with nth-child(2) delay 0.2s, nth-child(3) delay 0.4s.
+- `float`: 0%,100% translateY(0) rotate(-12deg); 50% translateY(-8px) rotate(-10deg); 3s ease-in-out infinite. → `.animate-float`
+
+### Responsive zoom hack (index.css)
+` ` `css
+@media (max-width: 1199px) { #root { zoom: 0.85; } }
+` ` `
+
+## Layout structure
+
+Root `<div>`: `w-full min-h-screen relative` with inline style `background: linear-gradient(135deg, rgba(236,233,252,0.7) 0%, rgba(243,238,229,1) 100%)`.
+
+Main content wrapper: `lg:pl-[100px]` (leaves room for fixed sidebar).
+
+### Fixed top bar
+`fixed top-0 right-0 left-0 lg:left-[100px] z-30 flex items-center justify-between px-5 py-3`. Contains: empty `hidden lg:block` spacer on the left, `<TopNav/>` centered (`mx-auto`, `hidden md:block`), and `<TopRightUtility/>` on the right (`flex-shrink-0`).
+
+### Section 1 (the hero)
+`<section data-section="0">` with classes `flex flex-col p-3 sm:p-5 pt-[70px] lg:pt-[80px] xl:tall:h-screen xl:tall:max-h-screen xl:tall:overflow-hidden`.
+
+**Header row**: `pt-4 lg:pt-6 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3 flex-shrink-0`.
+- `<h1>` "Let's Talk from the Start": `text-[24px] sm:text-[28px] lg:text-[40px] xl:text-[46px] font-medium text-black leading-none lg:pl-0 animate-fade-in-up` with `animationDelay: '0.15s'`.
+- `<CoachChips/>` wrapper: `animate-fade-in-up`, `animationDelay: '0.3s'`.
+
+**Body row**: `pt-4 lg:pt-5 flex flex-col lg:flex-row gap-3 xl:tall:flex-1 xl:tall:min-h-0`.
+- VideoCard wrapper: `flex-[1.8] min-w-0 animate-fade-in-scale`, delay `0.4s`.
+- ChatPanel wrapper: `flex-1 min-w-0 lg:max-w-[440px] xl:max-w-[480px] animate-slide-in-right`, delay `0.55s`.
+
+## Sidebar (fixed, left) — `Sidebar` component
+
+Fixed container: `fixed left-0 top-0 bottom-0 w-[80px] flex flex-col items-center py-[30px] pl-[20px] z-40 transition-transform duration-300 lg:translate-x-0`. Inner: `animate-slide-in-left h-full flex flex-col`.
+
+**Logo**: `w-[60px] h-[60px] bg-black rounded-[18px] flex items-center justify-center overflow-hidden flex-shrink-0` containing `<img>` `https://framerusercontent.com/images/QP3sofr3Nrny7jzPrzvgthcZ8.png?width=180&height=180` (object-cover, 60×60).
+
+**Main icon blob**: wrapper `relative mt-[80px] lg:mt-[120px]` sized 64×360, renders `<SidebarBlob height={360} lobes={6}/>` then an absolute inset-0 flex-col items-center justify-between holding 6 icon tiles (64×60 each, rounded-[18px]):
+1. VideoIcon → section 0 (active when activeSection===0)
+2. PieChartIcon → section -1 (inactive)
+3. ChecklistIcon → section 1
+4. FolderIcon → -1
+5. MailIcon → -1
+6. SettingsIcon → -1
+
+Active tile: `bg-black`, inline `boxShadow: 'inset 0 0 12px 2px rgba(255,255,255,0.5)'`, icon `text-white` `filled`. Inactive: `hover:bg-black`, icon `text-black group-hover:text-white`. Transition 200ms.
+
+**Theme toggle blob**: `relative mt-auto` sized 64×120, `<SidebarBlob height={120} lobes={2}/>` with two 64×60 tiles: SunIcon (active black tile, white icon, inset glow) and MoonIcon (hover-black, black→white icon).
+
+### SidebarBlob SVG component
+Width 64, given `height` and `lobes`. `lobeH = height/lobes`, `pinchDepth=9`, `r=20`, `spread=22`. Build a closed blob path with pinches between lobes on both edges (see code: loop building `pathRight` then `pathLeft` with cubic beziers). Render `<svg width=64 height viewBox="0 0 64 height" fill="none" className="absolute inset-0">` with a `<defs>` filter `sidebar-glow-${lobes}` (feFlood white opacity 0.7 → feComposite in → feGaussianBlur stdDeviation 4 → feComposite in), then two `<path d={d}>`: first `fill="rgba(255,255,255,0.92)"`, second `fill="rgba(255,255,255,0.5)" filter=url(#sidebar-glow-${lobes})`.
+
+## TopNav — `TopNav` component
+Items: `['Dashboard','Speaking','Progress','Courses']`. sectionMap: `{Dashboard:2, Speaking:0, Progress:-1, Courses:-1}`. Active item = the one whose mapped section equals `activeSection`.
+
+Render `<nav className="hidden md:block mx-auto">` containing `<BlobContainer width={507} lobes={4} height={60}>`. Inside, map items to `<button>` `flex-1 h-[60px] rounded-[18px] text-[16px] font-medium transition-all duration-200`. Active: `bg-black/90 text-white` + inline `boxShadow: 'inset 0 0 12px 2px rgba(255,255,255,0.5)'`. Inactive: `text-black hover:bg-black/90 hover:text-white`. onClick navigates only if sectionMap≥0.
+
+## TopRightUtility
+`<BlobContainer width={178} lobes={3} height={60}>` with three flex-1 60px-tall children:
+1. Search button (hover bg-black/90, SearchIcon 28px black→white).
+2. Bell button (same hover).
+3. Profile avatar: `w-[54px] h-[54px] rounded-[18px] overflow-hidden` with `<img src="https://framerusercontent.com/images/Yp9r5prd7RdO6pI9LBTeM1N2uxw.png">` object-cover.
+
+## BlobContainer component (core reusable blob)
+Props: `width, lobes, height=60, bg='rgba(255,255,255,0.60)', blur=true, children, className=''`. Uses `useId()` for a unique clipPath id and `useBlobPath(width, lobes, height)` to generate the blob path (pinchDepth=8, r=20, spread=22; pinches on top and bottom edges between lobes).
+
+Render:
+- Root `relative flex items-center` sized width×height (+className).
+- Hidden `<svg width=0 height=0>` with `<defs><clipPath id clipPathUnits="userSpaceOnUse"><path d/></clipPath></defs>`.
+- Absolute inset-0 div with `clipPath: url(#id)`, `WebkitClipPath`, `background: bg`, and `backdropFilter: blur(24px)` / `WebkitBackdropFilter` when blur=true.
+- Absolute inset-0 `<svg width height viewBox>` with `<path d fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth=1>` (pointer-events-none).
+- Relative content div `flex items-center w-full h-full` also clipped via the same clipPath, holding children.
+
+## GlassCard component
+Props: `children, className=''`. Root `relative rounded-[18px]` + className, inline `background: rgba(255,255,255,0.6)`, `boxShadow: 'inset 0px 0px 5px rgba(221,221,221,0.5)'`, `backdropFilter: 'blur(8px)'`, `WebkitBackdropFilter: 'blur(8px)'`. Plus an absolute inset-0 rounded-[18px] pointer-events-none border overlay using the gradient-mask trick: `padding: 1.5px`, `background: linear-gradient(162deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0.2) 100%)`, `WebkitMask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)`, `WebkitMaskComposite: xor`, `maskComposite: exclude`.
+
+## CoachChips component
+Two coaches:
+1. Isabella Collins — Language Coach — `https://framerusercontent.com/images/CyLJLVV8UGC7ng7KqoUZvwF9q0.png?width=224&height=224`
+2. Liam Johnson — Speaking Mentor — `https://framerusercontent.com/images/vLCwMzYDl3zUQZdwzLwiHOtkTs.png`
+
+Container: `flex flex-row items-center gap-2 sm:gap-3 flex-shrink-0`. Each coach is a `<GlassCard>` `flex-1 sm:flex-initial flex items-center gap-3 pl-[5px] pr-6 sm:pr-[22px] py-[5px] sm:py-[3px]` containing a 14×14 (w-14 h-14) rounded-[18px] overflow-hidden avatar image, then a flex-col gap-0 with name (`text-[15px] sm:text-[16px] font-medium text-black whitespace-nowrap`) and role (`text-[13px] sm:text-[14px] font-normal text-[#a0a0a0] whitespace-nowrap`).
+
+## VideoCard component
+Outer: `min-h-[320px] lg:h-[450px] xl:h-full`. Inside a `<GlassCard className="w-full h-full lg:overflow-hidden">` with `p-1.5 flex flex-col lg:h-full`.
+
+**Media area**: `flex gap-3 aspect-[4/3] sm:aspect-[16/10] lg:aspect-auto lg:flex-1 lg:min-h-0`.
+
+*Thumbnails column* (`hidden md:flex w-[180px] lg:w-[220px] xl:w-[260px] flex-col gap-3 flex-shrink-0`), three `flex-1 rounded-[18px] overflow-hidden relative min-h-0` tiles, each an image object-cover with a bottom-left label chip `bg-[rgba(0,0,0,0.2)] backdrop-blur-xl text-white text-[14px] font-medium px-3 py-1.5 rounded-[11px]` (WebkitBackdropFilter blur(24px)):
+1. Sophia — `https://framerusercontent.com/images/UdLuwJVnNqzikbdCbwoMH6YMu4.png`
+2. Jack — `https://framerusercontent.com/images/k69zlZLfKDyfEsIVIyZYZwUH9wQ.png`
+3. Liam — `https://framerusercontent.com/images/rjQedfhqIeAXdy1x3CVVTKXCzk.png`
+
+*Main video*: `flex-1 rounded-[18px] overflow-hidden relative` with `<img src="https://framerusercontent.com/images/ojrVd1wjK92ZEBpdjPkR9uc.png">` object-cover. Centered bottom overlay (`absolute bottom-5 left-1/2 -translate-x-1/2`) containing `<BlobContainer width={248} lobes={4} height={56} bg="rgba(20,20,20,0.75)" blur={false}>` with four flex-1 56px buttons:
+1. CameraIcon (hover bg-white/15, text-white/90→white)
+2. HeadphonesIcon
+3. MicrophoneIcon
+4. PhoneOffIcon on `bg-[#f95555] hover:bg-[#e04444]` with `boxShadow: '0 4px 12px rgba(249,85,85,0.4)'`, text-white. All 28px icons.
+
+**Transcript**: `px-[14px] pt-3 pb-2 flex-shrink-0` with `<p>` `text-[15px] sm:text-[16px] lg:text-[18px] xl:text-[20px] font-medium text-black leading-6 sm:leading-7 lg:leading-8` and exact text:
+> "Hi everyone, and welcome to your very first English lesson! My name is Isabella, and I'm so excited to help you start your English journey. In this lesson, we'll learn how to say hello, introduce yourself, and ask simple questions. Let's begin!"
+
+**Bottom controls**: `px-[14px] pb-2 flex items-center justify-between flex-shrink-0 mt-1 sm:mt-0`.
+- Left: `<BlobContainer width={240} lobes={2} height={56} blur={false}>` with two flex-1 56px buttons — "Transcription" (`bg-black text-white text-[14px] font-medium rounded-[18px]` + inset white glow boxShadow) and "Subtitle" (`text-[14px] font-medium text-black`).
+- Right (hidden on small): a `relative` 280×56 div rendering `<RecorderBlob/>` then an absolute inset-0 flex row: a flex-1 area with a 40-bar waveform (`w-[2px] rounded-full`, bars 22 in `bg-black/50` and rest `bg-black/15`, heights from `Math.sin(i*0.4)*10 + 12 + Math.sin(i*1.2)*5` clamped min 4px) with a red playhead `h-[32px] w-[1.5px] bg-red-500` at `left: 22*3.5 px`; and a 50×50 `bg-black rounded-[14px]` record button with inset glow holding a `w-3.5 h-3.5 bg-red-500 rounded-full` dot.
+
+### RecorderBlob SVG
+Width 280, height 56, pinchX = width-56 = 224, pinchDepth=8, r=20, spread=22. Closed path with a single pinch on top and bottom at pinchX. `<svg width=280 height=56 viewBox="0 0 280 56">` with a `<defs>` filter `recorder-glow` (feFlood white 0.7 → composite in → gaussianBlur stdDeviation 3 → composite in), then two paths: `fill="rgba(255,255,255,0.82)"` and `fill="rgba(255,255,255,0.5)" filter=url(#recorder-glow)`.
+
+## ChatPanel component
+Outer `lg:h-[450px] xl:h-full`. Inside `<GlassCard className="w-full h-full lg:overflow-hidden flex flex-col">`.
+
+**Header**: `px-5 pt-5 pb-3 flex items-start justify-between flex-shrink-0`. Left: flex-col gap-[5px] with `<h2>` "Room Chat" (`text-[24px] lg:text-[28px] font-medium text-black leading-tight`) and a row with a 3.5×3.5 status dot (outer `bg-[#29c012] opacity-20` + inner 2×2 `bg-[#29c012]` at left-3 top-3) plus "67 People in chat" (`text-[14px] text-[#29c012]`). Right: 44×44 `bg-white border border-gray-200 rounded-[14px]` button with ExpandIcon 24px (hover bg-black, icon black→white).
+
+**Chat area**: `flex-1 min-h-[300px] mx-1.5 mb-1.5 rounded-[18px] flex flex-col relative lg:min-h-0 overflow-hidden backdrop-blur-xl`, inline `background: linear-gradient(180deg, rgba(255,235,230,0.5) 0%, rgba(255,225,220,0.5) 100%)`, `WebkitBackdropFilter: blur(24px)`. Add the gradient-border overlay (1px padding, white→transparent gradient, mask trick).
+
+**Messages** (`flex-1 p-4 pb-[140px] flex flex-col gap-4 overflow-y-auto min-h-0`), revealed progressively via state `visibleMessages` (0→4) and `showTyping` typing indicator. Timer delays: `[800, 2200, 3800, 5500]` ms; each fires `showTyping=true` then 600ms later `showTyping=false; setVisibleMessages(i+1)`.
+
+1. **Anna M.** (visible≥1): `animate-chat-bubble`, flex gap-1.5 items-end. Avatar 50×50 rounded-[15px] `https://framerusercontent.com/images/vvPLPw59fpFHr4f5fTzD3clqPs.png`. Bubble `rounded-[18px_18px_18px_6px] p-[15px] flex-1` `background: rgba(255,255,255,0.9)` with header row (name `text-[16px] font-medium text-black` + "07:23 AM" `text-[14px] text-[#a0a0a0]`) and message `text-[16px] font-medium text-black`: "Let's help each other out! 🤗 Maybe we can do a quick quiz together later? 📝"
+2. **You** (visible≥2): `animate-chat-bubble-right`, items-end. Black bubble `rounded-[18px] bg-black p-[15px] max-w-[304px] w-full` + inset white glow. Header "You" white + DoubleCheckIcon 16px white/60 + "07:34 AM". Text: "Sure, absolutely! That sounds great! 🙌"
+3. **You** (visible≥3): same, `rounded-[18px_18px_6px_18px]`. Text: "By the way, could you send me an invitation to the next English lesson?"
+4. **Jake T.** (visible≥4): `animate-chat-bubble`. Avatar `https://framerusercontent.com/images/CKUL4OElXdNJgyym2CEdnemp9I.png`. White bubble with "Jake T." + "07:40 AM" and text "Yes, of course! Here you go 😄" then a **promo card**: `rounded-[10px] p-4 flex flex-col gap-4` `background: linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(51,51,51,1) 100%)`. Top row: "Unlock Your English Potential" (white, w-[126px], text-[16px] font-medium) + two overlapping 48×48 avatars (`-space-x-2`, 2.5px white borders) — z-10 `https://framerusercontent.com/images/UdLuwJVnNqzikbdCbwoMH6YMu4.png` and z-0 `https://framerusercontent.com/images/k69zlZLfKDyfEsIVIyZYZwUH9wQ.png`. Bottom: white "Join Now" button `bg-white text-black text-[14px] font-medium py-2 rounded-lg` with `boxShadow: 'inset 0 0 6px 1px rgba(0,0,0,0.32)'`.
+
+**Typing indicator** (when showTyping): `animate-chat-bubble`, white bubble `rounded-[18px] px-5 py-4` `background: rgba(255,255,255,0.9)` with three `typing-dot` `w-2 h-2 bg-black/50 rounded-full`.
+
+**Bottom panel** (`absolute bottom-0 left-0 right-0 z-10`): a backdrop layer `absolute inset-0 backdrop-blur-xl bg-white/30` with `WebkitBackdropFilter: blur(24px)` and a mask `linear-gradient(to bottom, transparent 0%, black 40%)`. Then a relative div containing:
+
+## State & behavior
+- `activeSection` state (number) updated by an IntersectionObserver watching all `[data-section]` elements (threshold 0.3); on intersect, set to `Number(dataset.section)`.
+- `scrollToSection(index)` scrolls the matching `[data-section="${index}"]` into view smoothly.
+- `sidebarOpen` state toggled by a mobile menu button (`fixed top-4 right-4 z-50 lg:hidden w-10 h-10 rounded-[12px]` showing MenuIcon/CloseIcon 28px) and a mobile overlay (`fixed inset-0 bg-black/10 backdrop-blur-sm z-40 lg:hidden`). Sidebar uses `lg:translate-x-0` and `translate-x-0`/`-translate-x-full` based on sidebarOpen.
+
+## Exact asset URLs (use verbatim)
+- Logo: `https://framerusercontent.com/images/QP3sofr3Nrny7jzPrzvgthcZ8.png?width=180&height=180`
+- Profile: `https://framerusercontent.com/images/Yp9r5prd7RdO6pI9LBTeM1N2uxw.png`
+- Isabella coach: `https://framerusercontent.com/images/CyLJLVV8UGC7ng7KqoUZvwF9q0.png?width=224&height=224`
+- Liam coach: `https://framerusercontent.com/images/vLCwMzYDl3zUQZdwzLwiHOtkTs.png`
+- Sophia thumb: `https://framerusercontent.com/images/UdLuwJVnNqzikbdCbwoMH6YMu4.png`
+- Jack thumb: `https://framerusercontent.com/images/k69zlZLfKDyfEsIVIyZYZwUH9wQ.png`
+- Liam thumb: `https://framerusercontent.com/images/rjQedfhqIeAXdy1x3CVVTKXCzk.png`
+- Main video: `https://framerusercontent.com/images/ojrVd1wjK92ZEBpdjPkR9uc.png`
+- Anna M. avatar: `https://framerusercontent.com/images/vvPLPw59fpFHr4f5fTzD3clqPs.png`
+- Jake T. avatar: `https://framerusercontent.com/images/CKUL4OElXdNJgyym2CEdnemp9I.png`
+
+## Icons (lucide-react)
+Use these exact icons: `Video, PieChart, ListChecks, Folder, Mail, Settings, Search, Bell, Sun, Moon, CheckCheck, Menu, X, Play, Volume2, Maximize2, ChevronLeft, ChevronRight, Pause, VolumeX, ChevronDown, ChevronUp, Check, Lock, BookOpen, Image, Pencil, FileText, MessageSquare, Headphones, Mic, PhoneOff, File, AudioLines, Video, Send, Camera`. Size 28 unless noted. Stroke width default except video controls (2.5).
+
+## Design notes
+- All glass surfaces use `rgba(255,255,255,0.6)` with inset shadow `0px 0px 5px rgba(221,221,221,0.5)` and blur(8px), plus the gradient border overlay.
+- Blob containers use `rgba(255,255,255,0.60)` default bg with blur(24px), except the dark video control blob (`rgba(20,20,20,0.75)`, no blur) and the two no-blur bottom controls.
+- Rounded corners: tiles 18px, blobs 18px, cards 18-24px, avatars 13-18px.
+- 8px spacing system; gap-3 (12px) and gap-2 (8px) dominate.
+- Black active state always has `boxShadow: 'inset 0 0 12px 2px rgba(255,255,255,0.5)'`.
+- Red accent `#f95555` for hang-up and record dot; green `#29c012` for online status; muted gray `#a0a0a0` for timestamps.
+- All text is Urbanist, weights 400/500/600/700, black color `text-black`.
+- Entrance animations staggered: title 0.15s, chips 0.3s, video 0.4s, chat 0.55s.
+```

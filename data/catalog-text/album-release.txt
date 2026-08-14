@@ -1,0 +1,211 @@
+```
+Build a full-screen music album carousel page. Single-page React + TypeScript + Vite + Tailwind CSS app. Use `lucide-react` for icons only (ChevronLeft, ChevronRight, ArrowLeft). No other dependencies. Import Google Fonts Inter (weights 300, 400, 500, 700). Body uses `font-family: 'Inter', sans-serif` and `overflow: hidden`.
+
+---
+
+## SLIDE DATA (5 albums)
+
+` ` `
+Slide 1:
+- image: https://soft-zoom-63098134.figma.site/_assets/v11/9bcce6dd6d1fc925f7ef936632184ae003cee862.png
+- color: #940C4F
+- title: MIDNIGHT ECHO
+- year: 2024
+- description: "Midnight Echo" is an album that captures the essence of musical unity and creativity. Each track is a unique symphony of sound, meticulously crafted within the walls of our creative sanctuary.
+- albumCover: https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260714_073059_cfc6e59d-2e58-416b-8572-e40a972f50d9.png&w=1280&q=85
+- tracks: Echoes of Silence, Velvet Shadows, Lunar Drift, Crimson Pulse, Neon Requiem
+
+Slide 2:
+- image: https://soft-zoom-63098134.figma.site/_assets/v11/6c45b058cb67766a23608a7052ebbfd6230928a1.png
+- color: #002AA6
+- title: OCEAN DEPTHS
+- year: 2024
+- description: "Ocean Depths" explores the vast landscapes of ambient sound. Dive into layers of atmospheric textures that transport you to the deepest corners of imagination and sonic wonder.
+- albumCover: https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260714_072532_76321f59-1b84-48b3-8573-64b6602dabac.png&w=1280&q=85
+- tracks: Abyssal Current, Tidal Resonance, Coral Hymn, Deep Blue Dream, Phosphor Waves
+
+Slide 3:
+- image: https://soft-zoom-63098134.figma.site/_assets/v11/3c2d9bbd7471512d0568904d1ebe2f52806bc51a.png
+- color: #D34607
+- title: SOLAR FLARE
+- year: 2024
+- description: "Solar Flare" ignites with explosive energy and raw passion. A collection of tracks that burn with intensity, each composition radiating warmth and power from our studio sessions.
+- albumCover: https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260714_073145_116f0272-4ca8-4573-aa29-5e4032a97031.png&w=1280&q=85
+- tracks: Corona Burst, Plasma Tide, Ember Ascent, Molten Core, Sunspot Ritual
+
+Slide 4:
+- image: https://soft-zoom-63098134.figma.site/_assets/v11/d63aec051776f1c6dfd021a32d2cb81de24d281c.png
+- color: #AEDC40
+- title: NEON GARDEN
+- year: 2024
+- description: "Neon Garden" blooms with vibrant electronic textures and organic rhythms. A fusion of natural beauty and synthetic wonder, cultivated in our state-of-the-art creative space.
+- albumCover: https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260714_073159_df69d213-36d8-4a5f-a11c-8316e41de348.png&w=1280&q=85
+- tracks: Chlorophyll Beat, Synthetic Bloom, Vine Circuit, Petal Static, Root Frequency
+
+Slide 5:
+- image: https://soft-zoom-63098134.figma.site/_assets/v11/d021b7fb3e8cc3ce451b3b039758e4ef7532b409.png
+- color: #FDC809
+- title: GOLDEN HOUR
+- year: 2024
+- description: "Golden Hour" captures the fleeting magic of twilight in sound. Warm, luminous compositions that shimmer with nostalgic beauty, crafted during inspired late-afternoon sessions.
+- albumCover: https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260714_073410_4f7583c9-b453-4931-b35d-9450124484c6.png&w=1280&q=85
+- tracks: Amber Glow, Horizon Haze, Dusk Serenade, Gilded Moment, Sunset Reverie
+` ` `
+
+---
+
+## TEXT COLOR LOGIC
+
+Colors `#940C4F`, `#002AA6`, `#D34607` are dark -- use white text (`text-white`). Colors `#AEDC40` and `#FDC809` are light -- use dark text (`text-gray-900`). All text and UI elements adapt based on the current slide's color. Navigation button backgrounds use `bg-white/10` on dark slides, `bg-black/10` on light slides.
+
+---
+
+## MAIN LAYOUT (Carousel View)
+
+Full viewport (`h-screen w-full overflow-hidden`). Solid background color from the active slide. Content padded `px-6 md:px-16 lg:px-24`, `pt-8 pb-8 md:py-12 md:pt-12`.
+
+**Top section** (flexbox, `md:flex-row`, column on mobile, `mb-auto`):
+- Left: Slide title as `<h1>`, `text-4xl md:text-6xl`, `font-light`, `tracking-tight leading-none`, `max-w-xs md:max-w-sm`. Uses Inter font explicitly.
+- Right: Slide description in `<p>`, `text-sm md:text-base`, `leading-relaxed opacity-80`, inside a `max-w-md` wrapper.
+
+**Carousel section** (flex-1, centered vertically and horizontally):
+- Container: `relative w-full flex items-center justify-center h-[280px] md:h-[480px]`.
+- Each slide is `position: absolute` with inline styles for transform, zIndex, opacity.
+
+---
+
+## CAROUSEL CARDS (IMPORTANT: No shadow, no background, no border)
+
+Each card is a single div wrapping an img. The div has ONLY these classes: `w-[240px] h-[240px] md:w-[480px] md:h-[480px] rounded-2xl overflow-hidden`. The img has ONLY: `w-full h-full object-cover`.
+
+**DO NOT add any of the following to carousel cards:** `shadow`, `shadow-lg`, `shadow-2xl`, `bg-*`, `border`, `ring`, or any elevation/card styling. The images float directly on the colored background with no visible frame. The ONLY visual boundary is the `rounded-2xl` clip from `overflow-hidden`. No wrapper div with background or shadow should exist around the cards.
+
+The outer positioning wrapper (the absolutely-positioned div that handles transforms) also has ZERO visual styling -- only `position: absolute`, a cursor style on the active card, and the inline style object.
+
+---
+
+## CAROUSEL TRANSFORMS
+
+Calculate offset from center using modulo wrapping (infinite loop both directions):
+- All transitions: `all 0.7s cubic-bezier(0.4, 0, 0.2, 1)`.
+
+---
+
+## NAVIGATION BUTTONS
+
+Two circular buttons below the carousel, `flex items-center gap-4`, centered. Each button: `w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-sm`. Background: `bg-white/10` on dark, `bg-black/10` on light. Hover: `scale-110`. Icons: ChevronLeft and ChevronRight from lucide-react, `w-5 h-5`, same text color class as other text.
+
+On mobile only, show the current slide title (`text-lg font-light tracking-widest`) above the nav buttons.
+
+---
+
+## BACKGROUND TRANSITION (Circle Reveal)
+
+When navigating to a new slide, trigger a circle-expand animation:
+- Render a div with the NEW slide's color. Position it absolutely at `top: 50%; left: 50%` with `width: 250vmax; height: 250vmax; border-radius: 50%; margin-top: -125vmax; margin-left: -125vmax`. This centers a massive circle that will cover the entire screen when fully scaled.
+- Apply CSS animation: `transform: scale(0)` to `scale(1)` over `2400ms` with timing function `cubic-bezier(0.05, 0.7, 0.1, 1)`, `animation-fill-mode: forwards`.
+- The div sits at `z-index: 1` (above the base background, below the content at z-index 2). Pointer-events none.
+- After 2400ms (via setTimeout), update the base background color to the new color and remove/unmount the circle div.
+- Use a `key` prop (incrementing counter) to force React to remount a fresh circle div on each navigation.
+
+---
+
+## DETAIL VIEW (Click center card to open)
+
+Clicking the center carousel image opens an album detail overlay.
+
+**Opening sequence:**
+1. Set `detailAnimating = true`, then after 50ms set `detailView = true` (to trigger CSS transitions).
+2. The carousel wrapper transitions to `opacity-0 scale-95` with `duration-700 ease-out` and `pointer-events-none`.
+3. The detail overlay (absolute, inset-0, z-index 3) becomes visible.
+
+**Desktop layout (hidden on mobile, `md:flex`):**
+
+Left half (50% width, `relative h-full flex items-center`):
+
+  - `left` from `calc(50% - 240px)` to `calc(25% - 290px)` 
+  - `transform rotate` from `0deg` to `90deg`
+  - Duration: `2000ms`, timing: `cubic-bezier(0.4, 0, 0.1, 1)`
+
+Right half (`flex-1`, padded `pr-8 md:pr-16 lg:pr-24 pl-8 lg:pl-12`):
+- Title: `text-4xl md:text-5xl lg:text-6xl font-light tracking-tight leading-none mb-2`
+- Year: `text-lg md:text-xl opacity-60 mb-8`
+- Description: `text-sm md:text-base leading-relaxed opacity-70 mb-10 max-w-md`
+- "Buy Now" button (see styling below)
+- Entire right column fades in with `translate-x-12` to `translate-x-0`, `duration-700 ease-out`, `transition-delay: 300ms`.
+
+**Mobile layout (md:hidden, stacked, scrollable with `overflow-y-auto`, `pt-20 px-6 pb-8`):**
+- Album cover: `w-[280px] h-[360px] rounded-lg shadow-2xl mb-8`. Fades up from `translate-y-8`.
+- Text block (center-aligned): title `text-3xl`, year `text-lg opacity-60 mb-6`, description `text-sm max-w-sm mx-auto mb-8`, then Buy Now button. Fades up with 200ms delay.
+
+**Close button:** ArrowLeft icon, positioned `absolute top-6 right-6 md:top-8 md:right-16`, z-10. Same circular style as nav buttons (`w-10 h-10 rounded-full backdrop-blur-sm`). Fades in from `-translate-y-4` to `translate-y-0` with 400ms delay.
+
+**Closing:** Set `detailView = false` (elements animate out via their transition classes returning to initial state). After 800ms timeout, set `detailAnimating = false` to unmount the overlay and restore the carousel.
+
+---
+
+## BUY NOW BUTTON
+
+`px-12 py-3 border rounded-sm text-sm tracking-widest uppercase`. On dark backgrounds: `border-white/40 text-white hover:bg-white/10`. On light: `border-gray-900/40 text-gray-900 hover:bg-gray-900/10`. Hover: `scale-105`. Transition: `duration-300`.
+
+---
+
+## CSS (index.css)
+
+` ` `css
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; overflow: hidden; }
+
+@keyframes circleExpand {
+  from { transform: scale(0); }
+  to { transform: scale(1); }
+}
+.circle-reveal {
+  animation: circleExpand 2400ms cubic-bezier(0.05, 0.7, 0.1, 1) forwards;
+}
+
+@keyframes vinylSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.vinyl-spin { animation: vinylSpin 4s linear infinite; }
+
+@keyframes trackFadeIn {
+  from { opacity: 0; transform: translateX(16px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.detail-track-in { animation: trackFadeIn 500ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+
+.cubic-bezier-smooth { transition-timing-function: cubic-bezier(0.4, 0, 0.1, 1); }
+` ` `
+
+---
+
+## STATE MANAGEMENT
+
+Single component, no routing. React state:
+- `currentIndex` (number) -- active slide
+- `bgColor` (string) -- current solid background
+- `nextBgColor` (string | null) -- color for circle reveal, null when not transitioning
+- `transitionKey` (number) -- incrementing key to remount circle div
+- `detailView` (boolean) -- controls CSS transition classes on detail elements
+- `detailAnimating` (boolean) -- controls mount/unmount of detail overlay
+
+Carousel wraps infinitely using modulo arithmetic in both directions.
+
+---
+
+## RESPONSIVE BREAKPOINTS
+
+- Mobile (<768px): Cards 240x240, translateX offset 260px. Detail stacks vertically. Mobile-only title below carousel. Padding px-6, pt-8 pb-8.
+- Desktop (>=768px): Cards 480x480, translateX offset 480px. Detail is side-by-side. Padding px-16, py-12.
+- Large (>=1024px): Detail album cover grows to 420x540. Padding px-24.
+
+---
+```

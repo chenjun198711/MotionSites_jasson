@@ -1,0 +1,270 @@
+```
+# EXACT RECREATION PROMPT
+
+## Tech Stack
+Create a Vite + React + TypeScript project with Tailwind CSS. Install these exact dependencies:
+- `framer-motion` (for animations)
+- `lucide-react` (for the ArrowUpRight icon)
+- `tailwindcss`, `postcss`, `autoprefixer` (devDependencies)
+
+## Fonts (in index.html `<head>`)
+` ` `html
+<link href="https://db.onlinewebfonts.com/c/23ed6ab5114b3c4b57abae46cf8a5029?family=PP+Editorial+New+Ultralight" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+` ` `
+Set page `<title>` to `Lumenvox Atelier`.
+
+## Global CSS (src/index.css)
+` ` `css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+` ` `
+
+## Custom CSS Classes (in index.css)
+
+### Liquid Glass Button Effect
+` ` `css
+.liquid-glass {
+  background: rgba(255, 255, 255, 0.01);
+  background-blend-mode: luminosity;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: none;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.liquid-glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.4px;
+  background: linear-gradient(180deg,
+    rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.15) 20%,
+    rgba(255,255,255,0) 40%, rgba(255,255,255,0) 60%,
+    rgba(255,255,255,0.15) 80%, rgba(255,255,255,0.45) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+` ` `
+
+### Hero Heading Font
+` ` `css
+.hero-heading {
+  font-family: 'PP Editorial New Ultralight', serif;
+  font-weight: 200;
+  line-height: 0.85;
+  letter-spacing: -0.02em;
+}
+` ` `
+
+### Keyframe Animations
+` ` `css
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-down {
+  animation: slideDown 0.8s ease-out forwards;
+}
+` ` `
+
+### Mobile Menu Overlay (full-screen, dark #030318 background)
+` ` `css
+.menu-overlay {
+  position: fixed; inset: 0; z-index: 40;
+  display: flex; flex-direction: column;
+  background: #030318;
+  opacity: 0; visibility: hidden;
+  transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+              visibility 0s linear 0.5s;
+}
+
+.menu-overlay.is-open {
+  opacity: 1; visibility: visible;
+  transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+              visibility 0s linear 0s;
+}
+
+.menu-overlay.is-closing {
+  opacity: 0;
+  transition: opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.15s,
+              visibility 0s linear 0.55s;
+}
+` ` `
+
+### Menu Lines (horizontal dividers that scale in)
+` ` `css
+.menu-overlay .menu-line {
+  display: block; width: 100%; height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.menu-overlay.is-open .menu-line { transform: scaleX(1); }
+` ` `
+Stagger delays for menu lines: `0.05s, 0.15s, 0.25s, 0.35s` (nth-child 1-4).
+
+### Menu Items (staggered slide-up)
+` ` `css
+.menu-overlay .menu-item {
+  opacity: 0; transform: translateY(30px);
+  transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.menu-overlay.is-open .menu-item { opacity: 1; transform: translateY(0); }
+.menu-overlay.is-closing .menu-item {
+  opacity: 0; transform: translateY(-20px);
+  transition: opacity 0.3s, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+` ` `
+Opening stagger delays: 0.1s, 0.17s, 0.24s, 0.31s, 0.38s (nth-child 1-5).
+Closing stagger delays: 0.12s, 0.09s, 0.06s, 0.03s, 0s (nth-child 1-5).
+
+### Hamburger Icon
+` ` `css
+.hamburger-line {
+  display: block; width: 24px; height: 1.5px; background: white;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+  transform-origin: center;
+}
+.hamburger-open .hamburger-line:nth-child(1) { transform: translateY(5px) rotate(45deg); }
+.hamburger-open .hamburger-line:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.hamburger-open .hamburger-line:nth-child(3) { transform: translateY(-5px) rotate(-45deg); }
+` ` `
+
+## StaggeredFade Component (src/components/StaggeredFade.tsx)
+A component that splits text into individual letters and animates each letter with a staggered fade-up using framer-motion. Props: `text` (string), `delay` (per-letter delay, default 0.05), `className` (optional).
+
+- Uses `useInView` from framer-motion with `once: true` to trigger when scrolled into view.
+- Each letter starts at `{ opacity: 0, y: 8 }` and animates to `{ opacity: 1, y: 0 }`.
+- Per-letter transition: `{ delay: i * delay, duration: 0.4, ease: [0.22, 1, 0.36, 1] }`.
+- Spaces are rendered as non-breaking spaces (`\u00A0`).
+
+## Page Structure (App.tsx)
+
+### State
+- `menuOpen` (boolean) — controls mobile menu visibility
+- `menuClosing` (boolean) — controls closing animation phase
+- On `menuOpen` change: set `body.style.overflow` to `'hidden'` or `''`
+- `handleCloseMenu`: sets `menuClosing=true`, then after 550ms sets `menuOpen=false` and `menuClosing=false`
+- `toggleMenu`: if open & not closing → close; if not closing → open
+
+### Nav Items Array
+` ` `
+['REEL WORK', 'PROCESS & METHODS', 'INNER WORKSHOP']
+` ` `
+
+### Layout (root div: `relative w-full h-screen overflow-hidden`)
+
+**1. Background Video** (absolute, full-cover):
+` ` `html
+<video
+  className="absolute inset-0 w-full h-full object-cover"
+  src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260717_084049_407d831b-67ef-4e76-9330-45386e0a9915.mp4"
+  autoPlay loop muted playsInline
+/>
+` ` `
+
+**2. Bottom Gradient Overlay** (for text contrast):
+` ` `html
+<div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-[#030318]/80 to-transparent pointer-events-none" />
+` ` `
+
+**3. Content Container** (`relative z-10 flex flex-col h-full px-4 sm:px-6 md:px-10 lg:px-14 py-4 sm:py-5 md:py-8`):
+
+**3a. Desktop Navbar** (`hidden lg:flex items-center justify-between w-full animate-slide-down`):
+- Brand text: `LUMENVOX ATELIER` — white, 10px, tracking-[0.15em], uppercase, font-medium
+- 3 nav links (from array): white/80, 10px, tracking-[0.15em], uppercase, hover→white, 300ms transition
+- CTA link: `START A PROJECT` + ArrowUpRight icon (size 12) — white, 10px, tracking-[0.15em], uppercase, hover→white/80
+
+**3b. Mobile/Tablet Navbar** (`flex lg:hidden items-center justify-between w-full animate-slide-down relative z-50`):
+- Brand text: `LUMENVOX ATELIER` (same styling)
+- Hamburger button: 40×40px, 3 lines (24px × 1.5px, white), gap-[5px]. Class `hamburger-open` applied when `menuOpen && !menuClosing`.
+
+**3c. Mobile Menu Overlay** (class `menu-overlay` + `is-open` when open + `is-closing` when closing):
+- Full-screen flex column, centered, `#030318` background
+- Each nav item wrapped with `menu-line` dividers (1px, white/10%, scaleX animation)
+- Nav items: white, `text-xl sm:text-2xl`, tracking-[0.25em], uppercase, `py-6 sm:py-8`, hover→white/70
+- Final item: `START A PROJECT` + ArrowUpRight (size 18), flex with gap-3
+
+**3d. Spacer** (`flex-1`)
+
+**3e. Hero Content** (bottom-aligned):
+
+**Row 1 — Large Typography** (`flex flex-col md:flex-row md:justify-between md:items-end mb-4 sm:mb-6 md:mb-8`):
+
+Left column:
+- `<p>`: `hero-heading`, `text-[6vw] sm:text-[5vw] md:text-[3.5vw] lg:text-[3vw]`, white, `mb-2 sm:mb-4 md:mb-6`. Text: `Visions So` via StaggeredFade (delay=0.06)
+- `<h1>`: `hero-heading`, `text-[14vw] sm:text-[13vw] md:text-[10vw] lg:text-[9vw]`, white, `leading-none`. Text: `UNDENIABLE` via StaggeredFade (delay=0.05)
+
+Right column (`text-right mt-2 sm:mt-3 md:mt-0`):
+- `<p>`: `hero-heading`, `text-[14vw] sm:text-[13vw] md:text-[10vw] lg:text-[9vw]`, white, `mb-2 sm:mb-4 md:mb-6`, `leading-none`. Text: `So` via StaggeredFade (delay=0.08)
+- `<h1>`: same sizing. Text: `RESIST` via StaggeredFade (delay=0.05)
+
+**Row 2 — Bottom Bar** (`flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6 pt-4 sm:pt-5 md:pt-6`):
+
+Left column (`flex items-start gap-4 sm:gap-5 md:gap-8`):
+
+  - Animation: `initial={{ opacity: 0, scale: 0.8 }}` → `animate={{ opacity: 1, scale: 1 }}`, `transition={{ delay: 0.6, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}`
+  - Sizing: `w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20`, `rounded-2xl`, `overflow-hidden`, `flex-shrink-0`, `border border-white/20`
+  - Image src: `https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260717_095034_599c0e43-e5a1-48c0-b169-f1267d71a58c.png&w=1280&q=85`
+  - Image class: `w-full h-full object-cover`, alt="Logo"
+
+  - Column 1 (framer-motion `motion.div`, delay=0.8, y:16→0, duration 0.6, same ease):
+    - Label: `01 — OUR CRAFT` — white, `text-[10px] sm:text-[11px] md:text-[13px]`, tracking-[0.15em], uppercase, `mb-1 sm:mb-1.5`
+    - Description: `Visual systems, immersive platforms and artistic vision forged into one cohesive entity.` — white/80, `text-[9px] sm:text-[10px] md:text-[11px]`, `leading-relaxed`, uppercase, tracking-wide, `max-w-[220px] md:max-w-[260px]`
+  - Column 2 (framer-motion, delay=1.0, same animation):
+    - Label: `02 — OUR APPROACH` (same label styling)
+    - Description: `Intention shapes the story. Form amplifies the mood. Detail seals it in memory.` (same desc styling)
+
+Right column — **CTA Button** (framer-motion `motion.a`, delay=1.2, y:16→0, duration 0.6, same ease):
+- Class: `liquid-glass rounded-full px-5 py-2.5 sm:px-6 sm:py-3 md:px-8 md:py-4 flex items-center gap-2 sm:gap-3 text-white text-[9px] sm:text-[10px] md:text-xs tracking-[0.2em] uppercase hover:bg-white/5 transition-all duration-300 group`
+- Text: `START A PROJECT`
+- Icon: ArrowUpRight (size 14), class: `group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300`
+
+## Animation Timing Summary
+| Element | Animation | Delay | Duration | Ease |
+|---------|-----------|-------|----------|------|
+| Navbar | slideDown | 0s | 0.8s | ease-out |
+| Hero letters | staggered fade-up | per-letter × delay | 0.4s | [0.22,1,0.36,1] |
+| Logo image | scale 0.8→1 + fade | 0.6s | 0.6s | [0.22,1,0.36,1] |
+| Info col 1 | y:16→0 + fade | 0.8s | 0.6s | [0.22,1,0.36,1] |
+| Info col 2 | y:16→0 + fade | 1.0s | 0.6s | [0.22,1,0.36,1] |
+| CTA button | y:16→0 + fade | 1.2s | 0.6s | [0.22,1,0.36,1] |
+| Mobile menu items | y:30→0 + fade | 0.1-0.38s stagger | 0.5s | [0.22,1,0.36,1] |
+| Menu lines | scaleX 0→1 | 0.05-0.35s stagger | 0.6s | [0.22,1,0.36,1] |
+
+## Colors
+- Background: `#030318` (dark navy)
+- Text primary: white
+- Text secondary: `white/80`
+- Borders/dividers: `white/20`, `white/10`
+- Gradient overlay: `from-[#030318]/80 to-transparent`
+
+## Exact Copy (all text on the page)
+- Brand: `LUMENVOX ATELIER`
+- Nav: `REEL WORK`, `PROCESS & METHODS`, `INNER WORKSHOP`
+- Hero: `Visions So` / `UNDENIABLE` / `So` / `RESIST`
+- Info 1 label: `01 — OUR CRAFT`
+- Info 1 desc: `Visual systems, immersive platforms and artistic vision forged into one cohesive entity.`
+- Info 2 label: `02 — OUR APPROACH`
+- Info 2 desc: `Intention shapes the story. Form amplifies the mood. Detail seals it in memory.`
+- CTA: `START A PROJECT`
+
+## Responsive Breakpoints
+
+---
+```

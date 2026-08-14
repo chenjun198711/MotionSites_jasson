@@ -1,0 +1,383 @@
+```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Denta — App Screens (Standalone)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<style>
+  @font-face{font-family:'Luxora Grotesk';src:url('assets/fonts/LuxoraGrotesk-Light.ttf') format('truetype');font-weight:300;font-style:normal;font-display:swap;}
+  @font-face{font-family:'Luxora Grotesk';src:url('assets/fonts/LuxoraGrotesk-Regular.ttf') format('truetype');font-weight:400;font-style:normal;font-display:swap;}
+  @font-face{font-family:'Luxora Grotesk';src:url('assets/fonts/LuxoraGrotesk-Medium.ttf') format('truetype');font-weight:500;font-style:normal;font-display:swap;}
+  @font-face{font-family:'Luxora Grotesk';src:url('assets/fonts/LuxoraGrotesk-Bold.ttf') format('truetype');font-weight:700;font-style:normal;font-display:swap;}
+  @font-face{font-family:'Luxora Grotesk';src:url('assets/fonts/LuxoraGrotesk-Heavy.ttf') format('truetype');font-weight:800;font-style:normal;font-display:swap;}
+  :root{
+    --bg:#FAE0CD;
+    --screen:#F6F6F6;
+    --ink:#101010;
+    --pill-ink:#0B0B0B;
+    --pill-txt:#3A3A3A;
+    --pill-border:#E4E3E1;
+    --white:#ffffff;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+  html,body{height:100%;}
+  body{
+    background:var(--bg);
+    font-family:'Inter','Helvetica Neue',Arial,sans-serif;
+    display:flex;align-items:center;justify-content:center;
+    overflow:hidden;
+  }
+  #row{
+    display:flex;
+    align-items:flex-start;
+    gap:72px;
+    transform-origin:center center;
+  }
+  #row > .screen:first-child{
+    font-family:'Luxora Grotesk','Inter','Helvetica Neue',Arial,sans-serif;
+    margin-top:88px;
+  }
+  #row > .screen#s3{margin-top:54px;}
+  .screen{
+    position:relative;
+    flex:none;
+    width:511px;height:1137px;
+    background:var(--screen);
+    border-radius:44px;
+    overflow:hidden;
+    box-shadow:0 40px 80px -20px rgba(120,70,50,.28), 0 10px 30px rgba(120,70,50,.12);
+  }
+  .heading{
+    position:absolute;left:33px;top:68px;
+    font-weight:300;
+    font-size:66px;
+    line-height:66px;
+    letter-spacing:-0.8px;
+    color:var(--ink);
+    -webkit-text-stroke:0.6px var(--ink);
+  }
+  .search{
+    position:absolute;left:419px;top:70px;
+    width:68px;height:68px;border-radius:50%;
+    background:rgba(15,15,15,.05);
+    display:flex;align-items:center;justify-content:center;
+    backdrop-filter:blur(2px);
+  }
+  .lucide{stroke-width:1.6;display:block;}
+  .search .lucide{width:32px;height:32px;color:#1b1b1b;}
+  .pills{
+    position:absolute;top:228px;left:0;right:0;height:56px;
+  }
+  .pill{
+    position:absolute;top:0;height:56px;border-radius:28px;
+    display:flex;align-items:center;gap:11px;
+    font-size:25px;font-weight:400;letter-spacing:-.2px;
+    padding:0 26px;white-space:nowrap;
+  }
+  .pill.ghost{
+    border:1.5px solid var(--pill-border);
+    color:var(--pill-txt);
+    background:rgba(255,255,255,.35);
+  }
+  .pill.active{
+    background:var(--pill-ink);
+    color:#fff;
+    padding:0 30px;
+    font-weight:300;
+    -webkit-font-smoothing:antialiased;
+  }
+  .pill .lucide{flex:none;width:26px;height:26px;stroke-width:1.4;}
+  .pill-ico{flex:none;}
+  .p-dentist{left:-70px;}
+  .p-surgery{left:78px;width:171px;justify-content:center;gap:13px;}
+  .p-ortho{left:259px;}
+  .p-more{left:497px;}
+  .card{
+    position:absolute;left:15px;width:481px;border-radius:38px;overflow:hidden;
+    background-size:cover;background-position:center;
+    box-shadow:0 8px 18px -12px rgba(70,25,30,.35);
+  }
+  .card1{
+    top:309px;height:481px;
+    background-image:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.15)),url("https://flick-award-65707097.figma.site/_assets/v11/9f6628dbdf5b112d8557f18191e15661691584e1.png?w=512");
+  }
+  .card2{
+    top:805px;height:332px;
+    border-radius:38px 38px 0 0;
+    background-image:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.25)),url("https://flick-award-65707097.figma.site/_assets/v11/dddb4be9b85c58bb6b0597c80a5f76f70dd80673.png");
+  }
+  .card-title{
+    position:absolute;left:30px;
+    font-weight:300;font-size:50px;line-height:48px;letter-spacing:0.2px;
+    color:#fff;
+    -webkit-text-stroke:0.05px #fff;
+    text-shadow:0 1px 10px rgba(0,0,0,.18);
+  }
+  .card1 .card-title{top:38px;}
+  .card2 .card-title{top:32px;}
+  .info{
+    position:absolute;top:14px;right:14px;
+    width:72px;height:72px;border-radius:50%;
+    background:transparent;
+    backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .info .lucide{width:32px;height:32px;color:#fff;}
+  .chat{
+    position:absolute;left:30px;top:379px;
+    width:72px;height:72px;border-radius:50%;
+    background:rgba(22,10,14,.42);
+    backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .chat .lucide{width:30px;height:30px;color:#fff;}
+  .schedule{
+    position:absolute;left:127px;top:372px;
+    width:324px;height:79px;border-radius:40px;
+    background:#0A0A0A;
+    display:flex;align-items:center;justify-content:center;gap:16px;
+    color:#fff;font-size:21px;font-weight:300;letter-spacing:-.2px;
+  }
+  .schedule .lucide{width:27px;height:27px;color:#fff;}
+
+  /* ============ SCREEN 2 ============ */
+  #s2{background:#FAE0CC;font-family:'Luxora Grotesk','Inter',system-ui,sans-serif;border-radius:50.34px;overflow:hidden;isolation:isolate;transform:translateZ(0);backface-visibility:hidden;}
+  #s2 .s2-stage{position:absolute;left:50%;top:50%;width:870px;height:1807px;transform:translate(-50%,-50%) scale(.62922);transform-origin:center;background:#FAE0CC;}
+  #s2 .s2-photo{position:absolute;left:-1336px;top:0;width:2712px;height:1807px;display:block;object-fit:cover;}
+  #s2 .s2-brand{position:absolute;left:67px;top:124px;display:flex;align-items:center;gap:18px;color:#fff;}
+  #s2 .s2-mark{width:66px;height:66px;flex:none;}
+  #s2 .s2-mark svg{display:block;width:100%;height:100%;}
+  #s2 .s2-name{font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:56.5px;letter-spacing:-.02em;line-height:1;transform:translateY(1px);}
+  #s2 .s2-progress{position:absolute;left:676px;top:154px;display:flex;align-items:center;gap:15px;}
+  #s2 .s2-progress-pill{width:82px;height:11px;border-radius:6px;background:#fff;}
+  #s2 .s2-progress-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.25);}
+  #s2 .s2-callout{position:absolute;left:0;top:451px;width:384px;text-align:right;color:#fff;font-weight:300;font-size:48px;line-height:51px;}
+  #s2 .s2-frame{position:absolute;left:462px;top:286px;width:283px;height:291px;border-radius:14px;--gx:82px;--gy:72px;--bw:2.4px;}
+  #s2 .s2-frame::before,#s2 .s2-tip::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:var(--bw);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;}
+  #s2 .s2-frame::before{background:radial-gradient(var(--gx) var(--gy) at 0 0,rgba(255,255,255,.9),transparent 100%),radial-gradient(var(--gx) var(--gy) at 100% 0,rgba(255,255,255,.9),transparent 100%),radial-gradient(var(--gx) var(--gy) at 100% 100%,rgba(255,255,255,.9),transparent 100%),radial-gradient(var(--gx) var(--gy) at 0 100%,rgba(255,255,255,.9),transparent 100%);}
+  #s2 .s2-tip{position:absolute;left:170px;top:379px;width:240px;height:200px;border-radius:12px;--bw:2.4px;}
+  #s2 .s2-tip::before{background:radial-gradient(100px 85px at 100% 100%,rgba(255,255,255,.95),transparent 100%);}
+  #s2 .s2-veneers{position:absolute;left:488px;top:294px;width:236px;height:236px;object-fit:contain;object-position:top;}
+  #s2 .s2-marker{position:absolute;left:539px;top:709px;width:136px;height:136px;border-radius:50%;background:rgba(0,0,0,.215);border:1px solid rgba(255,255,255,.33);backdrop-filter:blur(2px);}
+  #s2 .s2-marker-dot{position:absolute;left:50%;top:50%;width:15px;height:15px;border-radius:50%;background:#fff;transform:translate(-50%,-50%);}
+  #s2 .s2-connector{position:absolute;left:0;top:0;width:870px;height:1807px;pointer-events:none;}
+  #s2 .s2-title{position:absolute;left:87px;top:1222px;color:#fff;font-weight:300;font-size:100px;letter-spacing:-.03em;line-height:102.5px;white-space:nowrap;}
+  #s2 .s2-swipe{position:absolute;left:87px;top:1593px;width:693px;height:144px;border-radius:999px;background:rgba(0,0,0,.21);border:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.16);backdrop-filter:blur(9px);}
+  #s2 .s2-swipe-label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,250,247,.86);font-weight:400;font-size:29.5px;line-height:1;}
+  #s2 .s2-knob,#s2 .s2-hint{position:absolute;top:9px;width:126px;height:126px;aspect-ratio:1;border:0;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;}
+  #s2 .s2-knob{left:9px;background:#000;}
+  #s2 .s2-hint{right:9px;background:rgba(255,255,255,.066);backdrop-filter:blur(4px);}
+  #s2 .s2-knob svg,#s2 .s2-hint svg{width:41px;height:36px;display:block;transform:translateX(3px);}
+
+  /* ============ SCREEN 3 ============ */
+  #s3{width:523px;height:1135px;background:#FAE0CD;}
+  #row > .screen#s3{font-family:'Manrope',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;}
+  #s3 .phone{position:absolute;inset:0;width:523px;height:1135px;border-radius:44px;overflow:hidden;background:#FAE0CD;}
+  #s3 .video{position:absolute;top:0;left:0;width:523px;height:517px;border-radius:0;overflow:hidden;background:#71604d;}
+  #s3 .video img{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:cover;object-position:50% 50%;}
+  #s3 .gback{position:absolute;top:34px;left:16px;width:74px;height:74px;border:0;border-radius:50%;overflow:hidden;isolation:isolate;background:transparent;box-shadow:none;display:flex;align-items:center;justify-content:center;}
+  #s3 .gback::before{content:"";position:absolute;z-index:0;inset:-16px;background:url("https://flick-award-65707097.figma.site/_assets/v11/1c430ddc9fdbe1eff9307984694d06d144b95ab3.png?w=512") -3px -8px/528px 507px no-repeat;filter:blur(2px) saturate(80%) brightness(.98);}
+  #s3 .gback::after{content:"";position:absolute;z-index:1;inset:0;background:rgba(132,106,46,.18);}
+  #s3 .gback svg{position:relative;z-index:2;width:22px;height:27px;transform:translateX(-1px);}
+  #s3 .rec{position:absolute;top:39px;left:216px;width:101px;height:58px;border:0;border-radius:999px;overflow:hidden;isolation:isolate;background:linear-gradient(110deg,rgba(88,52,31,.54) 0%,rgba(125,88,69,.44) 45%,rgba(174,151,141,.47) 100%);box-shadow:inset 0 1px 1px rgba(255,255,255,.12),inset 0 -1px 1px rgba(40,20,10,.08),0 8px 30px rgba(30,15,8,.08);backdrop-filter:blur(6.8px) brightness(.86) saturate(1.12);-webkit-backdrop-filter:blur(6.8px) brightness(.86) saturate(1.12);display:flex;align-items:center;justify-content:center;gap:12px;}
+  #s3 .rec::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(circle at 86% 28%,rgba(255,255,255,.17),transparent 42%);}
+  #s3 .rec::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,rgba(54,30,17,.15),transparent 52%);}
+  #s3 .rec .dot{position:relative;z-index:2;width:10px;height:10px;border-radius:50%;background:#ff0909;box-shadow:0 0 8px rgba(255,0,0,.18);}
+  #s3 .rec .t{position:relative;z-index:2;color:#fff;font-size:21px;font-weight:500;letter-spacing:-.2px;text-shadow:0 1px 3px rgba(0,0,0,.24);}
+  #s3 .rec .t .cx{display:inline-block;transform:scaleX(0.9);}
+  #s3 .call-controls{position:absolute;top:400px;left:16px;width:256px;height:92px;padding:8px;gap:6px;border:0;border-radius:46px;overflow:hidden;background:rgba(0,0,0,.14);backdrop-filter:blur(3px) saturate(1);-webkit-backdrop-filter:blur(3px) saturate(1);box-shadow:none;display:flex;align-items:center;}
+  #s3 .call-controls::before,#s3 .call-controls::after{content:none;}
+  #s3 .cbtn{position:relative;z-index:2;top:auto;left:auto!important;width:76px;height:76px;flex:none;border:0;border-radius:50%;overflow:hidden;isolation:isolate;background:transparent;box-shadow:none;display:flex;align-items:center;justify-content:center;}
+  #s3 .cbtn::before{content:"";position:absolute;z-index:0;inset:0;border-radius:inherit;background:rgba(0,0,0,.05);backdrop-filter:blur(5px) saturate(1);-webkit-backdrop-filter:blur(5px) saturate(1);pointer-events:none;}
+  #s3 .cbtn::after{content:none;}
+  #s3 .cbtn svg{position:relative;z-index:3;width:30px;height:30px;display:block;fill:#fff;stroke:none;opacity:1;filter:none;mix-blend-mode:normal;}
+  #s3 .cbtn .material-symbols-outlined{position:relative;z-index:3;color:#fff!important;font-size:30px;font-weight:500;line-height:1;opacity:1!important;filter:none!important;text-shadow:none!important;mix-blend-mode:normal;-webkit-font-smoothing:antialiased;-webkit-text-stroke:0 transparent;font-variation-settings:'FILL' 0,'wght' 500,'GRAD' 0,'opsz' 32;}
+  #s3 .hangup{position:absolute;top:413px;left:427px;width:80px;height:80px;border-radius:50%;background:#ef0001;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(220,0,0,.24);}
+  #s3 .hangup svg{width:34px;height:34px;}
+  #s3 .hangup .material-symbols-outlined{color:#fff;font-size:34px;font-weight:300;line-height:1;font-variation-settings:'FILL' 0,'wght' 300,'GRAD' 0,'opsz' 34;}
+  #s3 .card{position:absolute;top:506px;left:0;width:523px;height:629px;background:#ffffff;border-radius:34px 34px 44px 44px;}
+  #s3 .abs{position:absolute;}
+  #s3 .cx{display:inline-block;transform-origin:left center;}
+  #s3 .cxc{display:inline-block;transform-origin:center center;}
+  #s3 .chatcall{top:18px;left:0;width:523px;text-align:center;font-size:20px;font-weight:500;color:#5f5f5f;letter-spacing:.1px;}
+  #s3 .chatcall .cxc{transform:none;}
+  #s3 .hav{top:43px;left:125px;width:45px;height:45px;border-radius:50%;object-fit:cover;}
+  #s3 .nm{top:54px;left:183px;font-size:34px;font-weight:700;color:#111;line-height:1;letter-spacing:-.5px;}
+  #s3 .nm .cx{transform:none;}
+  #s3 .userbub{top:119px;left:190px;width:319px;height:72px;background:#fff;border-radius:34px 0 34px 34px;box-shadow:none;border:1px solid #e8e8e8;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:600;color:#151515;white-space:nowrap;}
+  #s3 .userbub .cxc{transform:none;}
+  #s3 .docav{top:218px;left:21px;width:45px;height:45px;border-radius:50%;object-fit:cover;}
+  #s3 .docbub{top:217px;left:74px;width:435px;height:65px;background:#F3F3F3;border-radius:0 31px 31px 31px;display:flex;align-items:center;padding-left:25px;font-size:20px;font-weight:500;color:#161616;white-space:nowrap;}
+  #s3 .docbub .cx{transform:none;}
+  #s3 .docbub .emo{font-size:20px;margin:0 3px;}
+  #s3 .bullets{top:291px;left:74px;width:435px;height:183px;background:#F3F3F3;border-radius:18px;padding:20px 23px 18px 25px;font-size:20px;font-weight:400;color:#171717;line-height:1.27;}
+  #s3 .bullets .row{position:relative;padding-left:26px;}
+  #s3 .bullets .row + .row{margin-top:0;}
+  #s3 .bullets .row::before{content:"";position:absolute;left:5px;top:9px;width:7px;height:7px;border-radius:50%;background:#171717;}
+  #s3 .bullets b{font-weight:700;}
+  #s3 .bullets .emo{font-size:21px;}
+  #s3 .bl{display:inline-block;transform:none;white-space:nowrap;}
+  #s3 .emoimg{font-style:normal;font-size:19px;vertical-align:-2px;}
+  #s3 .stamp{top:487px;left:75px;font-size:16px;font-weight:400;color:#999;letter-spacing:.2px;}
+  #s3 .inputbar{top:523px;left:33px;width:467px;height:79px;background:#fff;border:1px solid #e5e5e5;border-radius:40px;display:flex;align-items:center;}
+  #s3 .inputbar .clip{margin-left:23px;width:23px;height:23px;flex:none;}
+  #s3 .inputbar .ph{margin-left:18px;font-size:22px;font-weight:500;color:#969696;}
+  #s3 .inputbar .ph .cx{transform:none;}
+  #s3 .sendbtn{position:absolute;right:7px;top:7px;width:65px;height:65px;border-radius:50%;background:#111126;display:flex;align-items:center;justify-content:center;}
+  #s3 .sendbtn svg{width:27px;height:27px;transform:translate(-1px,1px);}
+</style>
+</head>
+<body>
+<div id="row">
+
+  <!-- ============ SCREEN 1 : Choose a Service ============ -->
+  <div class="screen">
+    <div class="heading">Choose<br>a Service</div>
+    <div class="search">
+      <i data-lucide="search"></i>
+    </div>
+
+    <div class="pills">
+      <div class="pill ghost p-dentist">Dentist</div>
+      <div class="pill active p-surgery">
+        <svg class="pill-ico" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 20 L9 15"/>
+          <path d="M9 15 L21 3"/>
+          <path d="M21 3 C15 4 11 8 9 15"/>
+        </svg>
+        Surgery
+      </div>
+      <div class="pill ghost p-ortho">
+        <svg class="pill-ico" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 5.5c-2.4-2-6-1.7-7.2.9-1 2.4-.1 5.1.5 7.7.4 1.8.5 4.6 1.8 5.3 1.5.8 1.7-2.4 2.3-3.8.5-1 1.7-1 2.2 0 .6 1.4.8 4.6 2.3 3.8 1.3-.7 1.4-3.5 1.8-5.3.6-2.6 1.5-5.3.5-7.7-1.2-2.6-4.8-2.9-7.2-.9Z"/>
+        </svg>
+        Orthodontist
+      </div>
+      <div class="pill ghost p-more">
+        <i data-lucide="more-horizontal"></i>
+      </div>
+    </div>
+
+    <div class="card card1">
+      <div class="card-title">Dental<br>Implants</div>
+      <div class="info">
+        <i data-lucide="info"></i>
+      </div>
+      <div class="chat">
+        <i data-lucide="message-circle"></i>
+      </div>
+      <div class="schedule">
+        <i data-lucide="calendar-days"></i>
+        Schedule Surgery
+      </div>
+    </div>
+
+    <div class="card card2">
+      <div class="card-title">Surgical Smile<br>Restoration</div>
+      <div class="info">
+        <i data-lucide="info"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SCREEN 2 : Oral Wellness & Aesthetic Dentistry ============ -->
+  <div class="screen" id="s2">
+    <div class="s2-stage">
+      <img class="s2-photo" src="https://flick-award-65707097.figma.site/_assets/v11/dddb4be9b85c58bb6b0597c80a5f76f70dd80673.png" alt="Close-up of a bright smile">
+
+      <div class="s2-brand">
+        <span class="s2-mark"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <path d="M19.8086 24c0-1.052.8528-1.9048 1.9048-1.9048h6.0952c1.052 0 1.9048.8528 1.9048 1.9048v6.0952c0 1.052-.8528 1.9048-1.9048 1.9048h-6.0952c-1.052 0-1.9048-.8528-1.9048-1.9048V24Z" fill="currentColor"/><path d="M19.8086 14.0952c0-1.052.8528-1.9048 1.9048-1.9048h6.0952c1.052 0 1.9048.8528 1.9048 1.9048v6.0952c0 1.052-.8528 1.9048-1.9048 1.9048h-6.0952c-1.052 0-1.9048-.8528-1.9048-1.9048v-6.0952ZM9.9063 24c0-1.052.8527-1.9048 1.9047-1.9048h6.0952c1.052 0 1.9048.8528 1.9048 1.9048v6.0952c0 1.052-.8528 1.9048-1.9048 1.9048H11.811c-1.052 0-1.9047-.8528-1.9047-1.9048V24ZM0 24c0-1.052.8528-1.9048 1.9048-1.9048H8c1.052 0 1.9048.8528 1.9048 1.9048v6.0952C9.9048 31.1472 9.052 32 8 32H1.9048C.8528 32 0 31.1472 0 30.0952V24ZM9.9063 4.1906c0-1.052.8527-1.9048 1.9047-1.9048h6.0952c1.052 0 1.9048.8528 1.9048 1.9048v6.0952c0 1.052-.8528 1.9048-1.9048 1.9048H11.811c-1.052 0-1.9047-.8528-1.9047-1.9048V4.1906ZM22.0938 1.9048C22.0938.8528 22.9465 0 23.9985 0h6.0952c1.052 0 1.9048.8528 1.9048 1.9048V8c0 1.052-.8528 1.9048-1.9048 1.9048h-6.0952c-1.052 0-1.9047-.8528-1.9047-1.9048V1.9048ZM0 4.1906c0-1.052.8528-1.9048 1.9048-1.9048H8c1.052 0 1.9048.8528 1.9048 1.9048v6.0952c0 1.052-.8528 1.9048-1.9048 1.9048H1.9048C.8528 12.1906 0 11.3378 0 10.2858V4.1906ZM0 14.0952c0-1.052.8528-1.9048 1.9048-1.9048H8c1.052 0 1.9048.8528 1.9048 1.9048v6.0952c0 1.052-.8528 1.9048-1.9048 1.9048H1.9048C.8528 22.0952 0 21.2424 0 20.1904v-6.0952Z" fill="currentColor"/>
+        </svg></span>
+        <span class="s2-name">Denta</span>
+      </div>
+
+      <div class="s2-progress" role="progressbar" aria-valuenow="1" aria-valuemin="1" aria-valuemax="3"><span class="s2-progress-pill"></span><span class="s2-progress-dot"></span><span class="s2-progress-dot"></span></div>
+      <div class="s2-frame"></div><div class="s2-tip" aria-hidden="true"></div>
+      <img class="s2-veneers" src="https://flick-award-65707097.figma.site/_assets/v11/301262aba8cffd7a5ea97a79cc06c898db9dab99.png?w=256" alt="Three porcelain veneer crowns on posts">
+      <p class="s2-callout">Veneers<br>Installation</p>
+      <div class="s2-marker"><span class="s2-marker-dot"></span></div>
+      <svg class="s2-connector" viewBox="0 0 870 1807" fill="none" aria-hidden="true"><line x1="406" y1="574" x2="607" y2="777" stroke="#fff" stroke-width="1.4" stroke-opacity=".92"/><circle cx="406" cy="574" r="8" fill="#fff"/></svg>
+      <h1 class="s2-title">Oral Wellness<br>&amp; Aesthetic<br>Dentistry</h1>
+      <div class="s2-swipe">
+        <span class="s2-swipe-label">Swipe To Start</span>
+        <div class="s2-knob"><svg viewBox="0 0 34 30" fill="none" aria-hidden="true"><path d="M4 4 15 15 4 26M17 4l11 11-11 11" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="s2-hint"><svg viewBox="0 0 34 30" fill="none" aria-hidden="true"><path d="M4 4 15 15 4 26M17 4l11 11-11 11" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SCREEN 3 : Video Consultation ============ -->
+  <div class="screen" id="s3">
+    <div class="phone">
+      <div class="video"><img src="https://flick-award-65707097.figma.site/_assets/v11/1c430ddc9fdbe1eff9307984694d06d144b95ab3.png?w=512" alt="Patient speaking during a dental video consultation"></div>
+      <div class="gback">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#3d3d3d" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 5 8 12 15 19"/></svg>
+      </div>
+      <div class="rec"><span class="dot"></span><span class="t"><span class="cx">11:24</span></span></div>
+      <div class="call-controls">
+        <div class="cbtn c1"><span class="material-symbols-outlined" aria-hidden="true">mic_none</span></div>
+        <div class="cbtn c2"><span class="material-symbols-outlined" aria-hidden="true">volume_up</span></div>
+        <div class="cbtn c3"><span class="material-symbols-outlined" aria-hidden="true">chat_bubble</span></div>
+      </div>
+      <div class="hangup">
+        <span class="material-symbols-outlined" aria-hidden="true">call_end</span>
+      </div>
+      <div class="card">
+        <div class="abs chatcall"><span class="cxc">Chat Call</span></div>
+        <img class="abs hav" src="https://flick-award-65707097.figma.site/_assets/v11/754f7920b841db5f5cfcc63a59fc97856909cdf6.png" alt="Dr. Emily Carter">
+        <div class="abs nm"><span class="cx">Dr. Emily Carter</span></div>
+
+        <div class="abs userbub"><span class="cxc">Yes, my gum feels a bit swollen</span></div>
+
+        <img class="abs docav" src="https://flick-award-65707097.figma.site/_assets/v11/754f7920b841db5f5cfcc63a59fc97856909cdf6.png" alt="Dr. Emily Carter">
+        <div class="abs docbub"><span class="cx">I&rsquo;ll prescribe antibiotics and <span class="emoimg">&#x1F48A;</span> painkillers</span></div>
+
+        <div class="abs bullets">
+          <div class="row"><span class="bl"><b>Antibiotic:</b> Amoxicillin 500 mg, 3 times<br>a day for 5 days</span></div>
+          <div class="row"><span class="bl"><b>Pain reliever:</b> Ibuprofen 400 mg, every<br>6&ndash;8 hours if needed</span></div>
+          <div class="row"><span class="bl"><b>Schedule an X-ray</b> this week <span class="emoimg">&#x1F3E5;</span></span></div>
+        </div>
+
+        <div class="abs stamp">8:21 AM</div>
+
+        <div class="abs inputbar">
+          <svg class="clip" viewBox="0 0 24 24" fill="none" stroke="#b3b3b3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21.44 11.05l-9.19 9.19a5 5 0 0 1-7.07-7.07l9.19-9.19a3 3 0 0 1 4.24 4.24l-9.2 9.19a1 1 0 0 1-1.41-1.41l8.49-8.49"/>
+          </svg>
+          <span class="ph"><span class="cx">Type Your Message&hellip;</span></span>
+          <div class="sendbtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
+<script>
+  const ROW_W = 511*2 + 523 + 72*2;
+  const ROW_H = 1137 + 88;
+  function fit(){
+    const m = 60;
+    const s = Math.min((window.innerWidth - m)/ROW_W, (window.innerHeight - m)/ROW_H);
+    document.getElementById('row').style.transform = 'scale('+s+')';
+  }
+  window.addEventListener('resize', fit);
+  fit();
+</script>
+</body>
+</html>
+```

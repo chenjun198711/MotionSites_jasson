@@ -1,0 +1,33 @@
+```
+**Fonts (load in index.html):**
+- Kudryashev Display: `https://db.onlinewebfonts.com/c/77dcc46d9de45fef0051d12a768f9e5e?family=Kudryashev+Display`
+- Space Grotesk (weights 300-700): `https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap`
+- Helvetica Neue Light: `https://db.onlinewebfonts.com/c/0e6de1ec911a2e267ff136bbdd384a44?family=Helvetica+Neue+Light`
+
+**Tailwind config — extend fontFamily:**
+- `kudryashev: ['"Kudryashev Display"', 'serif']`
+- `grotesk: ['"Space Grotesk"', 'sans-serif']`
+- `helvetica: ['"Helvetica Neue Light"', '"Helvetica Neue"', 'Helvetica', 'Arial', 'sans-serif']`
+
+**Layout — full viewport section, white background, flex column, overflow hidden:**
+
+1. **Nav bar** (z-10, flex between, horizontal padding 6/10/14, top padding 6/10):
+   - Left: text "marcellocosta" — Space Grotesk, medium weight, gray-900, tracking-tight
+   - Right: 3-3.5px solid black rounded dot
+
+2. **Background video** — centered, 80% width/height, object-cover, autoPlay/loop/muted/playsInline:
+   - URL: `https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260718_132657_c3ce20d7-d20a-4498-b552-6d966fe3720a.mp4`
+   - **White-to-transparent gradient overlays on all 4 edges** (h-24/w-24, from-white to-transparent), pointer-events-none
+
+3. **Main content** (z-10, flex-1, centered, text-center):
+   - H1: thin weight, responsive 4xl→8xl, gray-900, leading-[1.1], tracking-tight
+     - "retro soul, " in Kudryashev Display (serif)
+     - "modern vision." in Space Grotesk
+   - Paragraph: Helvetica Neue Light, sm-lg, gray-900, mt-6/8, max-w md/lg/xl, leading-relaxed:
+     "I'm a cross-functional creative with 5+ years experience crafting for digital and physical media with a clean, detail-driven style."
+
+4. **Footer** (z-10, flex between, horizontal padding 6/10/14, bottom padding 6/10):
+   - Left: "© 2024 Marcello Costa" — Helvetica, xs/sm, gray-500
+   - Center (absolute, bottom 6/10): ChevronDown icon from lucide-react, w-6/7 h-6/7, gray-800, strokeWidth 1.5, `animate-bounce`
+   - Right: three links (Dribbble, Twitter, Unsplash) — Helvetica, xs/sm, gray-700, hover gray-900, transition-colors
+```
