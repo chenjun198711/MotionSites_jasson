@@ -3,10 +3,10 @@
 
 ## 🚀 在线浏览（Live Site）
 
-👉 **主域（GitHub Pages）：** https://zhaosenlin12-creator.github.io/MotionSites/
-👉 **备用（Cloudflare Pages）：** https://motionsites-prompts.pages.dev/
+👉 **主域（GitHub Pages）：** https://www.prompt-site.shop
 
-主域部署在 GitHub Pages（jsDelivr / Fastly CDN），每次 push 到 main 自动上线；Cloudflare Pages 同时保留作为兜底。公网可直接访问 504 条提示词、476 条完整正文、297 张预览、121 个循环视频。无需登录、无需付费、无网络调用，打开即用。
+
+主域部署在Cloudflare Pages 。公网可直接访问 546 条提示词、完整正文、 预览、循环视频。无需登录、无需付费、无网络调用，打开即用。
 
 
 > A progressively-loaded, offline-first catalog of **504 motion-driven UI prompts** — landing pages, hero scenes, agency showcases, dashboards, and more. Browse, search, copy, and export every prompt locally. No login, no third-party tracking, no paywall. Cold loads land paint-ready in ~34 ms (DOMContentLoaded) and finish in ~239 ms (loadEvent); only one small JSON per page + one prompt body per modal are fetched.
@@ -52,9 +52,9 @@ Note: opening `index.html` directly via `file://` works for the static HTML, but
 ### 当前线上版本
 
 **项目名：** `motionsites-prompts`  
-**线上地址：** https://motionsites-prompts.pages.dev/  
+**线上地址：** https://www.prompt-site.shop
 **部署方式：** Cloudflare Pages（Direct Upload）  
-**仓库地址：** https://github.com/zhaosenlin12-creator/MotionSites-Prompts.git
+
 
 > 上面的 *Live Site* 区块和这里指向的是同一个部署。任何 PR 合并到 `master` 后，只需运行 `.\deploy\deploy-cloudflare.ps1` 即可刷新线上版本（详见 *Push to GitHub & Deploy*）。
 
