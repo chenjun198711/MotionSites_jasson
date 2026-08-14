@@ -3,10 +3,10 @@
 
 ## 🚀 在线浏览（Live Site）
 
-👉 **主域（GitHub Pages）：** https://www.prompt-site.shop
+👉 **主域（GitHub Pages）：** https://prompt-site.shop
 
 
-主域部署在Cloudflare Pages 。公网可直接访问 546 条提示词、完整正文、 预览、循环视频。无需登录、无需付费、无网络调用，打开即用。
+主域部署在Cloudflare Pages 。公网可直接访问 546 条提示词、包含完整的正文、 预览、循环视频。无需登录、无需付费、无网络调用，打开即用。
 
 
 > A progressively-loaded, offline-first catalog of **504 motion-driven UI prompts** — landing pages, hero scenes, agency showcases, dashboards, and more. Browse, search, copy, and export every prompt locally. No login, no third-party tracking, no paywall. Cold loads land paint-ready in ~34 ms (DOMContentLoaded) and finish in ~239 ms (loadEvent); only one small JSON per page + one prompt body per modal are fetched.
@@ -52,7 +52,7 @@ Note: opening `index.html` directly via `file://` works for the static HTML, but
 ### 当前线上版本
 
 **项目名：** `motionsites-prompts`  
-**线上地址：** https://www.prompt-site.shop
+**线上地址：** https://prompt-site.shop
 **部署方式：** Cloudflare Pages（Direct Upload）  
 
 
