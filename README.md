@@ -114,10 +114,10 @@ https://<owner>.github.io/<repo>/
 
 ```bash
 node scripts/build.js
-# -> Records=546 complete=544 images=366 videos=178 concepts=2 motionsites=407 community=139
+# -> Records=546 complete=544 images=363 videos=181 concepts=2 motionsites=407 community=139
 # -> Wrote catalog-lite.json  1.7 KB  (gzip 0.8 KB)
 # -> Wrote catalog-meta.json  461.6 KB  (gzip 89.8 KB)
-# -> Wrote catalog-text.json  4986.3 KB  (gzip 1623.1 KB)
+# -> Wrote catalog-text.json  4986.3 KB  (gzip 1623.5 KB)
 # -> Wrote catalog-text/  544 files
 # -> Wrote index.html bytes 33247
 ```

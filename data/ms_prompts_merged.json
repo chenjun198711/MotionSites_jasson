@@ -2488,8 +2488,8 @@
     "video_preview_url": "https://stream.mux.com/MSctoqC17nNR00ZSv5l7fTur9QOwcJHC01uL02uOFs1Vvs.m3u8",
     "sort_order": 999,
     "created_at": "2026-06-14T05:20:00+00:00",
-    "local_rel": "assets/previews/luxury-focus.png",
-    "local_kind": "png",
+    "local_rel": "assets/previews/luxury-focus.webp",
+    "local_kind": "webp",
     "has_text": true,
     "text_len": 9692,
     "source_kind": "motionsites"
@@ -3281,8 +3281,8 @@
     "video_preview_url": "https://stream.mux.com/a6HPc2D4wiAmo1102yX8WVFt01gzGYkOG1vPVysYykdao.m3u8",
     "sort_order": 999,
     "created_at": "2026-05-09T08:02:55.82419+00:00",
-    "local_rel": "assets/previews/speakup-venture-hero.png",
-    "local_kind": "png",
+    "local_rel": "assets/previews/speakup-venture-hero.webp",
+    "local_kind": "webp",
     "has_text": true,
     "text_len": 3854,
     "source_kind": "motionsites"
@@ -3749,8 +3749,8 @@
     "video_preview_url": "https://stream.mux.com/i9kUFJpB6GrWoe2UXRZG4lIP02g00LGulS1GTVrMMwZI00.m3u8",
     "sort_order": 999,
     "created_at": "2026-05-12T09:59:53.729118+00:00",
-    "local_rel": "assets/previews/visual-hero.png",
-    "local_kind": "png",
+    "local_rel": "assets/previews/visual-hero.webp",
+    "local_kind": "webp",
     "has_text": true,
     "text_len": 8275,
     "source_kind": "motionsites"
@@ -3839,8 +3839,8 @@
     "video_preview_url": "https://stream.mux.com/iY611PYuZ02AKpIzYB4Q1BMpl7W2O3UwqjQm9p01xlmVg.m3u8",
     "sort_order": 999,
     "created_at": "2026-05-20T06:10:00+00:00",
-    "local_rel": "assets/previews/no-code-waitlist.png",
-    "local_kind": "png",
+    "local_rel": "assets/previews/no-code-waitlist.webp",
+    "local_kind": "webp",
     "has_text": true,
     "text_len": 6532,
     "source_kind": "motionsites"
@@ -4199,8 +4199,8 @@
     "video_preview_url": "https://stream.mux.com/imC5vQh9WbYUhhreIFOOONfNBnQI8AZznRfgZw8p2fA.m3u8",
     "sort_order": 999,
     "created_at": "2026-05-12T10:27:19.214749+00:00",
-    "local_rel": "assets/previews/shop.png",
-    "local_kind": "png",
+    "local_rel": "assets/previews/shop.webp",
+    "local_kind": "webp",
     "has_text": true,
     "text_len": 14382,
     "source_kind": "motionsites"
@@ -13313,8 +13313,8 @@
     "has_text": true,
     "text_len": 7877,
     "source_kind": "motionsites",
-    "local_rel": "assets/previews/cloud-kicks.png",
-    "local_kind": "png",
+    "local_rel": "assets/previews/cloud-kicks.mp4",
+    "local_kind": "mp4",
     "size_bytes": 1004604
   },
   {
@@ -13500,8 +13500,8 @@
     "has_text": true,
     "text_len": 27916,
     "source_kind": "motionsites",
-    "local_rel": "assets/previews/mostar-guide.png",
-    "local_kind": "png",
+    "local_rel": "assets/previews/mostar-guide.mp4",
+    "local_kind": "mp4",
     "size_bytes": 8322573
   },
   {
@@ -13855,8 +13855,8 @@
     "has_text": true,
     "text_len": 15785,
     "source_kind": "motionsites",
-    "local_rel": "assets/previews/sweet-question.png",
-    "local_kind": "png",
+    "local_rel": "assets/previews/sweet-question.mp4",
+    "local_kind": "mp4",
     "size_bytes": 21451462
   }
 ]
