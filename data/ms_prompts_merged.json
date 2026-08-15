@@ -65,8 +65,8 @@
     "video_preview_url": null,
     "sort_order": 25,
     "created_at": "2026-04-08T04:56:43.149592+00:00",
-    "local_rel": null,
-    "local_kind": null,
+    "local_rel": "assets/previews/prisma-landing.webp",
+    "local_kind": "webp",
     "has_text": true,
     "text_len": 8432,
     "source_kind": "motionsites"
@@ -152,8 +152,8 @@
     "text_len": 3112,
     "video_preview_url": null,
     "created_at": null,
-    "local_rel": null,
-    "local_kind": null
+    "local_rel": "assets/previews/web3-eos-hero.gif",
+    "local_kind": "gif"
   },
   {
     "id": "aetheris-voyage-hero",
@@ -167,8 +167,8 @@
     "video_preview_url": null,
     "sort_order": 60,
     "created_at": "2026-04-22T13:47:44.782074+00:00",
-    "local_rel": null,
-    "local_kind": null,
+    "local_rel": "assets/previews/aetheris-voyage-hero.webp",
+    "local_kind": "webp",
     "has_text": true,
     "text_len": 10190,
     "source_kind": "motionsites"
@@ -373,8 +373,8 @@
     "text_len": 3169,
     "video_preview_url": null,
     "created_at": null,
-    "local_rel": null,
-    "local_kind": null
+    "local_rel": "assets/previews/aethera-studio.gif",
+    "local_kind": "gif"
   },
   {
     "id": "5",
@@ -388,8 +388,8 @@
     "video_preview_url": null,
     "sort_order": 130,
     "created_at": "2026-03-18T07:43:11.545931+00:00",
-    "local_rel": null,
-    "local_kind": null,
+    "local_rel": "assets/previews/5.gif",
+    "local_kind": "gif",
     "has_text": true,
     "text_len": 3339,
     "source_kind": "motionsites",
@@ -445,8 +445,8 @@
     "text_len": 1565,
     "video_preview_url": null,
     "created_at": null,
-    "local_rel": null,
-    "local_kind": null
+    "local_rel": "assets/previews/logoisum-video-agency.gif",
+    "local_kind": "gif"
   },
   {
     "id": "innovation-landing",
@@ -479,8 +479,8 @@
     "video_preview_url": null,
     "sort_order": 170,
     "created_at": "2026-03-18T07:47:07.030744+00:00",
-    "local_rel": null,
-    "local_kind": null,
+    "local_rel": "assets/previews/10.gif",
+    "local_kind": "gif",
     "has_text": true,
     "text_len": 2693,
     "source_kind": "motionsites",
@@ -527,8 +527,8 @@
     "video_preview_url": null,
     "sort_order": 190,
     "created_at": "2026-03-18T07:44:21.324977+00:00",
-    "local_rel": null,
-    "local_kind": null,
+    "local_rel": "assets/previews/7.gif",
+    "local_kind": "gif",
     "has_text": true,
     "text_len": 1608,
     "source_kind": "motionsites",
@@ -626,8 +626,8 @@
     "text_len": 1663,
     "video_preview_url": null,
     "created_at": null,
-    "local_rel": null,
-    "local_kind": null
+    "local_rel": "assets/previews/new-era-bold-hero.gif",
+    "local_kind": "gif"
   },
   {
     "id": "portal",
@@ -686,8 +686,8 @@
     "text_len": 2080,
     "video_preview_url": null,
     "created_at": null,
-    "local_rel": null,
-    "local_kind": null
+    "local_rel": "assets/previews/buzzentic-agency.gif",
+    "local_kind": "gif"
   },
   {
     "id": "mindloop-landing",
@@ -725,8 +725,8 @@
     "video_preview_url": null,
     "sort_order": 290,
     "created_at": "2026-03-18T08:14:26.493079+00:00",
-    "local_rel": null,
-    "local_kind": null,
+    "local_rel": "assets/previews/18.gif",
+    "local_kind": "gif",
     "has_text": true,
     "text_len": 3313,
     "source_kind": "motionsites",
@@ -811,8 +811,8 @@
     "video_preview_url": null,
     "sort_order": 330,
     "created_at": "2026-04-13T05:48:31.966774+00:00",
-    "local_rel": null,
-    "local_kind": null,
+    "local_rel": "assets/previews/wisa-space-hero.gif",
+    "local_kind": "gif",
     "has_text": true,
     "text_len": 37,
     "source_kind": "motionsites",
@@ -869,8 +869,8 @@
     "text_len": 2162,
     "video_preview_url": null,
     "created_at": null,
-    "local_rel": null,
-    "local_kind": null
+    "local_rel": "assets/previews/targo-logistics-hero.gif",
+    "local_kind": "gif"
   },
   {
     "id": "codenest-hero",
@@ -1044,8 +1044,8 @@
     "video_preview_url": null,
     "sort_order": 430,
     "created_at": "2026-04-21T06:27:29.894707+00:00",
-    "local_rel": null,
-    "local_kind": null,
+    "local_rel": "assets/previews/nike-premium-landing.gif",
+    "local_kind": "gif",
     "has_text": true,
     "text_len": 18433,
     "source_kind": "motionsites"
@@ -1080,8 +1080,8 @@
     "video_preview_url": null,
     "sort_order": 440,
     "created_at": "2026-04-08T03:42:32.360254+00:00",
-    "local_rel": null,
-    "local_kind": null,
+    "local_rel": "assets/previews/sentinel-ai-hero.gif",
+    "local_kind": "gif",
     "has_text": true,
     "text_len": 5940,
     "source_kind": "motionsites"
@@ -1098,8 +1098,8 @@
     "video_preview_url": null,
     "sort_order": 450,
     "created_at": "2026-05-10T05:35:00+00:00",
-    "local_rel": null,
-    "local_kind": null,
+    "local_rel": "assets/previews/slam-dunk-hero.gif",
+    "local_kind": "gif",
     "has_text": true,
     "text_len": 86,
     "source_kind": "motionsites",
@@ -1230,8 +1230,8 @@
     "video_preview_url": null,
     "sort_order": 510,
     "created_at": "2026-05-03T10:05:12.129661+00:00",
-    "local_rel": null,
-    "local_kind": null,
+    "local_rel": "assets/previews/glow-features.png",
+    "local_kind": "png",
     "has_text": true,
     "text_len": 3072,
     "source_kind": "motionsites"
@@ -1313,8 +1313,8 @@
     "text_len": 6199,
     "video_preview_url": null,
     "created_at": null,
-    "local_rel": null,
-    "local_kind": null
+    "local_rel": "assets/previews/sync-ai.gif",
+    "local_kind": "gif"
   },
   {
     "id": "taskly",
@@ -1431,8 +1431,8 @@
     "text_len": 2826,
     "video_preview_url": null,
     "created_at": null,
-    "local_rel": null,
-    "local_kind": null
+    "local_rel": "assets/previews/datacore-booking.gif",
+    "local_kind": "gif"
   },
   {
     "id": "neo-vision",
@@ -1554,8 +1554,8 @@
     "video_preview_url": null,
     "sort_order": 660,
     "created_at": "2026-03-18T07:37:54.493241+00:00",
-    "local_rel": null,
-    "local_kind": null,
+    "local_rel": "assets/previews/digitwist-hero.gif",
+    "local_kind": "gif",
     "has_text": true,
     "text_len": 6001,
     "source_kind": "motionsites",
@@ -1587,8 +1587,8 @@
     "text_len": 5681,
     "video_preview_url": null,
     "created_at": null,
-    "local_rel": null,
-    "local_kind": null
+    "local_rel": "assets/previews/space-voyage.gif",
+    "local_kind": "gif"
   },
   {
     "id": "dot-hero",
@@ -1715,8 +1715,8 @@
     "video_preview_url": null,
     "sort_order": 740,
     "created_at": "2026-03-18T07:40:44.262774+00:00",
-    "local_rel": null,
-    "local_kind": null,
+    "local_rel": "assets/previews/price-calculator.gif",
+    "local_kind": "gif",
     "has_text": true,
     "text_len": 3134,
     "source_kind": "motionsites",
@@ -1777,8 +1777,8 @@
     "video_preview_url": null,
     "sort_order": 770,
     "created_at": "2026-03-28T08:09:17.562841+00:00",
-    "local_rel": null,
-    "local_kind": null,
+    "local_rel": "assets/previews/ecommerce-website-landing.gif",
+    "local_kind": "gif",
     "has_text": true,
     "text_len": 5130,
     "source_kind": "motionsites",
@@ -1882,8 +1882,8 @@
     "video_preview_url": null,
     "sort_order": 820,
     "created_at": "2026-05-03T10:00:23.656666+00:00",
-    "local_rel": null,
-    "local_kind": null,
+    "local_rel": "assets/previews/vize-footer.png",
+    "local_kind": "png",
     "has_text": true,
     "text_len": 7734,
     "source_kind": "motionsites"
@@ -2025,8 +2025,8 @@
     "video_preview_url": null,
     "sort_order": 930,
     "created_at": "2026-03-18T07:43:44.984966+00:00",
-    "local_rel": null,
-    "local_kind": null,
+    "local_rel": "assets/previews/6.gif",
+    "local_kind": "gif",
     "has_text": true,
     "text_len": 2871,
     "source_kind": "motionsites",
@@ -2068,8 +2068,8 @@
     "video_preview_url": null,
     "sort_order": 970,
     "created_at": "2026-04-07T03:27:41.919155+00:00",
-    "local_rel": null,
-    "local_kind": null,
+    "local_rel": "assets/previews/ecovolta-v2-hero.gif",
+    "local_kind": "gif",
     "has_text": true,
     "text_len": 3749,
     "source_kind": "motionsites"
@@ -2740,8 +2740,8 @@
     "video_preview_url": null,
     "sort_order": 999,
     "created_at": "2026-07-17T07:15:06.24981+00:00",
-    "local_rel": null,
-    "local_kind": null,
+    "local_rel": "assets/previews/social-hangouts.jpg",
+    "local_kind": "jpeg",
     "has_text": true,
     "text_len": 32961,
     "source_kind": "motionsites"
@@ -4469,8 +4469,8 @@
     "video_preview_url": null,
     "sort_order": 999,
     "created_at": "2026-05-08T06:34:13.264809+00:00",
-    "local_rel": null,
-    "local_kind": null,
+    "local_rel": "assets/previews/ai-image-generator-ui.png",
+    "local_kind": "png",
     "has_text": true,
     "text_len": 4480,
     "source_kind": "motionsites"
@@ -4541,8 +4541,8 @@
     "video_preview_url": null,
     "sort_order": 999,
     "created_at": "2026-07-15T08:31:00+00:00",
-    "local_rel": null,
-    "local_kind": null,
+    "local_rel": "assets/previews/modern-hr-dashboard.png",
+    "local_kind": "png",
     "has_text": true,
     "text_len": 13276,
     "source_kind": "motionsites"
@@ -4649,8 +4649,8 @@
     "video_preview_url": null,
     "sort_order": 999,
     "created_at": "2026-06-14T08:37:00+00:00",
-    "local_rel": null,
-    "local_kind": null,
+    "local_rel": "assets/previews/saas-value.png",
+    "local_kind": "png",
     "has_text": true,
     "text_len": 8755,
     "source_kind": "motionsites"
@@ -4973,8 +4973,8 @@
     "video_preview_url": null,
     "sort_order": 999,
     "created_at": "2026-04-02T08:53:00+00:00",
-    "local_rel": null,
-    "local_kind": null,
+    "local_rel": "assets/previews/404.png",
+    "local_kind": "png",
     "has_text": true,
     "text_len": 5689,
     "source_kind": "motionsites"
@@ -6323,8 +6323,8 @@
     "video_preview_url": null,
     "sort_order": 1010,
     "created_at": "2026-03-18T07:56:30.131713+00:00",
-    "local_rel": null,
-    "local_kind": null,
+    "local_rel": "assets/previews/deck-investor.gif",
+    "local_kind": "gif",
     "has_text": true,
     "text_len": 10864,
     "source_kind": "motionsites",
@@ -6375,8 +6375,8 @@
     "text_len": 2547,
     "video_preview_url": null,
     "created_at": null,
-    "local_rel": null,
-    "local_kind": null
+    "local_rel": "assets/previews/weblex-dark-hero.gif",
+    "local_kind": "gif"
   },
   {
     "id": "new-era-automotive-hero",
@@ -6399,8 +6399,8 @@
     "text_len": 2688,
     "video_preview_url": null,
     "created_at": null,
-    "local_rel": null,
-    "local_kind": null
+    "local_rel": "assets/previews/new-era-automotive-hero.gif",
+    "local_kind": "gif"
   },
   {
     "id": "bionova-hero",
@@ -6414,8 +6414,8 @@
     "video_preview_url": null,
     "sort_order": 1090,
     "created_at": "2026-03-25T07:00:13.889697+00:00",
-    "local_rel": null,
-    "local_kind": null,
+    "local_rel": "assets/previews/bionova-hero.gif",
+    "local_kind": "gif",
     "has_text": true,
     "text_len": 3902,
     "source_kind": "motionsites",
@@ -6447,8 +6447,8 @@
     "text_len": 2693,
     "video_preview_url": null,
     "created_at": null,
-    "local_rel": null,
-    "local_kind": null
+    "local_rel": "assets/previews/viktor-portfolio.gif",
+    "local_kind": "gif"
   },
   {
     "id": "finlytic-ai-agent",
@@ -6495,8 +6495,8 @@
     "text_len": 5106,
     "video_preview_url": null,
     "created_at": null,
-    "local_rel": null,
-    "local_kind": null
+    "local_rel": "assets/previews/nova-space-systems.gif",
+    "local_kind": "gif"
   },
   {
     "id": "zenith-realty-landing",
@@ -6572,8 +6572,8 @@
     "video_preview_url": null,
     "sort_order": 1230,
     "created_at": "2026-04-28T05:28:57.677802+00:00",
-    "local_rel": null,
-    "local_kind": null,
+    "local_rel": "assets/previews/prioritize-hero.png",
+    "local_kind": "png",
     "has_text": true,
     "text_len": 6216,
     "source_kind": "motionsites"
@@ -6599,8 +6599,8 @@
     "text_len": 2977,
     "video_preview_url": null,
     "created_at": null,
-    "local_rel": null,
-    "local_kind": null
+    "local_rel": "assets/previews/framelix-3d-studios.gif",
+    "local_kind": "gif"
   },
   {
     "id": "planet-orbit",
@@ -6741,8 +6741,8 @@
     "text_reconstructed": true,
     "has_text": true,
     "text_len": 2587,
-    "local_rel": null,
-    "local_kind": null
+    "local_rel": "assets/previews/datacore-saa-s-hero.gif",
+    "local_kind": "gif"
   },
   {
     "id": "taskora-saa-s-hero",
@@ -6787,8 +6787,8 @@
     "text_len": 2021,
     "video_preview_url": null,
     "created_at": null,
-    "local_rel": null,
-    "local_kind": null
+    "local_rel": "assets/previews/wealth-video-hero.gif",
+    "local_kind": "gif"
   },
   {
     "id": "apex-saa-s",
@@ -6824,8 +6824,8 @@
     "video_preview_url": null,
     "sort_order": 1450,
     "created_at": "2026-03-18T08:16:43.178861+00:00",
-    "local_rel": null,
-    "local_kind": null,
+    "local_rel": "assets/previews/15.gif",
+    "local_kind": "gif",
     "has_text": true,
     "text_len": 5526,
     "source_kind": "motionsites",
@@ -6867,8 +6867,8 @@
     "video_preview_url": null,
     "sort_order": 1490,
     "created_at": "2026-05-03T11:14:09.402077+00:00",
-    "local_rel": null,
-    "local_kind": null,
+    "local_rel": "assets/previews/keep-ahead-features.png",
+    "local_kind": "png",
     "has_text": true,
     "text_len": 9132,
     "source_kind": "motionsites"
@@ -6907,7 +6907,9 @@
     "has_text": true,
     "text_len": 4256,
     "source_kind": "motionsites",
-    "size_bytes": 43285966
+    "size_bytes": 43285966,
+    "local_rel": "assets/previews/zenith-footer.gif",
+    "local_kind": "gif"
   },
   {
     "id": "digital-reality-hero",
@@ -7022,7 +7024,9 @@
     "preview": "prompts/tubes-interactive-background/preview.png",
     "has_text": true,
     "text_len": 6675,
-    "size_bytes": 1057566
+    "size_bytes": 1057566,
+    "local_rel": "assets/previews/community-superdesign-tubes-interactive-background.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-high-contrast-landing-page",
@@ -7057,7 +7061,9 @@
     "preview": "prompts/high-contrast-landing-page/preview.png",
     "has_text": true,
     "text_len": 4755,
-    "size_bytes": 67827
+    "size_bytes": 67827,
+    "local_rel": "assets/previews/community-superdesign-high-contrast-landing-page.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-lumina-saas-landing-page",
@@ -7096,7 +7102,9 @@
     "preview": "prompts/lumina-saas-landing-page/preview.png",
     "has_text": true,
     "text_len": 5775,
-    "size_bytes": 627047
+    "size_bytes": 627047,
+    "local_rel": "assets/previews/community-superdesign-lumina-saas-landing-page.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-red-noir-style",
@@ -7132,7 +7140,9 @@
     "preview": "prompts/red-noir-style/preview.png",
     "has_text": true,
     "text_len": 22051,
-    "size_bytes": 716753
+    "size_bytes": 716753,
+    "local_rel": "assets/previews/community-superdesign-red-noir-style.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-deep-red-style-5b01cb",
@@ -7167,7 +7177,9 @@
     "preview": "prompts/deep-red-style-5b01cb/preview.png",
     "has_text": true,
     "text_len": 12905,
-    "size_bytes": 1432298
+    "size_bytes": 1432298,
+    "local_rel": "assets/previews/community-superdesign-deep-red-style-5b01cb.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-glassmorphism-style",
@@ -7203,7 +7215,9 @@
     "preview": "prompts/glassmorphism-style/preview.png",
     "has_text": true,
     "text_len": 5599,
-    "size_bytes": 2907684
+    "size_bytes": 2907684,
+    "local_rel": "assets/previews/community-superdesign-glassmorphism-style.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-mosaic-grid-architecture-style",
@@ -7246,7 +7260,9 @@
     "preview": "prompts/mosaic-grid-architecture-style/preview.png",
     "has_text": true,
     "text_len": 4627,
-    "size_bytes": 1382707
+    "size_bytes": 1382707,
+    "local_rel": "assets/previews/community-superdesign-mosaic-grid-architecture-style.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-softly-digital-wellness-app",
@@ -7289,7 +7305,9 @@
     "preview": "prompts/softly-digital-wellness-app/preview.png",
     "has_text": true,
     "text_len": 4453,
-    "size_bytes": 2356214
+    "size_bytes": 2356214,
+    "local_rel": "assets/previews/community-superdesign-softly-digital-wellness-app.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-neural-noir-interface-style",
@@ -7325,7 +7343,9 @@
     "preview": "prompts/neural-noir-interface-style/preview.png",
     "has_text": true,
     "text_len": 4805,
-    "size_bytes": 898073
+    "size_bytes": 898073,
+    "local_rel": "assets/previews/community-superdesign-neural-noir-interface-style.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-cinematic-style",
@@ -7361,7 +7381,9 @@
     "preview": "prompts/cinematic-style/preview.png",
     "has_text": true,
     "text_len": 4671,
-    "size_bytes": 605604
+    "size_bytes": 605604,
+    "local_rel": "assets/previews/community-superdesign-cinematic-style.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-kinetic-orange-style",
@@ -7397,7 +7419,9 @@
     "preview": "prompts/kinetic-orange-style/preview.png",
     "has_text": true,
     "text_len": 4491,
-    "size_bytes": 191314
+    "size_bytes": 191314,
+    "local_rel": "assets/previews/community-superdesign-kinetic-orange-style.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-luxury-focused-design-system",
@@ -7434,7 +7458,9 @@
     "preview": "prompts/luxury-focused-design-system/preview.png",
     "has_text": true,
     "text_len": 4694,
-    "size_bytes": 622971
+    "size_bytes": 622971,
+    "local_rel": "assets/previews/community-superdesign-luxury-focused-design-system.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-brutalist-e-commerce-page",
@@ -7471,7 +7497,9 @@
     "preview": "prompts/brutalist-e-commerce-page/preview.png",
     "has_text": true,
     "text_len": 4195,
-    "size_bytes": 2384890
+    "size_bytes": 2384890,
+    "local_rel": "assets/previews/community-superdesign-brutalist-e-commerce-page.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-nature-inspired-style",
@@ -7507,7 +7535,9 @@
     "preview": "prompts/nature-inspired-style/preview.png",
     "has_text": true,
     "text_len": 4644,
-    "size_bytes": 569389
+    "size_bytes": 569389,
+    "local_rel": "assets/previews/community-superdesign-nature-inspired-style.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-bold-editorial-studio-style",
@@ -7543,7 +7573,9 @@
     "preview": "prompts/bold-editorial-studio-style/preview.png",
     "has_text": true,
     "text_len": 5051,
-    "size_bytes": 262970
+    "size_bytes": 262970,
+    "local_rel": "assets/previews/community-superdesign-bold-editorial-studio-style.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-neumorphism",
@@ -7577,7 +7609,9 @@
     "preview": "prompts/neumorphism/preview.png",
     "has_text": true,
     "text_len": 10068,
-    "size_bytes": 159006
+    "size_bytes": 159006,
+    "local_rel": "assets/previews/community-superdesign-neumorphism.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-the-stacking-cards-effect",
@@ -7613,7 +7647,9 @@
     "preview": "prompts/the-stacking-cards-effect/preview.png",
     "has_text": false,
     "text_len": 197,
-    "size_bytes": 515997
+    "size_bytes": 515997,
+    "local_rel": "assets/previews/community-superdesign-the-stacking-cards-effect.mp4",
+    "local_kind": "mp4"
   },
   {
     "id": "community-superdesign-synapse",
@@ -7649,7 +7685,9 @@
     "preview": "prompts/synapse/preview.png",
     "has_text": true,
     "text_len": 5702,
-    "size_bytes": 168834
+    "size_bytes": 168834,
+    "local_rel": "assets/previews/community-superdesign-synapse.mp4",
+    "local_kind": "mp4"
   },
   {
     "id": "community-superdesign-bold-editorial-style",
@@ -7692,7 +7730,9 @@
     "preview": "prompts/bold-editorial-style/preview.png",
     "has_text": true,
     "text_len": 5189,
-    "size_bytes": 228040
+    "size_bytes": 228040,
+    "local_rel": "assets/previews/community-superdesign-bold-editorial-style.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-babybites-sophisticated-palette",
@@ -7727,7 +7767,9 @@
     "preview": "prompts/babybites-sophisticated-palette/preview.png",
     "has_text": true,
     "text_len": 4600,
-    "size_bytes": 396620
+    "size_bytes": 396620,
+    "local_rel": "assets/previews/community-superdesign-babybites-sophisticated-palette.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-hyper-saturated-fluid",
@@ -7761,7 +7803,9 @@
     "preview": "prompts/hyper-saturated-fluid/preview.png",
     "has_text": true,
     "text_len": 4984,
-    "size_bytes": 272896
+    "size_bytes": 272896,
+    "local_rel": "assets/previews/community-superdesign-hyper-saturated-fluid.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-saas-landing-page-for-developer-tool",
@@ -7799,7 +7843,9 @@
     "preview": "prompts/saas-landing-page-for-developer-tool/preview.png",
     "has_text": true,
     "text_len": 5489,
-    "size_bytes": 169669
+    "size_bytes": 169669,
+    "local_rel": "assets/previews/community-superdesign-saas-landing-page-for-developer-tool.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-midnight-editorial-style-5f0a22",
@@ -7835,7 +7881,9 @@
     "preview": "prompts/midnight-editorial-style-5f0a22/preview.png",
     "has_text": true,
     "text_len": 15135,
-    "size_bytes": 638408
+    "size_bytes": 638408,
+    "local_rel": "assets/previews/community-superdesign-midnight-editorial-style-5f0a22.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-hyper-speed-loading-state",
@@ -7870,7 +7918,9 @@
     "preview": "prompts/hyper-speed-loading-state/preview.png",
     "has_text": true,
     "text_len": 7671,
-    "size_bytes": 140939
+    "size_bytes": 140939,
+    "local_rel": "assets/previews/community-superdesign-hyper-speed-loading-state.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-chrome-extension-landing-page",
@@ -7917,7 +7967,9 @@
     "preview": "prompts/chrome-extension-landing-page/preview.png",
     "has_text": true,
     "text_len": 4578,
-    "size_bytes": 356096
+    "size_bytes": 356096,
+    "local_rel": "assets/previews/community-superdesign-chrome-extension-landing-page.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-cinematic-noir-style",
@@ -7953,7 +8005,9 @@
     "preview": "prompts/cinematic-noir-style/preview.png",
     "has_text": true,
     "text_len": 5045,
-    "size_bytes": 3042979
+    "size_bytes": 3042979,
+    "local_rel": "assets/previews/community-superdesign-cinematic-noir-style.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-minimalist-beta-capture",
@@ -7991,7 +8045,9 @@
     "preview": "prompts/minimalist-beta-capture/preview.png",
     "has_text": true,
     "text_len": 5396,
-    "size_bytes": 429726
+    "size_bytes": 429726,
+    "local_rel": "assets/previews/community-superdesign-minimalist-beta-capture.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-card-swap",
@@ -8027,7 +8083,9 @@
     "preview": "prompts/card-swap/preview.png",
     "has_text": true,
     "text_len": 9997,
-    "size_bytes": 160627
+    "size_bytes": 160627,
+    "local_rel": "assets/previews/community-superdesign-card-swap.mp4",
+    "local_kind": "mp4"
   },
   {
     "id": "community-superdesign-brutalist-style-ecommerce-page",
@@ -8064,7 +8122,9 @@
     "preview": "prompts/brutalist-style-ecommerce-page/preview.png",
     "has_text": true,
     "text_len": 5272,
-    "size_bytes": 2255348
+    "size_bytes": 2255348,
+    "local_rel": "assets/previews/community-superdesign-brutalist-style-ecommerce-page.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-superdesign-editorial-waitlist",
@@ -8100,7 +8160,9 @@
     "preview": "prompts/superdesign-editorial-waitlist/preview.png",
     "has_text": true,
     "text_len": 4807,
-    "size_bytes": 212202
+    "size_bytes": 212202,
+    "local_rel": "assets/previews/community-superdesign-superdesign-editorial-waitlist.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-hover-reveal-effect",
@@ -8136,7 +8198,9 @@
     "preview": "prompts/hover-reveal-effect/preview.png",
     "has_text": true,
     "text_len": 1811,
-    "size_bytes": 204974
+    "size_bytes": 204974,
+    "local_rel": "assets/previews/community-superdesign-hover-reveal-effect.mp4",
+    "local_kind": "mp4"
   },
   {
     "id": "community-superdesign-force-field-background",
@@ -8171,7 +8235,9 @@
     "preview": "prompts/force-field-background/preview.png",
     "has_text": true,
     "text_len": 16234,
-    "size_bytes": 891338
+    "size_bytes": 891338,
+    "local_rel": "assets/previews/community-superdesign-force-field-background.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-scroll-journey-line",
@@ -8246,7 +8312,9 @@
     "preview": "prompts/neon-velocity-countdown/preview.png",
     "has_text": true,
     "text_len": 4993,
-    "size_bytes": 251554
+    "size_bytes": 251554,
+    "local_rel": "assets/previews/community-superdesign-neon-velocity-countdown.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-gooey-gradient-background",
@@ -8281,7 +8349,9 @@
     "preview": "prompts/gooey-gradient-background/preview.png",
     "has_text": true,
     "text_len": 9282,
-    "size_bytes": 208417
+    "size_bytes": 208417,
+    "local_rel": "assets/previews/community-superdesign-gooey-gradient-background.mp4",
+    "local_kind": "mp4"
   },
   {
     "id": "community-superdesign-horizontal-gallery",
@@ -8396,7 +8466,9 @@
     "preview": "prompts/bold-editorial-design-style/preview.png",
     "has_text": true,
     "text_len": 5152,
-    "size_bytes": 348275
+    "size_bytes": 348275,
+    "local_rel": "assets/previews/community-superdesign-bold-editorial-design-style.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-light-beam-button",
@@ -8431,7 +8503,9 @@
     "preview": "prompts/light-beam-button/preview.png",
     "has_text": true,
     "text_len": 5890,
-    "size_bytes": 19250
+    "size_bytes": 19250,
+    "local_rel": "assets/previews/community-superdesign-light-beam-button.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-ghost-cursor",
@@ -8504,7 +8578,9 @@
     "preview": "prompts/aura-audio-showroom/preview.png",
     "has_text": true,
     "text_len": 4795,
-    "size_bytes": 498388
+    "size_bytes": 498388,
+    "local_rel": "assets/previews/community-superdesign-aura-audio-showroom.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-interactive-folder",
@@ -8579,7 +8655,9 @@
     "preview": "prompts/architectural-type-system-style/preview.png",
     "has_text": true,
     "text_len": 4868,
-    "size_bytes": 151055
+    "size_bytes": 151055,
+    "local_rel": "assets/previews/community-superdesign-architectural-type-system-style.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-parallax-stars-background",
@@ -8688,7 +8766,9 @@
     "preview": "prompts/shiny-text/preview.png",
     "has_text": true,
     "text_len": 6975,
-    "size_bytes": 115875
+    "size_bytes": 115875,
+    "local_rel": "assets/previews/community-superdesign-shiny-text.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-pill-nav",
@@ -8761,7 +8841,9 @@
     "preview": "prompts/exploded-view-assembly/preview.png",
     "has_text": true,
     "text_len": 364,
-    "size_bytes": 219721
+    "size_bytes": 219721,
+    "local_rel": "assets/previews/community-superdesign-exploded-view-assembly.mp4",
+    "local_kind": "mp4"
   },
   {
     "id": "community-superdesign-rolodex-text",
@@ -9096,7 +9178,9 @@
     "preview": "prompts/coverflow-carousels-that-turn-heads-dark-coverflow-aurora/preview.png",
     "has_text": true,
     "text_len": 29520,
-    "size_bytes": 605551
+    "size_bytes": 605551,
+    "local_rel": "assets/previews/community-superdesign-coverflow-carousels-that-turn-heads-dark-coverflow-aurora.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-aurora-glass-sign-in-to-the-canvas",
@@ -9139,7 +9223,9 @@
     "preview": "prompts/aurora-glass-sign-in-to-the-canvas/preview.png",
     "has_text": true,
     "text_len": 8398,
-    "size_bytes": 2091425
+    "size_bytes": 2091425,
+    "local_rel": "assets/previews/community-superdesign-aurora-glass-sign-in-to-the-canvas.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-graphic-comparison-report",
@@ -9181,7 +9267,9 @@
     "preview": "prompts/graphic-comparison-report/preview.png",
     "has_text": true,
     "text_len": 5085,
-    "size_bytes": 321608
+    "size_bytes": 321608,
+    "local_rel": "assets/previews/community-superdesign-graphic-comparison-report.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-gridwright-design-the-web-type-the-prompt-swiss-grid-signal-red",
@@ -9225,7 +9313,9 @@
     "preview": "prompts/gridwright-design-the-web-type-the-prompt-swiss-grid-signal-red/preview.png",
     "has_text": true,
     "text_len": 13025,
-    "size_bytes": 223792
+    "size_bytes": 223792,
+    "local_rel": "assets/previews/community-superdesign-gridwright-design-the-web-type-the-prompt-swiss-grid-signal-red.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-landing-page-local-small-business",
@@ -9259,7 +9349,9 @@
     "preview": "prompts/landing-page-local-small-business/preview.png",
     "has_text": true,
     "text_len": 5147,
-    "size_bytes": 476564
+    "size_bytes": 476564,
+    "local_rel": "assets/previews/community-superdesign-landing-page-local-small-business.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-palette-social-first-friendly-sign-up",
@@ -9310,7 +9402,9 @@
     "preview": "prompts/palette-social-first-friendly-sign-up/preview.png",
     "has_text": true,
     "text_len": 15803,
-    "size_bytes": 1013388
+    "size_bytes": 1013388,
+    "local_rel": "assets/previews/community-superdesign-palette-social-first-friendly-sign-up.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-super-shampoo-high-conversion-lp",
@@ -9346,7 +9440,9 @@
     "preview": "prompts/super-shampoo-high-conversion-lp/preview.png",
     "has_text": true,
     "text_len": 5040,
-    "size_bytes": 3358900
+    "size_bytes": 3358900,
+    "local_rel": "assets/previews/community-superdesign-super-shampoo-high-conversion-lp.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-slate-roi-calculator-pricing",
@@ -9394,7 +9490,9 @@
     "preview": "prompts/slate-roi-calculator-pricing/preview.png",
     "has_text": true,
     "text_len": 11977,
-    "size_bytes": 354837
+    "size_bytes": 354837,
+    "local_rel": "assets/previews/community-superdesign-slate-roi-calculator-pricing.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-the-quote-set-in-burgundy",
@@ -9444,7 +9542,9 @@
     "preview": "prompts/the-quote-set-in-burgundy/preview.png",
     "has_text": true,
     "text_len": 10341,
-    "size_bytes": 1071331
+    "size_bytes": 1071331,
+    "local_rel": "assets/previews/community-superdesign-the-quote-set-in-burgundy.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-prism-frosted-glass-pastel-agency-studio",
@@ -9497,7 +9597,9 @@
     "preview": "prompts/prism-frosted-glass-pastel-agency-studio/preview.png",
     "has_text": true,
     "text_len": 22685,
-    "size_bytes": 1324444
+    "size_bytes": 1324444,
+    "local_rel": "assets/previews/community-superdesign-prism-frosted-glass-pastel-agency-studio.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-teal-on-ink-newsletter-mega-footer",
@@ -9537,7 +9639,9 @@
     "preview": "prompts/teal-on-ink-newsletter-mega-footer/preview.png",
     "has_text": true,
     "text_len": 4374,
-    "size_bytes": 987609
+    "size_bytes": 987609,
+    "local_rel": "assets/previews/community-superdesign-teal-on-ink-newsletter-mega-footer.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-gesture-first-navigation-system",
@@ -9573,7 +9677,9 @@
     "preview": "prompts/gesture-first-navigation-system/preview.png",
     "has_text": true,
     "text_len": 17967,
-    "size_bytes": 701372
+    "size_bytes": 701372,
+    "local_rel": "assets/previews/community-superdesign-gesture-first-navigation-system.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-editorial-cream-ink-two-path-saas-pricing-3dee65",
@@ -9620,7 +9726,9 @@
     "preview": "prompts/editorial-cream-ink-two-path-saas-pricing-3dee65/preview.png",
     "has_text": true,
     "text_len": 10958,
-    "size_bytes": 194966
+    "size_bytes": 194966,
+    "local_rel": "assets/previews/community-superdesign-editorial-cream-ink-two-path-saas-pricing-3dee65.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-electric-lime-single-plan-saas-pricing",
@@ -9664,7 +9772,9 @@
     "preview": "prompts/electric-lime-single-plan-saas-pricing/preview.png",
     "has_text": true,
     "text_len": 9451,
-    "size_bytes": 193116
+    "size_bytes": 193116,
+    "local_rel": "assets/previews/community-superdesign-electric-lime-single-plan-saas-pricing.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-electric-blue-studio-pricing-188a8f",
@@ -9708,7 +9818,9 @@
     "preview": "prompts/electric-blue-studio-pricing-188a8f/preview.png",
     "has_text": true,
     "text_len": 13634,
-    "size_bytes": 242251
+    "size_bytes": 242251,
+    "local_rel": "assets/previews/community-superdesign-electric-blue-studio-pricing-188a8f.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-account-setup-flow-goals-interests-card-based",
@@ -9745,7 +9857,9 @@
     "preview": "prompts/account-setup-flow-goals-interests-card-based/preview.png",
     "has_text": true,
     "text_len": 4480,
-    "size_bytes": 133227
+    "size_bytes": 133227,
+    "local_rel": "assets/previews/community-superdesign-account-setup-flow-goals-interests-card-based.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-sectioned-index-page",
@@ -9782,7 +9896,9 @@
     "preview": "prompts/sectioned-index-page/preview.png",
     "has_text": true,
     "text_len": 4291,
-    "size_bytes": 774813
+    "size_bytes": 774813,
+    "local_rel": "assets/previews/community-superdesign-sectioned-index-page.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-electric-dark-usage-based-pricing-calculator-20e556",
@@ -9828,7 +9944,9 @@
     "preview": "prompts/electric-dark-usage-based-pricing-calculator-20e556/preview.png",
     "has_text": true,
     "text_len": 13369,
-    "size_bytes": 557308
+    "size_bytes": 557308,
+    "local_rel": "assets/previews/community-superdesign-electric-dark-usage-based-pricing-calculator-20e556.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-emerald-4-tier-saas-pricing-table",
@@ -9873,7 +9991,9 @@
     "preview": "prompts/emerald-4-tier-saas-pricing-table/preview.png",
     "has_text": true,
     "text_len": 11019,
-    "size_bytes": 251585
+    "size_bytes": 251585,
+    "local_rel": "assets/previews/community-superdesign-emerald-4-tier-saas-pricing-table.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-the-atelier-brief-an-editorial-intake-form-set-like-a-letter",
@@ -9919,7 +10039,9 @@
     "preview": "prompts/the-atelier-brief-an-editorial-intake-form-set-like-a-letter/preview.png",
     "has_text": true,
     "text_len": 16946,
-    "size_bytes": 218446
+    "size_bytes": 218446,
+    "local_rel": "assets/previews/community-superdesign-the-atelier-brief-an-editorial-intake-form-set-like-a-letter.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-send-us-the-brief-brutalist-contact-form",
@@ -9962,7 +10084,9 @@
     "preview": "prompts/send-us-the-brief-brutalist-contact-form/preview.png",
     "has_text": true,
     "text_len": 22047,
-    "size_bytes": 141033
+    "size_bytes": 141033,
+    "local_rel": "assets/previews/community-superdesign-send-us-the-brief-brutalist-contact-form.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-editorial-music-player-now-playing",
@@ -10000,7 +10124,9 @@
     "preview": "prompts/editorial-music-player-now-playing/preview.png",
     "has_text": true,
     "text_len": 3365,
-    "size_bytes": 355195
+    "size_bytes": 355195,
+    "local_rel": "assets/previews/community-superdesign-editorial-music-player-now-playing.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-cream-and-sky-playful-saas-pricing",
@@ -10045,7 +10171,9 @@
     "preview": "prompts/cream-and-sky-playful-saas-pricing/preview.png",
     "has_text": true,
     "text_len": 12605,
-    "size_bytes": 280206
+    "size_bytes": 280206,
+    "local_rel": "assets/previews/community-superdesign-cream-and-sky-playful-saas-pricing.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-editorial-crimson-dev-tool-pricing",
@@ -10092,7 +10220,9 @@
     "preview": "prompts/editorial-crimson-dev-tool-pricing/preview.png",
     "has_text": true,
     "text_len": 13297,
-    "size_bytes": 329224
+    "size_bytes": 329224,
+    "local_rel": "assets/previews/community-superdesign-editorial-crimson-dev-tool-pricing.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-card-grid-browse",
@@ -10129,7 +10259,9 @@
     "preview": "prompts/card-grid-browse/preview.png",
     "has_text": true,
     "text_len": 3945,
-    "size_bytes": 704514
+    "size_bytes": 704514,
+    "local_rel": "assets/previews/community-superdesign-card-grid-browse.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-acid-yellow-neo-brutalist-mega-footer",
@@ -10169,7 +10301,9 @@
     "preview": "prompts/acid-yellow-neo-brutalist-mega-footer/preview.png",
     "has_text": true,
     "text_len": 3332,
-    "size_bytes": 234135
+    "size_bytes": 234135,
+    "local_rel": "assets/previews/community-superdesign-acid-yellow-neo-brutalist-mega-footer.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-validar-forms-that-catch-mistakes-before-they-cost-you",
@@ -10211,7 +10345,9 @@
     "preview": "prompts/validar-forms-that-catch-mistakes-before-they-cost-you/preview.png",
     "has_text": true,
     "text_len": 10816,
-    "size_bytes": 584553
+    "size_bytes": 584553,
+    "local_rel": "assets/previews/community-superdesign-validar-forms-that-catch-mistakes-before-they-cost-you.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-champagne-noir-paywall-65a2fd",
@@ -10250,7 +10386,9 @@
     "preview": "prompts/champagne-noir-paywall-65a2fd/preview.png",
     "has_text": true,
     "text_len": 2981,
-    "size_bytes": 280565
+    "size_bytes": 280565,
+    "local_rel": "assets/previews/community-superdesign-champagne-noir-paywall-65a2fd.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-foundry-your-saas-site-designed-before-you-write-a-line",
@@ -10294,7 +10432,9 @@
     "preview": "prompts/foundry-your-saas-site-designed-before-you-write-a-line/preview.png",
     "has_text": true,
     "text_len": 9251,
-    "size_bytes": 280949
+    "size_bytes": 280949,
+    "local_rel": "assets/previews/community-superdesign-foundry-your-saas-site-designed-before-you-write-a-line.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-loam-warm-earthy-organic-agency-website",
@@ -10337,7 +10477,9 @@
     "preview": "prompts/loam-warm-earthy-organic-agency-website/preview.png",
     "has_text": true,
     "text_len": 9905,
-    "size_bytes": 1750651
+    "size_bytes": 1750651,
+    "local_rel": "assets/previews/community-superdesign-loam-warm-earthy-organic-agency-website.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-landing-page-real-estate",
@@ -10371,7 +10513,9 @@
     "preview": "prompts/landing-page-real-estate/preview.png",
     "has_text": true,
     "text_len": 9516,
-    "size_bytes": 542534
+    "size_bytes": 542534,
+    "local_rel": "assets/previews/community-superdesign-landing-page-real-estate.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-ink-and-acid-mono-sitemap-footer",
@@ -10411,7 +10555,9 @@
     "preview": "prompts/ink-and-acid-mono-sitemap-footer/preview.png",
     "has_text": true,
     "text_len": 4178,
-    "size_bytes": 843955
+    "size_bytes": 843955,
+    "local_rel": "assets/previews/community-superdesign-ink-and-acid-mono-sitemap-footer.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-editorial-violet-saas-pricing-matrix",
@@ -10456,7 +10602,9 @@
     "preview": "prompts/editorial-violet-saas-pricing-matrix/preview.png",
     "has_text": true,
     "text_len": 12479,
-    "size_bytes": 325589
+    "size_bytes": 325589,
+    "local_rel": "assets/previews/community-superdesign-editorial-violet-saas-pricing-matrix.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-editorial-saas-onboarding",
@@ -10499,7 +10647,9 @@
     "preview": "prompts/editorial-saas-onboarding/preview.png",
     "has_text": true,
     "text_len": 5125,
-    "size_bytes": 339931
+    "size_bytes": 339931,
+    "local_rel": "assets/previews/community-superdesign-editorial-saas-onboarding.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-design-at-the-speed-of-thought-editorial-split-sign-up",
@@ -10564,7 +10714,9 @@
     "preview": "prompts/design-at-the-speed-of-thought-editorial-split-sign-up/preview.png",
     "has_text": true,
     "text_len": 18619,
-    "size_bytes": 914014
+    "size_bytes": 914014,
+    "local_rel": "assets/previews/community-superdesign-design-at-the-speed-of-thought-editorial-split-sign-up.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-swiss-grid-agency-layout",
@@ -10615,7 +10767,9 @@
     "preview": "prompts/swiss-grid-agency-layout/preview.png",
     "has_text": true,
     "text_len": 23404,
-    "size_bytes": 161488
+    "size_bytes": 161488,
+    "local_rel": "assets/previews/community-superdesign-swiss-grid-agency-layout.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-create-your-account-promptly-split-image-emerald-sign-up",
@@ -10662,7 +10816,9 @@
     "preview": "prompts/create-your-account-promptly-split-image-emerald-sign-up/preview.png",
     "has_text": true,
     "text_len": 9990,
-    "size_bytes": 1314903
+    "size_bytes": 1314903,
+    "local_rel": "assets/previews/community-superdesign-create-your-account-promptly-split-image-emerald-sign-up.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-laboratory-skincare",
@@ -10699,7 +10855,9 @@
     "preview": "prompts/laboratory-skincare/preview.png",
     "has_text": true,
     "text_len": 4966,
-    "size_bytes": 134828
+    "size_bytes": 134828,
+    "local_rel": "assets/previews/community-superdesign-laboratory-skincare.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-ai-system-configuration-console",
@@ -10746,7 +10904,9 @@
     "preview": "prompts/ai-system-configuration-console/preview.png",
     "has_text": true,
     "text_len": 5040,
-    "size_bytes": 309763
+    "size_bytes": 309763,
+    "local_rel": "assets/previews/community-superdesign-ai-system-configuration-console.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-midnight-navy-fintech-pricing-656a6d",
@@ -10792,7 +10952,9 @@
     "preview": "prompts/midnight-navy-fintech-pricing-656a6d/preview.png",
     "has_text": true,
     "text_len": 11312,
-    "size_bytes": 476144
+    "size_bytes": 476144,
+    "local_rel": "assets/previews/community-superdesign-midnight-navy-fintech-pricing-656a6d.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-minimalist-wireframe-login",
@@ -10829,7 +10991,9 @@
     "preview": "prompts/minimalist-wireframe-login/preview.png",
     "has_text": true,
     "text_len": 3783,
-    "size_bytes": 120748
+    "size_bytes": 120748,
+    "local_rel": "assets/previews/community-superdesign-minimalist-wireframe-login.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-editorial-feature-announcement",
@@ -10869,7 +11033,9 @@
     "preview": "prompts/editorial-feature-announcement/preview.png",
     "has_text": true,
     "text_len": 4777,
-    "size_bytes": 221322
+    "size_bytes": 221322,
+    "local_rel": "assets/previews/community-superdesign-editorial-feature-announcement.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-modal-design-success-celebration-pastel-legibility-fixed-9fbd65",
@@ -10960,7 +11126,9 @@
     "preview": "prompts/volt-electric-lime-fitness-dashboard-a7544c/preview.png",
     "has_text": true,
     "text_len": 3260,
-    "size_bytes": 315657
+    "size_bytes": 315657,
+    "local_rel": "assets/previews/community-superdesign-volt-electric-lime-fitness-dashboard-a7544c.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-system-initialization-trust-and-transparency",
@@ -11004,7 +11172,9 @@
     "preview": "prompts/system-initialization-trust-and-transparency/preview.png",
     "has_text": true,
     "text_len": 4967,
-    "size_bytes": 341581
+    "size_bytes": 341581,
+    "local_rel": "assets/previews/community-superdesign-system-initialization-trust-and-transparency.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-cream-paper-and-coral-mega-footer",
@@ -11044,7 +11214,9 @@
     "preview": "prompts/cream-paper-and-coral-mega-footer/preview.png",
     "has_text": true,
     "text_len": 3744,
-    "size_bytes": 973699
+    "size_bytes": 973699,
+    "local_rel": "assets/previews/community-superdesign-cream-paper-and-coral-mega-footer.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-welcome-back-lumen-centered-card-true-cobalt",
@@ -11091,7 +11263,9 @@
     "preview": "prompts/welcome-back-lumen-centered-card-true-cobalt/preview.png",
     "has_text": true,
     "text_len": 10615,
-    "size_bytes": 738084
+    "size_bytes": 738084,
+    "local_rel": "assets/previews/community-superdesign-welcome-back-lumen-centered-card-true-cobalt.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-atlas-studio-charting-your-account-step-one-of-three",
@@ -11134,7 +11308,9 @@
     "preview": "prompts/atlas-studio-charting-your-account-step-one-of-three/preview.png",
     "has_text": true,
     "text_len": 12514,
-    "size_bytes": 686391
+    "size_bytes": 686391,
+    "local_rel": "assets/previews/community-superdesign-atlas-studio-charting-your-account-step-one-of-three.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-fintech-wallet-mobile-home-screen",
@@ -11173,7 +11349,9 @@
     "preview": "prompts/fintech-wallet-mobile-home-screen/preview.png",
     "has_text": true,
     "text_len": 3055,
-    "size_bytes": 554979
+    "size_bytes": 554979,
+    "local_rel": "assets/previews/community-superdesign-fintech-wallet-mobile-home-screen.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-forms-that-feel-effortless-to-fill-fieldcraft",
@@ -11216,7 +11394,9 @@
     "preview": "prompts/forms-that-feel-effortless-to-fill-fieldcraft/preview.png",
     "has_text": true,
     "text_len": 8721,
-    "size_bytes": 544752
+    "size_bytes": 544752,
+    "local_rel": "assets/previews/community-superdesign-forms-that-feel-effortless-to-fill-fieldcraft.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-loop-say-hello-we-dont-bite-friendly-illustrated-sky",
@@ -11259,7 +11439,9 @@
     "preview": "prompts/loop-say-hello-we-dont-bite-friendly-illustrated-sky/preview.png",
     "has_text": true,
     "text_len": 31320,
-    "size_bytes": 705551
+    "size_bytes": 705551,
+    "local_rel": "assets/previews/community-superdesign-loop-say-hello-we-dont-bite-friendly-illustrated-sky.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-formcraft-workspace-settings-cobalt-two-column",
@@ -11302,7 +11484,9 @@
     "preview": "prompts/formcraft-workspace-settings-cobalt-two-column/preview.png",
     "has_text": true,
     "text_len": 11510,
-    "size_bytes": 226018
+    "size_bytes": 226018,
+    "local_rel": "assets/previews/community-superdesign-formcraft-workspace-settings-cobalt-two-column.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-atelier-early-access-waitlist-minimal-graphite",
@@ -11345,7 +11529,9 @@
     "preview": "prompts/atelier-early-access-waitlist-minimal-graphite/preview.png",
     "has_text": true,
     "text_len": 14460,
-    "size_bytes": 390711
+    "size_bytes": 390711,
+    "local_rel": "assets/previews/community-superdesign-atelier-early-access-waitlist-minimal-graphite.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-editorial-image-lightbox",
@@ -11405,7 +11591,9 @@
     "preview": "prompts/editorial-image-lightbox/preview.png",
     "has_text": true,
     "text_len": 23211,
-    "size_bytes": 279120
+    "size_bytes": 279120,
+    "local_rel": "assets/previews/community-superdesign-editorial-image-lightbox.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-tablekit-the-data-table-your-team-actually-wants-to-live-in",
@@ -11450,7 +11638,9 @@
     "preview": "prompts/tablekit-the-data-table-your-team-actually-wants-to-live-in/preview.png",
     "has_text": true,
     "text_len": 8804,
-    "size_bytes": 333982
+    "size_bytes": 333982,
+    "local_rel": "assets/previews/community-superdesign-tablekit-the-data-table-your-team-actually-wants-to-live-in.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-sunset-glow-wordmark-mega-footer",
@@ -11490,7 +11680,9 @@
     "preview": "prompts/sunset-glow-wordmark-mega-footer/preview.png",
     "has_text": true,
     "text_len": 3108,
-    "size_bytes": 3335128
+    "size_bytes": 3335128,
+    "local_rel": "assets/previews/community-superdesign-sunset-glow-wordmark-mega-footer.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-atelier-design-spoken-into-being-editorial-serif-burgundy",
@@ -11535,7 +11727,9 @@
     "preview": "prompts/atelier-design-spoken-into-being-editorial-serif-burgundy/preview.png",
     "has_text": true,
     "text_len": 8229,
-    "size_bytes": 179420
+    "size_bytes": 179420,
+    "local_rel": "assets/previews/community-superdesign-atelier-design-spoken-into-being-editorial-serif-burgundy.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-superdesign-setup-inline-preview",
@@ -11580,7 +11774,9 @@
     "preview": "prompts/superdesign-setup-inline-preview/preview.png",
     "has_text": true,
     "text_len": 4513,
-    "size_bytes": 219593
+    "size_bytes": 219593,
+    "local_rel": "assets/previews/community-superdesign-superdesign-setup-inline-preview.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-verify-its-you-aperture-otp-2fa-graphite-platinum",
@@ -11625,7 +11821,9 @@
     "preview": "prompts/verify-its-you-aperture-otp-2fa-graphite-platinum/preview.png",
     "has_text": true,
     "text_len": 11948,
-    "size_bytes": 437549
+    "size_bytes": 437549,
+    "local_rel": "assets/previews/community-superdesign-verify-its-you-aperture-otp-2fa-graphite-platinum.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-technical-system-onboarding",
@@ -11670,7 +11868,9 @@
     "preview": "prompts/technical-system-onboarding/preview.png",
     "has_text": true,
     "text_len": 5079,
-    "size_bytes": 428431
+    "size_bytes": 428431,
+    "local_rel": "assets/previews/community-superdesign-technical-system-onboarding.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-plume-sign-in-to-your-design-canvas",
@@ -11716,7 +11916,9 @@
     "preview": "prompts/plume-sign-in-to-your-design-canvas/preview.png",
     "has_text": true,
     "text_len": 10166,
-    "size_bytes": 702708
+    "size_bytes": 702708,
+    "local_rel": "assets/previews/community-superdesign-plume-sign-in-to-your-design-canvas.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-gen-z-social-app",
@@ -11762,7 +11964,9 @@
     "preview": "prompts/gen-z-social-app/preview.png",
     "has_text": true,
     "text_len": 5798,
-    "size_bytes": 632578
+    "size_bytes": 632578,
+    "local_rel": "assets/previews/community-superdesign-gen-z-social-app.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-questions-set-in-serif-an-editorial-faq",
@@ -11804,7 +12008,9 @@
     "preview": "prompts/questions-set-in-serif-an-editorial-faq/preview.png",
     "has_text": true,
     "text_len": 8274,
-    "size_bytes": 317498
+    "size_bytes": 317498,
+    "local_rel": "assets/previews/community-superdesign-questions-set-in-serif-an-editorial-faq.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-high-energy-onboarding",
@@ -11853,7 +12059,9 @@
     "preview": "prompts/high-energy-onboarding/preview.png",
     "has_text": true,
     "text_len": 4301,
-    "size_bytes": 802404
+    "size_bytes": 802404,
+    "local_rel": "assets/previews/community-superdesign-high-energy-onboarding.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-sign-in-to-verdant-classic-split-emerald",
@@ -11898,7 +12106,9 @@
     "preview": "prompts/sign-in-to-verdant-classic-split-emerald/preview.png",
     "has_text": true,
     "text_len": 9629,
-    "size_bytes": 340041
+    "size_bytes": 340041,
+    "local_rel": "assets/previews/community-superdesign-sign-in-to-verdant-classic-split-emerald.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-momentum-ship-your-startup-launch-before-the-idea-cools",
@@ -11943,7 +12153,9 @@
     "preview": "prompts/momentum-ship-your-startup-launch-before-the-idea-cools/preview.png",
     "has_text": true,
     "text_len": 14578,
-    "size_bytes": 1002817
+    "size_bytes": 1002817,
+    "local_rel": "assets/previews/community-superdesign-momentum-ship-your-startup-launch-before-the-idea-cools.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-verdance-agency-website-design-studio-dark-emerald",
@@ -11996,7 +12208,9 @@
     "preview": "prompts/verdance-agency-website-design-studio-dark-emerald/preview.png",
     "has_text": true,
     "text_len": 25510,
-    "size_bytes": 1340629
+    "size_bytes": 1340629,
+    "local_rel": "assets/previews/community-superdesign-verdance-agency-website-design-studio-dark-emerald.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-system-interface-feature-announcement",
@@ -12036,7 +12250,9 @@
     "preview": "prompts/system-interface-feature-announcement/preview.png",
     "has_text": true,
     "text_len": 4604,
-    "size_bytes": 344804
+    "size_bytes": 344804,
+    "local_rel": "assets/previews/community-superdesign-system-interface-feature-announcement.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-forge-launch-waitlist-dark-warm-ember",
@@ -12081,7 +12297,9 @@
     "preview": "prompts/forge-launch-waitlist-dark-warm-ember/preview.png",
     "has_text": true,
     "text_len": 10940,
-    "size_bytes": 565225
+    "size_bytes": 565225,
+    "local_rel": "assets/previews/community-superdesign-forge-launch-waitlist-dark-warm-ember.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-multi-step-form-flow",
@@ -12119,7 +12337,9 @@
     "preview": "prompts/multi-step-form-flow/preview.png",
     "has_text": true,
     "text_len": 13044,
-    "size_bytes": 138338
+    "size_bytes": 138338,
+    "local_rel": "assets/previews/community-superdesign-multi-step-form-flow.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-workspace-settings-formcraft-two-column-cobalt",
@@ -12160,7 +12380,9 @@
     "preview": "prompts/workspace-settings-formcraft-two-column-cobalt/preview.png",
     "has_text": true,
     "text_len": 11069,
-    "size_bytes": 251658
+    "size_bytes": 251658,
+    "local_rel": "assets/previews/community-superdesign-workspace-settings-formcraft-two-column-cobalt.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-ledgerline-deep-teal-mint-fintech-startup-dashboard-hero",
@@ -12214,7 +12436,9 @@
     "preview": "prompts/ledgerline-deep-teal-mint-fintech-startup-dashboard-hero/preview.png",
     "has_text": true,
     "text_len": 15056,
-    "size_bytes": 728701
+    "size_bytes": 728701,
+    "local_rel": "assets/previews/community-superdesign-ledgerline-deep-teal-mint-fintech-startup-dashboard-hero.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-skeuomorphism-music-player-tactile-leather-and-brass-now-playing-ui",
@@ -12281,7 +12505,9 @@
     "preview": "prompts/skeuomorphism-music-player-tactile-leather-and-brass-now-playing-ui/preview.png",
     "has_text": true,
     "text_len": 9953,
-    "size_bytes": 742799
+    "size_bytes": 742799,
+    "local_rel": "assets/previews/community-superdesign-skeuomorphism-music-player-tactile-leather-and-brass-now-playing-ui.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-coral-gradient-product-launch-email",
@@ -12332,7 +12558,9 @@
     "preview": "prompts/coral-gradient-product-launch-email/preview.png",
     "has_text": true,
     "text_len": 4911,
-    "size_bytes": 324059
+    "size_bytes": 324059,
+    "local_rel": "assets/previews/community-superdesign-coral-gradient-product-launch-email.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-editorial-serif-receipt-email",
@@ -12384,7 +12612,9 @@
     "preview": "prompts/editorial-serif-receipt-email/preview.png",
     "has_text": true,
     "text_len": 5268,
-    "size_bytes": 248159
+    "size_bytes": 248159,
+    "local_rel": "assets/previews/community-superdesign-editorial-serif-receipt-email.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-cinematic-editorial-newsletter-email",
@@ -12438,7 +12668,9 @@
     "preview": "prompts/cinematic-editorial-newsletter-email/preview.png",
     "has_text": true,
     "text_len": 5586,
-    "size_bytes": 2496404
+    "size_bytes": 2496404,
+    "local_rel": "assets/previews/community-superdesign-cinematic-editorial-newsletter-email.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-cinematic-grayscale-newsletter-email",
@@ -12489,7 +12721,9 @@
     "preview": "prompts/cinematic-grayscale-newsletter-email/preview.png",
     "has_text": true,
     "text_len": 4345,
-    "size_bytes": 862669
+    "size_bytes": 862669,
+    "local_rel": "assets/previews/community-superdesign-cinematic-grayscale-newsletter-email.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-red-on-cream-editorial-announcement-email",
@@ -12540,7 +12774,9 @@
     "preview": "prompts/red-on-cream-editorial-announcement-email/preview.png",
     "has_text": true,
     "text_len": 4046,
-    "size_bytes": 420859
+    "size_bytes": 420859,
+    "local_rel": "assets/previews/community-superdesign-red-on-cream-editorial-announcement-email.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-movie-poster-film-premiere-invite-email",
@@ -12592,7 +12828,9 @@
     "preview": "prompts/movie-poster-film-premiere-invite-email/preview.png",
     "has_text": true,
     "text_len": 4152,
-    "size_bytes": 256929
+    "size_bytes": 256929,
+    "local_rel": "assets/previews/community-superdesign-movie-poster-film-premiere-invite-email.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-folded-paper-club-invite-email",
@@ -12645,7 +12883,9 @@
     "preview": "prompts/folded-paper-club-invite-email/preview.png",
     "has_text": true,
     "text_len": 4227,
-    "size_bytes": 1259734
+    "size_bytes": 1259734,
+    "local_rel": "assets/previews/community-superdesign-folded-paper-club-invite-email.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-warm-terracotta-ai-chat-interface",
@@ -12708,7 +12948,9 @@
     "preview": "prompts/warm-terracotta-ai-chat-interface/preview.png",
     "has_text": true,
     "text_len": 8784,
-    "size_bytes": 329871
+    "size_bytes": 329871,
+    "local_rel": "assets/previews/community-superdesign-warm-terracotta-ai-chat-interface.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-glassmorphism-dashboard-frosted-sunrise-analytics-ui",
@@ -12776,7 +13018,9 @@
     "preview": "prompts/glassmorphism-dashboard-frosted-sunrise-analytics-ui/preview.png",
     "has_text": true,
     "text_len": 12220,
-    "size_bytes": 848000
+    "size_bytes": 848000,
+    "local_rel": "assets/previews/community-superdesign-glassmorphism-dashboard-frosted-sunrise-analytics-ui.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-claymorphism-mobile-app-pastel-habit-tracker-home",
@@ -12835,7 +13079,9 @@
     "preview": "prompts/claymorphism-mobile-app-pastel-habit-tracker-home/preview.png",
     "has_text": true,
     "text_len": 7615,
-    "size_bytes": 315395
+    "size_bytes": 315395,
+    "local_rel": "assets/previews/community-superdesign-claymorphism-mobile-app-pastel-habit-tracker-home.png",
+    "local_kind": "png"
   },
   {
     "id": "community-superdesign-calendar-ui-warm-editorial-week-planner",
@@ -12873,7 +13119,9 @@
     "preview": "prompts/calendar-ui-warm-editorial-week-planner/preview.png",
     "has_text": true,
     "text_len": 10205,
-    "size_bytes": 221034
+    "size_bytes": 221034,
+    "local_rel": "assets/previews/community-superdesign-calendar-ui-warm-editorial-week-planner.png",
+    "local_kind": "png"
   },
   {
     "id": "motionz-premium-landing-page",
@@ -13540,7 +13788,9 @@
     "created_at": "2026-08-14T08:39:05.666Z",
     "has_text": true,
     "text_len": 11255,
-    "source_kind": "motionsites"
+    "source_kind": "motionsites",
+    "local_rel": "assets/previews/forecast-center.mp4",
+    "local_kind": "mp4"
   },
   {
     "id": "freight-command",
@@ -13554,7 +13804,9 @@
     "created_at": "2026-08-14T08:39:05.666Z",
     "has_text": true,
     "text_len": 20277,
-    "source_kind": "motionsites"
+    "source_kind": "motionsites",
+    "local_rel": "assets/previews/freight-command.png",
+    "local_kind": "png"
   },
   {
     "id": "reading-library",
