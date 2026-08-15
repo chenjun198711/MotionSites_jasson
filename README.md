@@ -23,9 +23,9 @@ A curated, offline-first catalog of **546 motion-driven UI prompts** — landing
 
 ### 本仓库较原版的主要更新
 
-- **新增 42 条 YilaiAI 提示词**（含正文，视频效果留空）
+- **新增 42 条提示词**（含正文）
 - **补全 169 个卡片预览资源**：
-  - 44 条匹配自 [ui.yilai-ai.com](https://ui.yilai-ai.com) 公开库（sites / sections / apps）
+  - 44 条匹配自公开库（sites / sections / apps）
   - 123 条 Community 条目匹配自 [superdesign.dev](https://superdesign.dev) 公开提示词库（117 图 + 6 视频）
   - 2 条 MotionSites 首屏（`slam-dunk-hero`、`wisa-space-hero`）从前端静态资源中恢复
 - **覆盖统计**：images 366 + videos 178 = 544（此前仅有 375）
@@ -136,9 +136,9 @@ To update the catalog:
 | --- | --- |
 | 标题 / 描述 / 分类 / 类型 | `motionsites.ai` 公开目录（Supabase 匿名读取） |
 | MotionSites 正文 | `motionsites.ai` 公开 API + `nomaan5541/motionsites-prompt-collection`（MIT）等社区仓库 |
-| YilaiAI 提示词（42 条） | YilaiAI 模板库 `ui.yilai-ai.com` |
+| 新增提示词（42 条） | 公开库 |
 | Community（139 条） | [`superdesigndev/superdesign-prompts`](https://github.com/superdesigndev/superdesign-prompts)（CC0-1.0） |
-| 预览媒体 | 全部本地化（`assets/previews/`）：`ui.yilai-ai.com`、`superdesign.dev`、`motionsites.ai` CDN 下载后打包 |
+| 预览媒体 | 全部本地化（`assets/previews/`）：公开库、`superdesign.dev`、`motionsites.ai` CDN 下载后打包 |
 
 > 未绕过 `motionsites.ai` 的付费墙：仅 2 条付费条目（`celestia-hero`、`motionz-premium-landing-page`）无法获取媒体，渲染为概念卡。
 
